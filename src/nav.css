@@ -1,0 +1,306 @@
+.displaynone{
+    display: none !important;
+}
+details{
+    padding: 0;
+    margin: 0;
+}
+summary {
+    list-style: none;
+    text-decoration: none;
+    width: 100% !important;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+    height: 7vh;
+}
+.homeImg{
+    display: flex;
+    flex-direction: row;
+    margin-top: 0.5vh;
+    height: 6vh !important;
+    width: 100% !important;
+    text-align: center;
+}
+.accordion-content{
+    text-align: center;
+    width: 90% !important;
+}
+details[open] summary{
+    background: #3c4464;
+    width: 100% !important;
+}
+.homeImg a{
+}
+.homeImg a img{
+    width: 100% !important;
+}
+.homeImg button img{
+    width: 100% !important;
+    margin-top: auto !important;
+    margin-bottom: auto !important;
+}
+.homeImg button img[cerrar]{
+    width: 70% !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+}
+.homeImg button{
+    height: 100% !important;
+}
+summary:hover{
+    background: #3c4464;
+    width: 100% !important;
+}
+.list-group-item:hover{
+    background: #64697F !important;
+}
+
+.hrmenu{
+    color: white !important;
+    width: 95% !important;
+    height: 3px !important;
+    margin: 0 !important;
+    margin-top: 1.3vh !important;
+ }
+.accordion{
+    padding: 0;
+    margin: 0;
+    margin-top: 6px !important;
+    width: 100% ;
+}
+.navegadorClose{
+    width: 5vw!important;
+    height: 100vh;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    border-radius:0px 6px 6px 0px !important;
+
+}
+.img-menu{
+    height: 60% !important;
+    margin-top: auto !important;
+    margin-bottom: auto !important;
+}
+.img-menu img{
+    height: 100% !important;
+}
+.navegadorOpen{
+    width: 15vw!important;
+    height: 100vh;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    border-radius:0px 6px 6px 0px !important;
+}
+summary div img {
+    height: 10% !important;
+}
+summary img[cerrar]{
+    height: 60% !important;
+}
+details div ul li a img{
+    height: 30px !important;
+    width: 30px !important;
+}
+.summap{
+    text-align: left !important;
+    margin-left: 4px !important;
+    color: white !important;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    display: flex;
+}
+details div ul li a{
+    height: 100% !important;
+    width: 100%;
+    text-decoration: none;
+}
+.df-row{
+    display: flex;
+    flex-direction: row;justify-content: center;
+}
+.list-group-item{
+    background: #3c4464 !important;
+    border-color: #3c4464 !important;
+    height: 7vh;
+    width: 100% !important;
+    display: inline-block;
+    text-align: center;
+    padding: 0;
+    border-radius:0;
+}
+.list-group{
+    margin-top: 3px;
+    margin-bottom: 3px;
+    display: inline-block;
+    text-align: center;
+    width: 100% !important;
+}
+.navegadorCloseBody{
+    margin-left: 5vw !important;
+    width: 95vw !important;
+}
+.navegadorOpenBody{
+    margin-left: 15vw !important;
+    width: 85vw !important;
+}
+
+
+/* movimiento menu */
+
+
+/* fin movimiento menu */
+
+/* body */
+
+body{
+    background-image: url('/img/fondo2.jpg');
+    background-repeat: repeat;
+    background-size: cover;display: flex;
+
+}
+.divbutonsession{
+    position: fixed;
+    bottom: 1vh !important;
+    left: 0vw !important;
+    z-index: 100;
+    width: 5vw !important;
+    display: inline-block;
+    text-align: center;
+    height: 5vh !important; ;
+}
+.divbutonsession button{
+    height: 100% !important;
+    width: 90% !important;
+    display: inline-block;
+    text-align: center;
+    padding: 2px !important;
+}
+.divbutonsession button img{
+   height: 98% !important;
+}
+
+.divbutonsessionopen{
+    position: fixed;
+    bottom: 1vh !important;
+    left: 0vw !important;
+    z-index: 100;
+    width: 15vw !important;
+    display: inline-block;
+    text-align: center;
+    height: 4vh !important; ;
+}
+.divbutonsessionopen button{
+    height: 100% !important;
+    width: 90% !important;
+    display: inline-block;
+    text-align: center;
+    padding: 2px !important;
+}
+.divbutonsessionopen button img{
+    height: 98% !important;
+}
+
+/* Scroll */
+body::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+}
+body::-webkit-scrollbar-track {
+    border-radius: 5px;
+    background-color: #DFE9EB;
+}
+
+body::-webkit-scrollbar-track:hover {
+    background-color: #B8C0C2;
+}
+
+body::-webkit-scrollbar-track:active {
+    background-color: #B8C0C2;
+}
+
+body::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: #397524;
+}
+
+body::-webkit-scrollbar-thumb:hover {
+    background-color: #62A34B;
+}
+
+body::-webkit-scrollbar-thumb:active {
+    background-color: #62A34B;
+}
+navegadorScroll::-webkit-scrollbar {
+    height: 10px;
+    width: 10px;
+}
+navegadorScroll::-webkit-scrollbar-track {
+    border-radius: 5px;
+    background-color: #DFE9EB;
+}
+
+navegadorScroll::-webkit-scrollbar-track:hover {
+    background-color: #B8C0C2;
+}
+
+navegadorScroll::-webkit-scrollbar-track:active {
+    background-color: #B8C0C2;
+}
+
+navegadorScroll::-webkit-scrollbar-thumb {
+    border-radius: 5px;
+    background-color: #397524;
+}
+
+navegadorScroll::-webkit-scrollbar-thumb:hover {
+    background-color: #62A34B;
+}
+
+navegadorScroll::-webkit-scrollbar-thumb:active {
+    background-color: #62A34B;
+}
+.chosen-container{
+    width: 100% !important;
+    height:  100% !important;
+}
+.control-group{
+    width: 100% !important;
+    height:  100% !important;
+}
+.chosen-single{
+    width: 100% !important;
+    height:  100% !important;
+
+}
+.chosen-single span{
+    display: flex !important;
+    align-items: center !important;
+    vertical-align: middle !important;
+    height:  100% !important;
+    font-size: 16px !important;
+
+}
+
+.chosen-choices{
+    width: 100% !important;
+    height:  100% !important;
+}
+.chosen-choices li{
+    height:  80% !important;
+    border-radius: 8px !important;
+}
+.chosen-choices li span{
+    display: flex !important;
+    align-items: center !important;
+    vertical-align: middle !important;
+    height:  100% !important;
+    font-size: 16px !important;
+
+}
+.chosen-container-multi ul{
+    border-radius: 8px !important;
+}

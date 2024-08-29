@@ -1,0 +1,163 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  text-align: center;
+}
+
+.logo {
+  height: 6em;
+  padding: 1.5em;
+  will-change: filter;
+  transition: filter 300ms;
+}
+.logo:hover {
+  filter: drop-shadow(0 0 2em #646cffaa);
+}
+.logo.react:hover {
+  filter: drop-shadow(0 0 2em #61dafbaa);
+}
+
+@keyframes logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  a:nth-of-type(2) .logo {
+    animation: logo-spin infinite 20s linear;
+  }
+}
+
+.card {
+  padding: 2em;
+}
+
+.read-the-docs {
+  color: #888;
+}
+
+
+.animacionMenu{
+  transition: width 0.3s ease, height 0.3s ease;
+}
+
+.animacionMenu:hover .view{
+  display: none;
+}
+.animacionMenu:hover .hidden{
+  display: block;
+}
+.hidden{ display: none;}
+
+.hoverLink:hover{
+  background-color: #0d1f4d;
+  border-radius: 10px;
+  margin-left: none !important;
+  margin-right: none !important;
+}
+.hoverLink img{  
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+.animacionMenu:hover .hoverLink img{  
+  margin-left: 10px !important;
+  margin-right: 10px !important;
+}
+.botonMenu{
+  transition: 0.3s;
+  top:0;
+  height: 5vh;
+  width: 2vw;
+}
+.botonMenu button svg path,.botonMenu button svg{
+  border-radius: 15px !important;
+  background: none;
+}
+.animacionMenu:hover .botonMenu{
+  transition: 0.3s;
+  margin-left: 12.4vw !important;
+}
+.hoverLink{
+  background: none;
+}
+.navegadorOpenBody{
+  overflow-y: auto !important;
+  width: 100%;
+}
+.navegadorOpenBody::-webkit-scrollbar {
+  height: 10px;
+  width: 10px;
+}
+.navegadorOpenBody::-webkit-scrollbar-track {
+  border-radius: 5px;
+  background-color: #DFE9EB;
+}
+
+.navegadorOpenBody::-webkit-scrollbar-track:hover {
+  background-color: #B8C0C2;
+}
+
+.navegadorOpenBody::-webkit-scrollbar-track:active {
+  background-color: #B8C0C2;
+}
+
+.navegadorOpenBody::-webkit-scrollbar-thumb {
+  border-radius: 5px;
+  background-color: #397524;
+}
+
+.navegadorOpenBody::-webkit-scrollbar-thumb:hover {
+  background-color: #62A34B;
+}
+
+.navegadorOpenBody::-webkit-scrollbar-thumb:active {
+  background-color: #62A34B;
+}
+label::after{
+  background: #e2e3e5 !important;
+  color: black;
+  
+}
+label::before{
+  background: #ffffff !important;
+  color: black;
+  
+}
+input[type="text"],input[type="number"],input[type="datetime-local"],input[type="email"],input[type="date"]{
+  background: #e2e3e5 ;
+  color: black;
+  
+}
+.bgWhite{
+  background: #ffffff !important ;
+}
+.bgWhiteA::after{
+  background: #ffffff !important ;
+}
+
+.MuiFormLabel-root{
+  color: #000000 !important;
+}
+
+.spin {
+  /* Ajusta el tamaño de la imagen si es necesario */
+  width: 100px;
+  height: 100px;
+
+  /* Aplica la animación */
+  animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+  from {
+      transform: rotate(0deg);
+  }
+  to {
+      transform: rotate(360deg);
+  }
+}

@@ -1,0 +1,37 @@
+@heights: 1vh, 2vh, 3vh, 4vh, 5vh, 6vh, 7vh, 8vh, 9vh, 10vh, 11vh, 12vh, 13vh, 14vh, 15vh, 16vh, 17vh, 18vh, 19vh, 20vh, 21vh, 22vh, 23vh, 24vh, 25vh, 26vh, 27vh, 28vh, 29vh, 30vh, 31vh, 32vh, 33vh, 34vh, 35vh, 36vh, 37vh, 38vh, 39vh, 40vh, 41vh, 42vh, 43vh, 44vh, 45vh, 46vh, 47vh, 48vh, 49vh, 50vh, 51vh, 52vh, 53vh, 54vh, 55vh, 56vh, 57vh, 58vh, 59vh, 60vh, 61vh, 62vh, 63vh, 64vh, 65vh, 66vh, 67vh, 68vh, 69vh, 70vh, 71vh, 72vh, 73vh, 74vh, 75vh, 76vh, 77vh, 78vh, 79vh, 80vh, 81vh, 82vh, 83vh, 84vh, 85vh, 86vh, 87vh, 88vh, 89vh, 90vh, 91vh, 92vh, 93vh, 94vh, 95vh, 96vh, 97vh, 98vh, 99vh, 100vh;
+
+each(@heights, {
+    .h-@{value} {
+        height: @value; 
+      }
+});
+
+each(@heights, {
+    .hover-h-@{value}:hover {
+        height: @value; 
+      }
+});
+
+@widths: 1vw , 2vw , 3vw , 4vw , 5vw , 6vw , 7vw , 8vw , 9vw , 10vw , 11vw , 12vw , 13vw , 14vw , 15vw , 16vw , 17vw , 18vw , 19vw , 20vw , 21vw , 22vw , 23vw , 24vw , 25vw , 26vw , 27vw , 28vw , 29vw , 30vw , 31vw , 32vw , 33vw , 34vw , 35vw , 36vw , 37vw , 38vw , 39vw , 40vw , 41vw , 42vw , 43vw , 44vw , 45vw , 46vw , 47vw , 48vw , 49vw , 50vw , 51vw , 52vw , 53vw , 54vw , 55vw , 56vw , 57vw , 58vw , 59vw , 60vw , 61vw , 62vw , 63vw , 64vw , 65vw , 66vw , 67vw , 68vw , 69vw , 70vw , 71vw , 72vw , 73vw , 74vw , 75vw , 76vw , 77vw , 78vw , 79vw , 80vw , 81vw , 82vw , 83vw , 84vw , 85vw , 86vw , 87vw , 88vw , 89vw , 90vw , 91vw , 92vw , 93vw , 94vw , 95vw , 96vw , 97vw , 98vw , 99vw , 100vw;
+
+each(@widths, {
+    .w-@{value} {
+        width: @value; 
+      }
+});
+
+each(@widths, {
+    .hover-w-@{value}:hover {
+        width: @value; 
+      }
+});
+
+.bg-api-p{
+    background: @primary;
+}
+.bg-api-s{
+    background: @secundary;
+}
+.text-api-s{
+    color: @secundary;
+}
