@@ -1,15 +1,17 @@
 
 
-import React, {  useEffect } from 'react';
+import React, {  useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ClientAxios from '../config/ClientAxios';
 import Decrypt from '../config/Decrypt';
+import Login from './login';
 const ValidacionToken = ({ children }) => {
   const navigate = useNavigate();
+  const [loginApp,setLoginApp]=useState(true);
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
-      navigate('/login');
+      setLoginApp(true)
     }else{
       async function fetchData() {
         try {
@@ -24,18 +26,15 @@ const ValidacionToken = ({ children }) => {
             
           );
           if(response.data.valideToken=="true"){
-            navigate('/')
+            setLoginApp(false)
           }else{
-            // localStorage.clear();
-            // document.location.reload();
+            setLoginApp(true)
           }
           
         } catch (error) {
-          // localStorage.clear();
-          // document.location.reload();
+          setLoginApp(true)
           console.error('Error fetching data:', error);
-        } finally {
-        }
+        } f
       }
       fetchData();
       
@@ -44,7 +43,7 @@ const ValidacionToken = ({ children }) => {
 
   return (
     <>
-      {children}
+      {loginApp?<Login/>:children}
     </>
   );
 };
