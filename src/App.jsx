@@ -12,11 +12,11 @@ import Pages from './pages/Pages';
 function App() {
   const [ page,setPage ] = useState("/");
   const rol =localStorage.getItem("AcessToken")?Decrypt(localStorage.getItem("AcessToken")):0;
-  console.log(rol)
+
   function addPage(p){
     setPage(p)
   }
-  console.log(page)
+ 
   return (
    
       <BrowserRouter>

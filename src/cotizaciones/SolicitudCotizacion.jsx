@@ -4,8 +4,11 @@ import { useForm } from "react-hook-form";
 import { Autocomplete, TextField } from '@mui/material';
 import Decrypt from '../config/Decrypt';
 import Alert from '../utils/Alert';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
 const logo = "./img/cdpLogo2.png";
 const SolicitudCotizacion=()=> {
+        const [loadingIcon,setLoadingIcon] = useState(false);
         const [selectedUnidad, setSelectedUnidad] = useState('1');
         const [selectedUnidadGlobal, setSelectedUnidadGlobal] = useState('1');
         const [dateTime, setDateTime] = useState("");
@@ -63,7 +66,7 @@ const SolicitudCotizacion=()=> {
     
         
         const onSubmit = async (data) => {
-            
+            setLoadingIcon(true)
             try {
                 
                 const response = await ClientAxios.post(`/insertcotizacion`, data)
@@ -73,12 +76,14 @@ const SolicitudCotizacion=()=> {
                     error: false,
                   });
                 setValue([])
+                setLoadingIcon(false)
             } catch (error) {
                 setAlert({
                     msg: error.data,
                     error: false,
                   });
                 console.log(error.data)
+                setLoadingIcon(false)
             }
           };
         
@@ -133,7 +138,8 @@ const SolicitudCotizacion=()=> {
         const { msg } = alert;
   return (
     <>  
-
+    {loadingIcon && <div className="position-fixed rounded p-1 shadow-lg" style={{zIndex:200,top:10,right:20,height:"8vh",width:"5vw",background:"#498ac2"}}><FontAwesomeIcon className="fa-spin fa-beat-fade text-white" style={{height:"90%"}}   icon={faArrowsRotate}/></div>}
+            
     
     {!allDatas?.clientes?<div className="navegadorOpenBody d-flex  h-100vh"><img
             className="mx-auto my-auto spin"

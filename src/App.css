@@ -4,6 +4,21 @@
   padding: 2rem;
   text-align: center;
 }
+:root {
+  font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  color-scheme: light dark;
+  color: rgba(255, 255, 255, 0.87);
+  background-color: #242424;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+
+}
 
 .logo {
   height: 6em;
@@ -43,6 +58,7 @@
 
 
 .animacionMenu{
+  background-color: --primary-blue;
   transition: width 0.3s ease, height 0.3s ease;
 }
 
@@ -119,19 +135,21 @@
   background-color: #62A34B;
 }
 label::after{
-  background: #a5afb6 !important;
+  background: #f5f5f5 !important;
   color: black;
+  
   
 }
 label::before{
-  background: #a5afb6 !important;
+  background: #f5f5f5 !important;
   color: black;
   
 }
 input[type="text"],input[type="number"],input[type="datetime-local"],input[type="email"],input[type="date"]{
-  background: #a5afb6 ;
+  background: #f5f5f5 ;
+  border: #666666 1px solid;
   color: black;
-  
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
 }
 .bg-secondary-subtle-r{
   background: #a5afb6 ;
@@ -169,3 +187,4 @@ input[type="text"],input[type="number"],input[type="datetime-local"],input[type=
       transform: rotate(360deg);
   }
 }
+
