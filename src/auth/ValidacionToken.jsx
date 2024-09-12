@@ -7,11 +7,13 @@ import Decrypt from '../config/Decrypt';
 import Login from './login';
 const ValidacionToken = ({ children }) => {
   const navigate = useNavigate();
+  const [view,setView]=useState(false);
   const [loginApp,setLoginApp]=useState(true);
   useEffect(() => {
     const token = localStorage.getItem('token');
     if (!token) {
       setLoginApp(true)
+      setView(true)
     }else{
       async function fetchData() {
         try {
@@ -27,12 +29,15 @@ const ValidacionToken = ({ children }) => {
           );
           if(response.data.valideToken=="true"){
             setLoginApp(false)
+            setView(true)
           }else{
             setLoginApp(true)
+            setView(true)
           }
           
         } catch (error) {
           setLoginApp(true)
+          setView(true)
           console.error('Error fetching data:', error);
         } f
       }
@@ -43,7 +48,7 @@ const ValidacionToken = ({ children }) => {
 
   return (
     <>
-      {loginApp?<Login/>:children}
+      {view?loginApp?<Login/>:children:<></>}
     </>
   );
 };
