@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import './App.css';
-import SolicitudCotizacion from './cotizaciones/solicitudCotizacion';
 import Sidebar from './layouts/sidebar';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './styles/Globals.less';
