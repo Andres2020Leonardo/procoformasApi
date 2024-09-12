@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faBars } from "@fortawesome/free-solid-svg-icons";
+import { SignOutButton } from "../auth/SignOutButton";
 
 
-const Sidebar = () => {
+const Sidebar = ({rol,addPage}) => {
   const [active, setActive] = useState(0);
   const [isOpen, setIsOpen] = useState(false);
   const logo = "./img/cdpLogo2.png";
@@ -20,7 +19,7 @@ const Sidebar = () => {
         onMouseLeave={()=>setIsOpen(false)} style={{zIndex:100}}
       > 
         <div className="h-8vh p-2 mx-auto w-100"  style={{width:"100%"}}>
-        <Link onClick={() => setActive(0)} to="/" className="w-100 mx-auto" >
+        <Link onClick={()=>addPage("/")} to="/" className="w-100 mx-auto" >
           <img
             className="mx-auto h-5vh  view"
             src={logo}
@@ -37,7 +36,7 @@ const Sidebar = () => {
         </div>
         
         <div className="  d-flex flex-column ">
-        <Link
+        {["1","2"].includes(rol) && <> <Link
             onClick={()=>setIsOpen(!isOpen)}
             className={`${
               active == 1 && " bg-[#DDEB47] "
@@ -55,11 +54,34 @@ const Sidebar = () => {
             </p>
             
           </Link>
-          <div className={`collapse ${isOpen && "show"}`} id="collapseExample">
-                Some placeholder content for the collapse component. This panel is hidden by default but revealed when the user activates the relevant trigger.
+          <div className={`collapse ${isOpen && "show"}`} id="collapseExample" style={{background:"#0d1f4d",borderRadius:"8px"}}>
+          <button
+            onClick={()=>addPage("solicitudCotizacion")}
+            className={`${
+              active == 1 && " bg-[#DDEB47] "
+            } mt-1 d-flex flex-row align-middle mx-auto hoverLink p-1 w-100 h-5vh btn-group`}
+          >
+           
+            <p className="text-api-s  hidden overflow-hidden my-auto mx-auto" style={{fontSize:"12px"}}>
+              Solicitud de cotización
+            </p>
+            
+          </button>
+          <button
+            onClick={()=>addPage("cotizacion")}
+            className={`${
+              active == 1 && " bg-[#DDEB47] "
+            } mt-1 d-flex flex-row align-middle mx-auto hoverLink p-1 w-100 h-5vh btn-group`}
+          >
+           
+            <p className="text-api-s  hidden overflow-hidden my-auto mx-auto" style={{fontSize:"12px"}}>
+              Cotización
+            </p>
+            
+          </button>
           
-            </div>
-          <Link
+            </div></>}
+            {["1"].includes(rol) && <><Link
             
             className={`${
               active == 1 && " bg-[#DDEB47] "
@@ -75,8 +97,8 @@ const Sidebar = () => {
             <p className="text-api-s  hidden overflow-hidden my-auto ">
               Comercial
             </p>
-          </Link>
-          <Link
+          </Link></>}
+          {["1"].includes(rol) && <><Link
            
             className={`${
               active == 1 && " bg-[#DDEB47] "
@@ -92,8 +114,8 @@ const Sidebar = () => {
             <p className="text-api-s  hidden overflow-hidden my-auto ">
               Almacen
             </p>
-          </Link>
-       
+          </Link></>}
+            <SignOutButton></SignOutButton>
         </div>
       </div>
      </>

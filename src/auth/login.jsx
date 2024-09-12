@@ -3,7 +3,10 @@ const logo ='./img/JAT1.png';
 import { useForm } from 'react-hook-form';
 import ClientAxios from '../config/ClientAxios';
 import './login.css'
+import { useNavigate } from 'react-router-dom';
+import Encrypt from '../config/Encrypt';
 const login=()=> {
+    const navigate = useNavigate();
     const {
         register,
         reset,
@@ -14,14 +17,22 @@ const login=()=> {
         formState: { errors },
       } = useForm();
     const onSubmit = async (data) => {
-        console.log(data)
         
         try {
           const response = await ClientAxios.post(`/login`, data)
-            console.log(response)
+          if (response.status == 200) {
+            ;
+            localStorage.setItem("token", Encrypt(response.data.token));
+            localStorage.setItem("SesionToken", Encrypt(response.data.email));
+            localStorage.setItem("AcessToken", Encrypt(response.data.rol));
+            localStorage.setItem("NameToken", Encrypt(response.data.name));
+            navigate('/')
+          } else {
+            localStorage.clear();
+          }
           
         } catch (error) {
-            console.log(error.data)
+            console.log(error)
         }
       };
     
@@ -40,7 +51,7 @@ const login=()=> {
                     </div>
 
                     <form  onSubmit={handleSubmit(onSubmit)} method="POST" id="formlogin">
-                        <input type="text" id="email" className="fadeIn second" {...register("email")}  placeholder="Correo electronico" required/>
+                        <input type="text" id="emailL" className="fadeIn second" {...register("email")}  placeholder="Correo electronico" required/>
                         <input type="password" id="password" className="fadeIn third"  {...register("password")} placeholder="Contraseña" required/>
                         <div className="" style={{display: "flex",
                         justifyContent: "center",

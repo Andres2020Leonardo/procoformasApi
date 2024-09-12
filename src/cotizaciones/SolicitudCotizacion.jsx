@@ -1,14 +1,16 @@
-import { useEffect, useState } from 'react'
+import {  useEffect, useState } from 'react'
 import ClientAxios from '../config/ClientAxios';
 import { useForm } from "react-hook-form";
 import { Autocomplete, TextField } from '@mui/material';
-import Modal from "react-modal";
+import Decrypt from '../config/Decrypt';
+import Alert from '../utils/Alert';
 const logo = "./img/cdpLogo2.png";
 const SolicitudCotizacion=()=> {
         const [selectedUnidad, setSelectedUnidad] = useState('1');
         const [selectedUnidadGlobal, setSelectedUnidadGlobal] = useState('1');
         const [dateTime, setDateTime] = useState("");
         const [dateTimeExpired, setDateTimeExpired] = useState("");
+        const [alert, setAlert] = useState({});
         const [allDatas,setAllDatas] =useState({})
         const [valueCold, setValueCold] = useState(null);
         const [valueMaterial, setValueMaterial] = useState(null);
@@ -61,13 +63,21 @@ const SolicitudCotizacion=()=> {
     
         
         const onSubmit = async (data) => {
-            console.log(data)
             
             try {
-              const response = await ClientAxios.post(`/insertcotizacion`, data)
+                
+                const response = await ClientAxios.post(`/insertcotizacion`, data)
                 console.log(response)
-              
+                setAlert({
+                    msg: response.data,
+                    error: false,
+                  });
+                setValue([])
             } catch (error) {
+                setAlert({
+                    msg: error.data,
+                    error: false,
+                  });
                 console.log(error.data)
             }
           };
@@ -86,9 +96,14 @@ const SolicitudCotizacion=()=> {
             async function fetchData() {
               try {
                 const response = await ClientAxios.post(
-                  `/allDatasSoli`
+                  `/allDatasSoli`,   {}, 
+                  {
+                    headers: {
+                      'User': Decrypt(localStorage.getItem("SesionToken")), 
+                    }
+                  }
+                  
                 );
-                console.log(response.data)
                 setAllDatas(response.data)
               } catch (error) {
                 console.error('Error fetching data:', error);
@@ -115,7 +130,7 @@ const SolicitudCotizacion=()=> {
             }
             fetchData();
         }, [valueCiudadId])
-        
+        const { msg } = alert;
   return (
     <>  
 
@@ -137,7 +152,7 @@ const SolicitudCotizacion=()=> {
                             <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row"}}>
                             
                                 <div className="form-floating mx-auto p-1 col-4 " >
-                                    <select className="form-select bg-secondary-subtle " id="tipo_cotizacion" {...register("tipo_cotizacion")} aria-label="Tipo cotización">
+                                    <select className="form-select bg-secondary-subtle-r " id="tipo_cotizacion" {...register("tipo_cotizacion")} aria-label="Tipo cotización">
                                         <option value="N" >Nueva</option>
                                         <option value="R">Repetida</option>
 
@@ -169,7 +184,7 @@ const SolicitudCotizacion=()=> {
                                         
                                             {allDatas?.clientes?
                                             <Autocomplete
-                                                className='bg-secondary-subtle'
+                                                className='bg-secondary-subtle-r'
                                                 value={valueCliente}
                                                 onChange={(event, newValue) => {setValueCliente(newValue);
                                                                                 setValueClienteId(newValue?.id);
@@ -194,18 +209,18 @@ const SolicitudCotizacion=()=> {
 
 
                             
-                                <div className="form-floating  mx-auto p-1 col-3" >
+                                <div className="form-floating  mx-auto p-1 col-3 " >
                                     <input type="text" className="form-control" id="nombre_cliente" {...register("nombre_cliente")} disabled={valueClienteId==1?false:true}/>
                                     <label htmlFor="nombre_cliente" >Nombre cliente</label>
                                 </div>
                             
                                 <div className="form-floating  mx-auto p-1 col-3">
-                                    <input type="number" className="form-control" id="nit_cliente" {...register("nit_cliente")} disabled={valueClienteId==1?false:true}/>
+                                    <input type="text" className="form-control" id="nit_cliente" {...register("nit_cliente")} disabled={valueClienteId==1?false:true}/>
                                     <label htmlFor="nit_cliente">Nit</label>
                                 </div>
                             
                                 <div className="form-floating mx-auto p-1 col-3" style={{paddingRight:"2px"}}>
-                                    <select className="form-select bg-secondary-subtle" id="forma_pago" aria-label="forma_pago" {...register("forma_pago")} >
+                                    <select className="form-select bg-secondary-subtle-r" id="forma_pago" aria-label="forma_pago" {...register("forma_pago")} >
 
                                         <option value="N" >Forma de pago</option>
                                         <option value="R">Repetida</option>
@@ -220,7 +235,7 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating mx-auto p-1 col-3" >
                                 {allDatas?.ciudades?
                                 <Autocomplete
-                                        className='bg-secondary-subtle'
+                                        className='bg-secondary-subtle-r'
                                         value={valueCiudad}
                                         onChange={(event, newValue) => {setValueCiudad(newValue);setValue("ciudad_cliente",newValue.id)}}
                                         options={allDatas?.ciudades}
@@ -282,7 +297,7 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating mx-auto p-1 col-3" >
                                 {allDatas?.productos?
                                     <Autocomplete
-                                        className='bg-secondary-subtle'
+                                        className='bg-secondary-subtle-r'
                                         value={valueProducto}
                                         onChange={(event, newValue) => {setValueProducto(newValue);setValue("producto",newValue.id)}}
                                         options={allDatas?.productos}
@@ -309,7 +324,7 @@ const SolicitudCotizacion=()=> {
                             <h6 className="col-12 zoom90 mt-2" style={{textAlign: "center", textDecoration: "none"}}>Unidad</h6>
                             <hr style={{marginTop: "-1px", border: "#ffffff 2px solid"}}/>
                         
-                            <div className="col-12 zoom90 shadow-sm p-2 mb-2" style={{background: "#e2e3e5",display: "flex", flexDirection: "column", border: "rgba(114,91,114,0.1) 1px solid", borderRadius: "15px"}}>
+                            <div className="col-12 zoom90 shadow-sm p-2 mb-2" style={{background: "#a5afb6",display: "flex", flexDirection: "column", border: "rgba(114,91,114,0.1) 1px solid", borderRadius: "15px"}}>
                             
                                 <div className="form-floating mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
                                     <div className="form-check col-2 mx-auto ">
@@ -402,7 +417,7 @@ const SolicitudCotizacion=()=> {
                         
                             <div className="col-12 zoom90 "style={{display: "flex", flexDirection: "row",height:"100px"}}>
                                 <div className="form-floating  mx-auto p-1 col-3 " >
-                                    <div className="form-control" id="divcheckratio" style={{display: "flex", flexDirection: "row", height: "100px",background: "#e2e3e5",}}>
+                                    <div className="form-control" id="divcheckratio" style={{display: "flex", flexDirection: "row", height: "100px",background: "#a5afb6",}}>
                                         <div className="form-check col-4">
                                             <input className="form-check-input" type="radio" {...register("grado_dificultad")} id="dificultadBaja" value="baja"/>
                                             <label className="form-check-label" htmlFor="dificultadBaja">
@@ -432,7 +447,7 @@ const SolicitudCotizacion=()=> {
 
                             
                                 <div className="form-floating  mx-auto  col-3 p-1"  >
-                                    <div className="col-12 form-control" style={{height: "100px ", display: "flex", flexDirection: "row",background: "#e2e3e5",}} id="divcambios">
+                                    <div className="col-12 form-control" style={{height: "100px ", display: "flex", flexDirection: "row",background: "#a5afb6",}} id="divcambios">
                                         <div className="form-floating  mx-auto p-1 col-6" >
                                             <input type="text" className="form-control bgWhite"  id="unidad_planchas" {...register("unidad_planchas")}/>
                                             <label htmlFor="unidad_planchas" className='bgWhiteA'>Planchas</label>
@@ -446,7 +461,7 @@ const SolicitudCotizacion=()=> {
                                 </div>
                         
                                 <div className="form-floating  mx-auto p-1 col-3 " >
-                                    <div className="form-control" id="divcheckratio2" style={{display: "flex", flexDirection: "row", height: "100px ",background: "#e2e3e5",}} >
+                                    <div className="form-control" id="divcheckratio2" style={{display: "flex", flexDirection: "row", height: "100px ",background: "#a5afb6",}} >
                                         <div className="form-check col-4">
                                             <input className="form-check-input" type="radio" {...register("canidades_ref_son")} id="canidades_ref_son_iguales" defaultChecked value="iguales"/>
                                             <label className="form-check-label" htmlFor="canidades_ref_son_iguales">
@@ -472,7 +487,7 @@ const SolicitudCotizacion=()=> {
                             <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row"}}>
                             
                                 <div className="form-floating  mx-auto  col-6 p-1"  >
-                                    <div className="col-12 form-control" style={{background: "#e2e3e5", height: "auto ", display: "flex", flexDirection: "column"}} id="divcantidad" >
+                                    <div className="col-12 form-control" style={{background: "#a5afb6", height: "auto ", display: "flex", flexDirection: "column"}} id="divcantidad" >
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
                                             <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%"}}>1</label><input type="text" className="form-control  bgWhite"  id="cantidad1" {...register("cantidad1")}/>
 
@@ -509,7 +524,7 @@ const SolicitudCotizacion=()=> {
                                     <label htmlFor="divcantidad" >Cantidad</label>
                                 </div>
                                 <div className="form-floating  mx-auto  col-6 p-1"  >
-                                    <div className="col-12 form-control" style={{background: "#e2e3e5", height: "auto ",display: "flex", flexDirection: "column"}} id="diventragas">
+                                    <div className="col-12 form-control" style={{background: "#a5afb6", height: "auto ",display: "flex", flexDirection: "column"}} id="diventragas">
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
                                             <input type="text" className="form-control  bgWhite"  id="entrega1" {...register("entrega1")}/>
 
@@ -548,8 +563,8 @@ const SolicitudCotizacion=()=> {
                             
                             </div>
                             <div className="col-12 zoom90 mt-3"style={{display: "flex", flexDirection: "row"}}>
-                                <div className="form-floating mx-auto p-1 col-12" >
-                                    <textarea className="form-control" placeholder="Leave a comment here" id="observaciones" {...register("observaciones")} style={{height: "150px "}}></textarea>
+                                <div className="form-floating mx-auto p-1 col-12 " >
+                                    <textarea className="form-control bg-secondary-subtle-r" placeholder="Leave a comment here" id="observaciones" {...register("observaciones")} style={{height: "150px "}}></textarea>
                                     <label htmlFor="observaciones">Observaciones</label>
 
                                 </div>
@@ -560,7 +575,7 @@ const SolicitudCotizacion=()=> {
                             <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row"}}>
                             
                                 <div className="form-floating mx-auto p-1 col-3 " >
-                                    <select className="form-select bg-secondary-subtle" id="aplicacion_especificaciones" {...register("aplicacion_especificaciones")} aria-label="aplicacion">
+                                    <select className="form-select bg-secondary-subtle-r" id="aplicacion_especificaciones" {...register("aplicacion_especificaciones")} aria-label="aplicacion">
                                         <option value="M" >Manual</option>
                                         <option value="A">Automática</option>
 
@@ -581,7 +596,7 @@ const SolicitudCotizacion=()=> {
                                 </div>
                             
                                 <div className="form-floating mx-auto p-1 col-3" style={{paddingRight:"2px"}}>
-                                    <select className="form-select bg-secondary-subtle" id="troquel" {...register("troquel")} aria-label="troquel">
+                                    <select className="form-select bg-secondary-subtle-r" id="troquel" {...register("troquel")} aria-label="troquel">
                                         <option value="Existe" >Existe</option>
                                         <option value="Nuevo">Nuevo</option>
                                         <option value="Ninguno">Ninguno</option>
@@ -597,7 +612,7 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating mx-auto p-1 col-4 mt-2" >
                                 {allDatas?.materials?
                                 <Autocomplete
-                                    className='bg-secondary-subtle'
+                                    className='bg-secondary-subtle-r'
                                     value={valueMaterial}
                                     onChange={(event, newValue) => {setValueMaterial(newValue);setValue("material",newValue.id)}}
                                     options={allDatas?.materials}
@@ -612,7 +627,7 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating mx-auto p-1 col-4 mt-2" >
                                 {allDatas?.acabados?
                                 <Autocomplete
-                                    className='bg-secondary-subtle'
+                                    className='bg-secondary-subtle-r'
                                     value={valueAcabado}
                                     onChange={(event, newValue) => {setValueAcabado(newValue);setValue("acabado",newValue.id)}}
                                     options={allDatas?.acabados}
@@ -626,7 +641,7 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating mx-auto p-1 col-4 mt-2" >
                                     {allDatas?.coldFoilds?
                                 <Autocomplete
-                                    className='bg-secondary-subtle'
+                                    className='bg-secondary-subtle-r'
                                     value={valueCold}
                                     onChange={(event, newValue) => {setValueCold(newValue);setValue("cold_foild",newValue.id)}}
                                     options={allDatas?.coldFoilds}
@@ -643,15 +658,15 @@ const SolicitudCotizacion=()=> {
                         
                             <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row"}}>
                         
-                                <div className="form-floating  mx-auto  col-3 p-1"  >
-                                    <div className="col-12 form-control" style={{height: "100px ", display: "flex", flexDirection: "row"}} id="divcambiosTintas">
+                                <div className="form-floating  mx-auto  col-3 p-1 "  >
+                                    <div className="col-12 form-control bg-secondary-subtle-r" style={{height: "100px ", display: "flex", flexDirection: "row"}} id="divcambiosTintas">
                                         <div className="my-auto  mx-auto p-1 col-6" >
-                                            <input type="text" className="form-control" id="T1" {...register("T1")}/>
+                                            <input type="text" style={{background:"#ffffff"}} className="form-control" id="T1" {...register("T1")}/>
 
                                         </div>
                                         <b className="my-auto" style={{fontSize: "18px"}}>X</b>
                                         <div className="my-auto  mx-auto p-1 col-6" >
-                                            <input type="text" className="form-control" id="T2" {...register("T2")}/>
+                                            <input type="text" style={{background:"#ffffff"}} className="form-control" id="T2" {...register("T2")}/>
 
                                         </div>
                                     </div>
@@ -659,8 +674,8 @@ const SolicitudCotizacion=()=> {
                                 </div>
                                 <div className="form-floating  mx-auto  col-4 p-1" style={{display: "flex", flexDirection: "column"}} >
                                 
-                                    <div className="col-12 form-control"  style={{height: "100px ", display: "flex", flexDirection: "column"}} id="divtintas">
-                                        <div className="form-floating mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}}>
+                                    <div className="col-12 form-control bg-secondary-subtle-r "  style={{height: "100px ", display: "flex", flexDirection: "column"}} id="divtintas">
+                                        <div className="form-floating mx-auto p-1 col-12 " style={{display: "flex", flexDirection: "row"}}>
                                             <div className="form-check col-6 mx-auto">
                                                 <input className="form-check-input" type="checkbox" {...register("base_agua_tipo_tinta")} id="base_agua_tipo_tinta"/>
                                                 <label className="form-check-label" htmlFor="base_agua_tipo_tinta">
@@ -706,7 +721,7 @@ const SolicitudCotizacion=()=> {
                                     <label htmlFor="cubrimiento">cubrimiento (%)</label>
                                 </div>
                                 <div className="form-floating mx-auto p-1 col-3" >
-                                    <select className="form-select bg-secondary-subtle" id="tintas_respaldo" {...register("tintas_respaldo")} aria-label="tintas_respaldo" style={{height: "100px "}} >
+                                    <select className="form-select bg-secondary-subtle-r" id="tintas_respaldo" {...register("tintas_respaldo")} aria-label="tintas_respaldo" style={{height: "100px "}} >
                                         <option value="N" >Ninguna</option>
                                         <option value="L" >Liner</option>
                                         <option value="A" >Adhesivo</option>
@@ -721,11 +736,11 @@ const SolicitudCotizacion=()=> {
                             <hr style={{marginTop: "-1px", border: "#ffffff 2px solid"}}/>
                             <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row"}}>
                             
-                                <div className="form-floating  mx-auto  col-12 p-1" style={{display: "flex", flexDirection: "row"}} >
+                                <div className="form-floating  mx-auto  col-12 p-1 " style={{display: "flex", flexDirection: "row"}} >
                                 
-                                    <div className="col-12 form-control" style={{height: "80px ",display: "flex", flexDirection: "row"}} id="divcintas">
+                                    <div className="col-12 form-control bg-secondary-subtle-r" style={{height: "80px ",display: "flex", flexDirection: "row"}} id="divcintas">
 
-                                        <div className="form-floating p-1 col-7 mx-2 " style={{display: "flex", flexDirection: "row", border: "#39ace7 1px solid", borderRadius: "7px"}}>
+                                        <div className="form-floating p-1 col-7 mx-2 " style={{display: "flex", flexDirection: "row", border: "#425fa0 1px solid", borderRadius: "7px"}}>
 
                                             <div className="form-check col-3 mx-auto my-auto ml-2">
                                                 <input className="form-check-input" type="radio" {...register("cinta")} id="cinta_Cera" value="cera"/>
@@ -755,7 +770,7 @@ const SolicitudCotizacion=()=> {
 
                                         </div>
 
-                                        <div className="form-control" id="divcheckratio3 col-4" style={{display: "flex", flexDirection: "row", background: "#e2e3e5"}}>
+                                        <div className="form-control" id="divcheckratio3 col-4" style={{display: "flex", flexDirection: "row", background: "#a5afb6"}}>
                                             <div className="form-check col-6">
                                                 <input className="form-check-input" type="radio" {...register("tipo_cinta")} id="cinta_fija" defaultChecked="" value="fija"/>
                                                 <label className="form-check-label" htmlFor="cinta_fija">
@@ -783,12 +798,12 @@ const SolicitudCotizacion=()=> {
                             <hr style={{marginTop: "-1px", border: "#ffffff 2px solid"}}/>
                             <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row"}}>
                             
-                                <div className="form-floating  mx-auto  col-12 p-1" style={{display: "flex", flexDirection: "row"}} >
+                                <div className="form-floating  mx-auto  col-12 p-1 " style={{display: "flex", flexDirection: "row"}} >
                                 
-                                    <div className="col-12 form-control" style={{height: "auto ", display: "flex", flexDirection: "row"}} id="divcintas">
+                                    <div className="col-12 form-control bg-secondary-subtle-r" style={{height: "auto ", display: "flex", flexDirection: "row"}} id="divcintas">
 
 
-                                        <div className="form-control" id="divcheckratio3" style={{display: "flex", flexDirection: "row", background: "#e2e3e5"}}>
+                                        <div className="form-control" id="divcheckratio3" style={{display: "flex", flexDirection: "row", background: "#a5afb6"}}>
                                             <div className="form-control p-1 m-1" style={{background: "transparent ", border: "none"}}>
                                                 <div className="form-check col-6">
                                                     <input className="form-check-input" type="radio" {...register("presentacion_rollos")} id="presentacion_rollos" value="rollos"/>
@@ -807,7 +822,7 @@ const SolicitudCotizacion=()=> {
                                                         <label htmlFor="etiq_ancho">Etiq. Ancho</label>
                                                     </div>
                                                     <div className="form-floating mx-auto p-1 col-3" >
-                                                        <select className="form-select bg-secondary-subtle" id="core" {...register("core")} aria-label="core"  >
+                                                        <select className="form-select bg-secondary-subtle-r" id="core" {...register("core")} aria-label="core"  >
                                                             <option value="N" >Ninguna</option>
                                                             <option value="L" >Liner</option>
                                                             <option value="A" >Adhesivo</option>
@@ -864,7 +879,7 @@ const SolicitudCotizacion=()=> {
 
                         
                                 <div className="form-floating mx-auto p-1 col-6" style={{paddingRight:"2px"}}>
-                                    <select className="form-select bg-secondary-subtle" id="ciudad_entrega-select" {...register("ciudad_entrega")} multiple aria-label="ciudad_entrega"  data-placeholder="Seleccionar ciudad/es...">
+                                    <select className="form-select bg-secondary-subtle-r" id="ciudad_entrega-select" {...register("ciudad_entrega")} multiple aria-label="ciudad_entrega"  data-placeholder="Seleccionar ciudad/es...">
                                         <option  th:each="ciudad : ${ciudades}"   th:value="${ciudad.id}" th:text="${ciudad.nombre}"></option>
                                     </select>
 
@@ -881,7 +896,7 @@ const SolicitudCotizacion=()=> {
                         
                                 <div className="form-floating  mx-auto p-1 col-5">
 
-                                    <select className="form-select bg-secondary-subtle" id="asesor-select" {...register("asesor")} aria-label="asesor">
+                                    <select className="form-select bg-secondary-subtle-r" id="asesor-select" {...register("asesor")} aria-label="asesor">
                                         <option value="" >Seleccionar Asesor...</option>
                                         <option  th:each="asesor : ${asesores}"   th:value="${asesor.getId()}" th:text="${asesor.getName()}"></option>
                                     </select>
@@ -892,7 +907,7 @@ const SolicitudCotizacion=()=> {
                                 </div>
                             
                                 <div className="form-floating mx-auto p-1 col-2" style={{paddingRight:"2px"}}>
-                                    <select className="form-select bg-secondary-subtle" id="tipo_asesor" {...register("tipo_asesor")} aria-label="tipo_asesor">
+                                    <select className="form-select bg-secondary-subtle-r" id="tipo_asesor" {...register("tipo_asesor")} aria-label="tipo_asesor">
                                         <option value="" ></option>
                                         <option value="Nuevo">Propio</option>
                                         <option value="Ninguno">Externo</option>
@@ -902,7 +917,7 @@ const SolicitudCotizacion=()=> {
                                 </div>
                                 <div className="form-floating  mx-auto p-1 col-3">
 
-                                    <select className="form-select bg-secondary-subtle" id="digitado-select" {...register("digitado")} aria-label="digitado">
+                                    <select className="form-select bg-secondary-subtle-r" id="digitado-select" {...register("digitado")} aria-label="digitado">
                                         <option value="" >Seleccionar digitador por...</option>
                                         <option  th:each="asesor : ${asesores}"   th:value="${asesor.getId()}" th:text="${asesor.getName()}"></option>
                                     </select>
@@ -914,9 +929,12 @@ const SolicitudCotizacion=()=> {
                             <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row"}}>
 
                                 <input className="btn btn-success mx-auto  my-auto" type="submit" value="Guardar Cotización" onClick={handleSubmit(onSubmit)}/>
-
+                                   
 
                             </div>
+                            <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row"}}>{msg && <Alert  alert={alert} setAlert={setAlert} />} </div>
+                            
+
                         </div>
 
 

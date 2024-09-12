@@ -119,19 +119,22 @@
   background-color: #62A34B;
 }
 label::after{
-  background: #e2e3e5 !important;
+  background: #a5afb6 !important;
   color: black;
   
 }
 label::before{
-  background: #ffffff !important;
+  background: #a5afb6 !important;
   color: black;
   
 }
 input[type="text"],input[type="number"],input[type="datetime-local"],input[type="email"],input[type="date"]{
-  background: #e2e3e5 ;
+  background: #a5afb6 ;
   color: black;
   
+}
+.bg-secondary-subtle-r{
+  background: #a5afb6 ;
 }
 .bgWhite{
   background: #ffffff !important ;
@@ -152,7 +155,12 @@ input[type="text"],input[type="number"],input[type="datetime-local"],input[type=
   /* Aplica la animación */
   animation: spin 2s linear infinite;
 }
-
+.carousel-item {
+  background: #011034 !important;
+}
+.card {
+  background: #f5f5f5 !important;
+}
 @keyframes spin {
   from {
       transform: rotate(0deg);
