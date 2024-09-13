@@ -15,7 +15,7 @@ export const SignOutButton = () => {
   return (
     <>
       <button
-        className="text-primary left-5 mx-auto items-center d-flex " style={{transition: "width 0.1s ease-in-out",position:"absolute",bottom:"5px",flexDirection:"row",maxHeight:"40px",maxWidth:"12vw"}}
+        className="text-primary left-5 mx-auto  d-flex my-auto" style={{transition: "width 0.6s ease-in-out",flexDirection:"row",width:"100%",background:"transparent",justifyContent:"center"}}
         type="button"
         onClick={() => handleLogout("popup")}
       >
@@ -23,7 +23,7 @@ export const SignOutButton = () => {
           className="text-primary  me-2"
           icon={faRightFromBracket}
         />
-        <p className="hidden " style={{fontSize:"12px"}}>Cerrar Sesión</p>
+        <p className="hidden  my-auto" style={{fontSize:"13px",whiteSpace:"nowrap"}}>Cerrar Sesión</p>
       </button>
     </>
   );

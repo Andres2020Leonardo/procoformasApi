@@ -163,20 +163,20 @@ const SolicitudCotizacion=()=> {
                                         <option value="R">Repetida</option>
 
                                     </select>
-                                    <label htmlFor="tipo_cotizacion">Tipo</label>
+                                    <label style={{color:"#000000"}} htmlFor="tipo_cotizacion">Tipo</label>
                                 </div>
 
                             
 
                                 <div className="form-floating  mx-auto p-1 col-4" >
                                     <input type="datetime-local" className="form-control" value={fecha} id="fecha_cotizacion" {...register("fecha_cotizacion")} readOnly />
-                                    <label htmlFor="fecha_cotizacion">Fecha</label>
+                                    <label style={{color:"#000000"}} htmlFor="fecha_cotizacion">Fecha</label>
                                 </div>
 
                             
                                 <div className="form-floating  mx-auto p-1 col-4">
                                     <input type="date" className="form-control" id="fecha_vigencia" {...register("fecha_vigencia")} value={fechaExpiracion} />
-                                    <label htmlFor="fecha_vigencia">Vigencia</label>
+                                    <label style={{color:"#000000"}} htmlFor="fecha_vigencia">Vigencia</label>
                                 </div>
                         
 
@@ -190,7 +190,7 @@ const SolicitudCotizacion=()=> {
                                         
                                             {allDatas?.clientes?
                                             <Autocomplete
-                                                className='bg-secondary-subtle-r'
+                                                className='shearchinputs'
                                                 value={valueCliente}
                                                 onChange={(event, newValue) => {setValueCliente(newValue);
                                                                                 setValueClienteId(newValue?.id);
@@ -217,12 +217,12 @@ const SolicitudCotizacion=()=> {
                             
                                 <div className="form-floating  mx-auto p-1 col-3 " >
                                     <input type="text" className="form-control" id="nombre_cliente" {...register("nombre_cliente")} disabled={valueClienteId==1?false:true}/>
-                                    <label htmlFor="nombre_cliente" >Nombre cliente</label>
+                                    <label style={{color:"#000000"}} htmlFor="nombre_cliente" >Nombre cliente</label>
                                 </div>
                             
                                 <div className="form-floating  mx-auto p-1 col-3">
                                     <input type="text" className="form-control" id="nit_cliente" {...register("nit_cliente")} disabled={valueClienteId==1?false:true}/>
-                                    <label htmlFor="nit_cliente">Nit</label>
+                                    <label style={{color:"#000000"}} htmlFor="nit_cliente">Nit</label>
                                 </div>
                             
                                 <div className="form-floating mx-auto p-1 col-3" style={{paddingRight:"2px"}}>
@@ -232,7 +232,7 @@ const SolicitudCotizacion=()=> {
                                         <option value="R">Repetida</option>
 
                                     </select>
-                                    <label htmlFor="forma_pago">Forma de pago</label>
+                                    <label style={{color:"#000000"}} htmlFor="forma_pago">Forma de pago</label>
                                 </div>
                             </div>
                             
@@ -241,7 +241,7 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating mx-auto p-1 col-3" >
                                 {allDatas?.ciudades?
                                 <Autocomplete
-                                        className='bg-secondary-subtle-r'
+                                        className='shearchinputs'
                                         value={valueCiudad}
                                         onChange={(event, newValue) => {setValueCiudad(newValue);setValue("ciudad_cliente",newValue.id)}}
                                         options={allDatas?.ciudades}
@@ -260,17 +260,17 @@ const SolicitudCotizacion=()=> {
                                 
                                 <div className="form-floating  mx-auto p-1 col-2" >
                                     <input type="text" className="form-control" id="telefono1" {...register("telefono1")} disabled={valueClienteId==1?false:true}/>
-                                    <label htmlFor="descripcion_producto">Teléfono</label>
+                                    <label style={{color:"#000000"}} htmlFor="descripcion_producto">Teléfono</label>
                                 </div>
                                 
                                 <div className="form-floating  mx-auto p-1 col-2" >
                                     <input type="text" className="form-control" id="telefono2" {...register("telefono2")} disabled={valueClienteId==1?false:true}/>
-                                    <label htmlFor="descripcion_producto">Teléfono 2</label>
+                                    <label style={{color:"#000000"}} htmlFor="descripcion_producto">Teléfono 2</label>
                                 </div>
                             
                                 <div className="form-floating  mx-auto p-1 col-5">
                                     <input type="email" className="form-control" id="email" {...register("email")} disabled={valueClienteId==1?false:true}/>
-                                    <label htmlFor="Existencia">Email</label>
+                                    <label style={{color:"#000000"}} htmlFor="Existencia">Email</label>
                                 </div>
 
                             </div>
@@ -280,7 +280,7 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating col-12 mx-auto " >
                                     <div className="form-floating  mx-auto p-1" >
                                         <input type="text" className="form-control" id="contacto" {...register("contacto")} disabled={valueClienteId==1?false:true}/>
-                                        <label htmlFor="contacto">Contacto</label>
+                                        <label style={{color:"#000000"}} htmlFor="contacto">Contacto</label>
                                     </div>
                                 </div>
                             </div>
@@ -289,7 +289,7 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating   "  style={{width: "90% "}}>
                                     <div className="form-floating  mx-auto p-1" >
                                         <input type="text" className="form-control" id="direccion" {...register("direccion")} disabled={valueClienteId==1?false:true}/>
-                                        <label htmlFor="direccion">Direccion</label>
+                                        <label style={{color:"#000000"}} htmlFor="direccion">Direccion</label>
                                     </div>
                                 </div>
 
@@ -303,7 +303,7 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating mx-auto p-1 col-3" >
                                 {allDatas?.productos?
                                     <Autocomplete
-                                        className='bg-secondary-subtle-r'
+                                        className='shearchinputs'
                                         value={valueProducto}
                                         onChange={(event, newValue) => {setValueProducto(newValue);setValue("producto",newValue.id)}}
                                         options={allDatas?.productos}
@@ -317,12 +317,12 @@ const SolicitudCotizacion=()=> {
                             
                                 <div className="form-floating  mx-auto p-1 col-6" >
                                     <input type="text" className="form-control" id="descripcion_producto" {...register("descripcion_producto")}/>
-                                    <label htmlFor="descripcion_producto">Descripcion de producto</label>
+                                    <label style={{color:"#000000"}} htmlFor="descripcion_producto">Descripcion de producto</label>
                                 </div>
                             
                                 <div className="form-floating  mx-auto p-1 col-3">
                                     <input type="text" className="form-control" id="Existencia" {...register("Existencia_producto")}/>
-                                    <label htmlFor="Existencia">Existencia</label>
+                                    <label style={{color:"#000000"}} htmlFor="Existencia">Existencia</label>
                                 </div>
 
                             </div>
@@ -335,31 +335,31 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
                                     <div className="form-check col-2 mx-auto ">
                                         <input className="form-check-input" type="radio"   {...register("unidad_seleccion")} checked={selectedUnidadGlobal=="unidad_una"?true:false} id="unidad_una" value="unidad_una" onChange={()=>setSelectedUnidadGlobal("unidad_una")} />
-                                        <label className="form-check-label" htmlFor="unidad_una">
+                                        <label style={{color:"#000000"}} className="form-check-label" htmlFor="unidad_una">
                                             Una
                                         </label>
                                     </div>
                                     <div className="form-check col-2 mx-auto">
                                         <input className="form-check-input" type="radio" {...register("unidad_seleccion")}  checked={selectedUnidadGlobal=="unidad_rollos"?true:false} id="unidad_rollos" value="unidad_rollos" onChange={()=>setSelectedUnidadGlobal("unidad_rollos")}/>
-                                        <label className="form-check-label" htmlFor="unidad_rollos">
+                                        <label style={{color:"#000000"}} className="form-check-label" htmlFor="unidad_rollos">
                                             Rollos
                                         </label>
                                     </div>
                                     <div className="form-check col-2 mx-auto">
                                         <input className="form-check-input" type="radio"  {...register("unidad_seleccion")} checked={selectedUnidadGlobal=="unidad_juegox2"?true:false} id="unidad_juegox2" value="unidad_juegox2" onChange={()=>setSelectedUnidadGlobal("unidad_juegox2")}/>
-                                        <label className="form-check-label" htmlFor="unidad_juegox2">
+                                        <label style={{color:"#000000"}} className="form-check-label" htmlFor="unidad_juegox2">
                                             Juego x 2
                                         </label>
                                     </div>
                                     <div className="form-check col-2 mx-auto">
                                         <input className="form-check-input" type="radio"  {...register("unidad_seleccion")} checked={selectedUnidadGlobal=="unidad_mangas"?true:false} id="unidad_mangas" value="unidad_mangas" onChange={()=>setSelectedUnidadGlobal("unidad_mangas")}/>
-                                        <label className="form-check-label" htmlFor="unidad_mangas">
+                                        <label style={{color:"#000000"}} className="form-check-label" htmlFor="unidad_mangas">
                                             Mangas
                                         </label>
                                     </div>
                                     <div className="form-check col-2 mx-auto">
                                         <input className="form-check-input" type="radio"  {...register("unidad_seleccion")} checked={selectedUnidadGlobal=="unidad_otra"?true:false} id="unidad_otra" value="unidad_otra"onChange={()=>setSelectedUnidadGlobal("unidad_otra")} />
-                                        <label className="form-check-label" htmlFor="unidad_otra" >
+                                        <label style={{color:"#000000"}} className="form-check-label" htmlFor="unidad_otra" >
                                             Hojas
                                         </label>
                                     </div>
@@ -374,13 +374,13 @@ const SolicitudCotizacion=()=> {
                                     </div>
                                     <div className="form-check col-2 mx-auto">
                                         <input className="form-check-input" type="radio"   {...register("unidad_seleccion_juego2x2")} checked={selectedUnidad=="unidad_uinercaladas"?true:false} value="unidad_uinercaladas" id="unidad_uinercaladas" onChange={handleUnidadChange}/>
-                                        <label className="form-check-label" htmlFor="unidad_uinercaladas">
+                                        <label style={{color:"#000000"}} className="form-check-label" htmlFor="unidad_uinercaladas">
                                             Intercaladas
                                         </label>
                                     </div>
                                     <div className="form-check col-2 mx-auto">
                                         <input className="form-check-input" type="radio"   {...register("unidad_seleccion_mangas")} checked={selectedUnidad=="unidad_en_rollo"?true:false} value="unidad_en_rollo" id="unidad_en_rollo" onChange={handleUnidadChange}/>
-                                        <label className="form-check-label" htmlFor="unidad_en_rollo" >
+                                        <label style={{color:"#000000"}} className="form-check-label" htmlFor="unidad_en_rollo" >
                                             En Rollo
                                         </label>
                                     </div>
@@ -401,13 +401,13 @@ const SolicitudCotizacion=()=> {
                                     </div>
                                     <div className="form-check col-2 mx-auto">
                                         <input className="form-check-input" type="radio"  value="unidad_separados"  {...register("unidad_seleccion_juego2x2")} checked={selectedUnidad=="unidad_separados"?true:false} id="unidad_separados" onChange={handleUnidadChange}/>
-                                        <label className="form-check-label" htmlFor="unidad_separados">
+                                        <label style={{color:"#000000"}} className="form-check-label" htmlFor="unidad_separados">
                                             Separados
                                         </label>
                                     </div>
                                     <div className="form-check col-2 mx-auto">
                                         <input className="form-check-input" type="radio"  value="unidad_cortadas" {...register("unidad_seleccion_mangas")} checked={selectedUnidad=="unidad_cortadas"?true:false}  id="unidad_cortadas" onChange={handleUnidadChange}/>
-                                        <label className="form-check-label" htmlFor="unidad_cortadas">
+                                        <label style={{color:"#000000"}} className="form-check-label" htmlFor="unidad_cortadas">
                                             Cortadas
                                         </label>
                                     </div>
@@ -426,29 +426,29 @@ const SolicitudCotizacion=()=> {
                                     <div className="form-control" id="divcheckratio" style={{display: "flex", flexDirection: "row", height: "100px",background: "#a5afb6",}}>
                                         <div className="form-check col-4">
                                             <input className="form-check-input" type="radio" {...register("grado_dificultad")} id="dificultadBaja" value="baja"/>
-                                            <label className="form-check-label" htmlFor="dificultadBaja">
+                                            <label style={{color:"#000000"}} className="form-check-label" htmlFor="dificultadBaja">
                                                 Baja
                                             </label>
                                         </div>
                                         <div className="form-check col-4">
                                             <input className="form-check-input" type="radio" {...register("grado_dificultad")} id="dificultadMedia"  value="media"/>
-                                            <label className="form-check-label" htmlFor="dificultadMedia">
+                                            <label style={{color:"#000000"}} className="form-check-label" htmlFor="dificultadMedia">
                                                 Media
                                             </label>
                                         </div>
                                         <div className="form-check col-4">
                                             <input className="form-check-input" type="radio" {...register("grado_dificultad")} id="dificultadAlta" defaultChecked value="alta"/>
-                                            <label className="form-check-label" htmlFor="dificultadAlta">
+                                            <label style={{color:"#000000"}} className="form-check-label" htmlFor="dificultadAlta">
                                                 Alta
                                             </label>
                                         </div>
                                     </div>
-                                    <label htmlFor="divcheckratio">Grado de dificultad</label>
+                                    <label style={{color:"#000000"}} htmlFor="divcheckratio">Grado de dificultad</label>
                                 </div>
                             
                                 <div className="form-floating mx-auto p-1 col-3 my-auto" >
                                     <input type="text" className="form-control" id="unidad_ref_distintas" {...register("unidad_ref_distintas")}/>
-                                    <label htmlFor="unidad_ref_distintas">Ref. distintas</label>
+                                    <label style={{color:"#000000"}} htmlFor="unidad_ref_distintas">Ref. distintas</label>
                                 </div>
 
                             
@@ -456,33 +456,33 @@ const SolicitudCotizacion=()=> {
                                     <div className="col-12 form-control" style={{height: "100px ", display: "flex", flexDirection: "row",background: "#a5afb6",}} id="divcambios">
                                         <div className="form-floating  mx-auto p-1 col-6" >
                                             <input type="text" className="form-control bgWhite"  id="unidad_planchas" {...register("unidad_planchas")}/>
-                                            <label htmlFor="unidad_planchas" className='bgWhiteA'>Planchas</label>
+                                            <label style={{color:"#000000"}} htmlFor="unidad_planchas" className='bgWhiteA'>Planchas</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 col-6" >
                                             <input type="text" className="form-control bgWhite" id="unidad_tintas" {...register("unidad_tintas")}/>
-                                            <label htmlFor="unidad_tintas" className='bgWhiteA'>Tintas</label>
+                                            <label style={{color:"#000000"}} htmlFor="unidad_tintas" className='bgWhiteA'>Tintas</label>
                                         </div>
                                     </div>
-                                    <label htmlFor="divcambios">Cambios</label>
+                                    <label style={{color:"#000000"}} htmlFor="divcambios">Cambios</label>
                                 </div>
                         
                                 <div className="form-floating  mx-auto p-1 col-3 " >
                                     <div className="form-control" id="divcheckratio2" style={{display: "flex", flexDirection: "row", height: "100px ",background: "#a5afb6",}} >
                                         <div className="form-check col-4">
                                             <input className="form-check-input" type="radio" {...register("canidades_ref_son")} id="canidades_ref_son_iguales" defaultChecked value="iguales"/>
-                                            <label className="form-check-label" htmlFor="canidades_ref_son_iguales">
+                                            <label style={{color:"#000000"}} className="form-check-label" htmlFor="canidades_ref_son_iguales">
                                                 Iguales
                                             </label>
                                         </div>
                                         <div className="form-check col-4">
                                             <input className="form-check-input" type="radio" {...register("canidades_ref_son")} id="canidades_ref_son_dif"  value="diferentes"/>
-                                            <label className="form-check-label" htmlFor="canidades_ref_son_dif">
+                                            <label style={{color:"#000000"}} className="form-check-label" htmlFor="canidades_ref_son_dif">
                                                 Diferentes
                                             </label>
                                         </div>
 
                                     </div>
-                                    <label htmlFor="divcheckratio2">Las cantidades por referencia son:</label>
+                                    <label style={{color:"#000000"}} htmlFor="divcheckratio2">Las cantidades por referencia son:</label>
                                 </div>
 
                             </div>
@@ -495,39 +495,39 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating  mx-auto  col-6 p-1"  >
                                     <div className="col-12 form-control" style={{background: "#a5afb6", height: "auto ", display: "flex", flexDirection: "column"}} id="divcantidad" >
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
-                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%"}}>1</label><input type="text" className="form-control  bgWhite"  id="cantidad1" {...register("cantidad1")}/>
+                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%",color:"#000000"}}>1</label><input type="text" className="form-control  bgWhite"  id="cantidad1" {...register("cantidad1")}/>
 
                                         </div>
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
-                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%"}}>2</label><input type="text" className="form-control  bgWhite"  id="cantidad2" {...register("cantidad2")}/>
+                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%",color:"#000000"}}>2</label><input type="text" className="form-control  bgWhite"  id="cantidad2" {...register("cantidad2")}/>
 
                                         </div>
                                         <div className="  mx-auto p-1 col-12 " style={{display: "flex", flexDirection: "row"}} >
-                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%"}}>3</label><input type="text" className="form-control  bgWhite"  id="cantidad3" {...register("cantidad3")}/>
+                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%",color:"#000000"}}>3</label><input type="text" className="form-control  bgWhite"  id="cantidad3" {...register("cantidad3")}/>
 
                                         </div>
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
-                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%"}}>4</label><input type="text" className="form-control  bgWhite"  id="cantidad4" {...register("cantidad4")}/>
+                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%",color:"#000000"}}>4</label><input type="text" className="form-control  bgWhite"  id="cantidad4" {...register("cantidad4")}/>
 
                                         </div>
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
-                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%"}}>5</label><input type="text" className="form-control  bgWhite"  id="cantidad5" {...register("cantidad5")}/>
+                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%",color:"#000000"}}>5</label><input type="text" className="form-control  bgWhite"  id="cantidad5" {...register("cantidad5")}/>
 
                                         </div>
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
-                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%"}}>6</label><input type="text" className="form-control  bgWhite"  id="cantidad6" {...register("cantidad6")}/>
+                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%",color:"#000000"}}>6</label><input type="text" className="form-control  bgWhite"  id="cantidad6" {...register("cantidad6")}/>
 
                                         </div>
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
-                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%"}}>7</label><input type="text" className="form-control  bgWhite"  id="cantidad7" {...register("cantidad7")}/>
+                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%",color:"#000000"}}>7</label><input type="text" className="form-control  bgWhite"  id="cantidad7" {...register("cantidad7")}/>
 
                                         </div>
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
-                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%"}}>8</label><input type="text" className="form-control  bgWhite"  id="cantidad8" {...register("cantidad8")}/>
+                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%",color:"#000000"}}>8</label><input type="text" className="form-control  bgWhite"  id="cantidad8" {...register("cantidad8")}/>
 
                                         </div>
                                     </div>
-                                    <label htmlFor="divcantidad" >Cantidad</label>
+                                    <label style={{color:"#000000"}} htmlFor="divcantidad" >Cantidad</label>
                                 </div>
                                 <div className="form-floating  mx-auto  col-6 p-1"  >
                                     <div className="col-12 form-control" style={{background: "#a5afb6", height: "auto ",display: "flex", flexDirection: "column"}} id="diventragas">
@@ -564,14 +564,14 @@ const SolicitudCotizacion=()=> {
 
                                         </div>
                                     </div>
-                                    <label htmlFor="diventragas" > Entregas</label>
+                                    <label style={{color:"#000000"}} htmlFor="diventragas" > Entregas</label>
                                 </div>
                             
                             </div>
                             <div className="col-12 zoom90 mt-3"style={{display: "flex", flexDirection: "row"}}>
                                 <div className="form-floating mx-auto p-1 col-12 " >
                                     <textarea className="form-control bg-secondary-subtle-r" placeholder="Leave a comment here" id="observaciones" {...register("observaciones")} style={{height: "150px "}}></textarea>
-                                    <label htmlFor="observaciones">Observaciones</label>
+                                    <label style={{color:"#000000"}} htmlFor="observaciones">Observaciones</label>
 
                                 </div>
                             </div>
@@ -586,19 +586,19 @@ const SolicitudCotizacion=()=> {
                                         <option value="A">Automática</option>
 
                                     </select>
-                                    <label htmlFor="tipo_cotizacion">Aplicación</label>
+                                    <label style={{color:"#000000"}} htmlFor="tipo_cotizacion">Aplicación</label>
                                 </div>
 
                             
                                 <div className="form-floating  mx-auto p-1 col-3" >
                                     <input type="number" className="form-control" id="ancho_espe" {...register("ancho_espe")}/>
-                                    <label htmlFor="ancho_espe">Ancho (cms)</label>
+                                    <label style={{color:"#000000"}} htmlFor="ancho_espe">Ancho (cms)</label>
                                 </div>
 
                             
                                 <div className="form-floating  mx-auto p-1 col-3" >
                                     <input type="number" className="form-control" id="avance_espe" {...register("avance_espe")}/>
-                                    <label htmlFor="avance_espe">Avance (cms)</label>
+                                    <label style={{color:"#000000"}} htmlFor="avance_espe">Avance (cms)</label>
                                 </div>
                             
                                 <div className="form-floating mx-auto p-1 col-3" style={{paddingRight:"2px"}}>
@@ -609,7 +609,7 @@ const SolicitudCotizacion=()=> {
                                         <option value="Nuevo especial">Nuevo especial</option>
 
                                     </select>
-                                    <label htmlFor="troquel">Troquel</label>
+                                    <label style={{color:"#000000"}} htmlFor="troquel">Troquel</label>
                                 </div>
                             </div>
                             
@@ -618,7 +618,7 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating mx-auto p-1 col-4 mt-2" >
                                 {allDatas?.materials?
                                 <Autocomplete
-                                    className='bg-secondary-subtle-r'
+                                    className='shearchinputs'
                                     value={valueMaterial}
                                     onChange={(event, newValue) => {setValueMaterial(newValue);setValue("material",newValue.id)}}
                                     options={allDatas?.materials}
@@ -633,7 +633,7 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating mx-auto p-1 col-4 mt-2" >
                                 {allDatas?.acabados?
                                 <Autocomplete
-                                    className='bg-secondary-subtle-r'
+                                    className='shearchinputs'
                                     value={valueAcabado}
                                     onChange={(event, newValue) => {setValueAcabado(newValue);setValue("acabado",newValue.id)}}
                                     options={allDatas?.acabados}
@@ -647,7 +647,7 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating mx-auto p-1 col-4 mt-2" >
                                     {allDatas?.coldFoilds?
                                 <Autocomplete
-                                    className='bg-secondary-subtle-r'
+                                    className='shearchinputs'
                                     value={valueCold}
                                     onChange={(event, newValue) => {setValueCold(newValue);setValue("cold_foild",newValue.id)}}
                                     options={allDatas?.coldFoilds}
@@ -676,7 +676,7 @@ const SolicitudCotizacion=()=> {
 
                                         </div>
                                     </div>
-                                    <label htmlFor="divcambiosTintas">Tintas</label>
+                                    <label style={{color:"#000000"}} htmlFor="divcambiosTintas">Tintas</label>
                                 </div>
                                 <div className="form-floating  mx-auto  col-4 p-1" style={{display: "flex", flexDirection: "column"}} >
                                 
@@ -684,13 +684,13 @@ const SolicitudCotizacion=()=> {
                                         <div className="form-floating mx-auto p-1 col-12 " style={{display: "flex", flexDirection: "row"}}>
                                             <div className="form-check col-6 mx-auto">
                                                 <input className="form-check-input" type="checkbox" {...register("base_agua_tipo_tinta")} id="base_agua_tipo_tinta"/>
-                                                <label className="form-check-label" htmlFor="base_agua_tipo_tinta">
+                                                <label style={{color:"#000000"}} className="form-check-label" htmlFor="base_agua_tipo_tinta">
                                                     Base Agua
                                                 </label>
                                             </div>
                                             <div className="form-check col-6 mx-auto">
                                                 <input className="form-check-input" type="checkbox" {...register("metalizada_tipo_tinta")} id="metalizada_tipo_tinta"/>
-                                                <label className="form-check-label" htmlFor="metalizada_tipo_tinta">
+                                                <label style={{color:"#000000"}} className="form-check-label" htmlFor="metalizada_tipo_tinta">
                                                     Metalizada
                                                 </label>
                                             </div>
@@ -701,13 +701,13 @@ const SolicitudCotizacion=()=> {
                                         <div className="form-floating mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}}>
                                             <div className="form-check col-6 mx-auto">
                                                 <input className="form-check-input" type="checkbox" {...register("uv_tipo_tinta")} id="uv_tipo_tinta"/>
-                                                <label className="form-check-label" htmlFor="uv_tipo_tinta">
+                                                <label style={{color:"#000000"}} className="form-check-label" htmlFor="uv_tipo_tinta">
                                                     UV
                                                 </label>
                                             </div>
                                             <div className="form-check col-6 mx-auto">
                                                 <input className="form-check-input" type="checkbox" {...register("fluorescentes_tipo_tinta")} id="fluorescentes_tipo_tinta"/>
-                                                <label className="form-check-label" htmlFor="fluorescentes_tipo_tinta">
+                                                <label style={{color:"#000000"}} className="form-check-label" htmlFor="fluorescentes_tipo_tinta">
                                                     Fluorescentes
                                                 </label>
                                             </div>
@@ -715,7 +715,7 @@ const SolicitudCotizacion=()=> {
 
                                         </div>
                                     </div>
-                                    <label htmlFor="divtintas">Tipos de tintas</label>
+                                    <label style={{color:"#000000"}} htmlFor="divtintas">Tipos de tintas</label>
 
 
                                 </div>
@@ -724,7 +724,7 @@ const SolicitudCotizacion=()=> {
                             
                                 <div className="form-floating  mx-auto p-1 col-2">
                                     <input type="text" className="form-control" id="cubrimiento" {...register("cubrimiento")} value="100" style={{height: "100px "}} />
-                                    <label htmlFor="cubrimiento">cubrimiento (%)</label>
+                                    <label style={{color:"#000000"}} htmlFor="cubrimiento">cubrimiento (%)</label>
                                 </div>
                                 <div className="form-floating mx-auto p-1 col-3" >
                                     <select className="form-select bg-secondary-subtle-r" id="tintas_respaldo" {...register("tintas_respaldo")} aria-label="tintas_respaldo" style={{height: "100px "}} >
@@ -733,7 +733,7 @@ const SolicitudCotizacion=()=> {
                                         <option value="A" >Adhesivo</option>
 
                                     </select>
-                                    <label htmlFor="tintas_respaldo">Tintas del repaldo en</label>
+                                    <label style={{color:"#000000"}} htmlFor="tintas_respaldo">Tintas del repaldo en</label>
                                 </div>
 
                             </div>
@@ -750,25 +750,25 @@ const SolicitudCotizacion=()=> {
 
                                             <div className="form-check col-3 mx-auto my-auto ml-2">
                                                 <input className="form-check-input" type="radio" {...register("cinta")} id="cinta_Cera" value="cera"/>
-                                                <label className="form-check-label" htmlFor="cinta_Cera">
+                                                <label style={{color:"#000000"}} className="form-check-label" htmlFor="cinta_Cera">
                                                     Cera
                                                 </label>
                                             </div>
                                             <div className="form-check col-3 mx-auto my-auto">
                                                 <input className="form-check-input" type="radio" {...register("cinta")} id="cinta_Resina" value="resina"/>
-                                                <label className="form-check-label" htmlFor="cinta_Resina">
+                                                <label style={{color:"#000000"}} className="form-check-label" htmlFor="cinta_Resina">
                                                     Resina
                                                 </label>
                                             </div>
                                             <div className="form-check col-3 mx-auto my-auto">
                                                 <input className="form-check-input" type="radio" {...register("cinta")} id="cinta_cR" value="resina_cera"/>
-                                                <label className="form-check-label" htmlFor="cinta_cR">
+                                                <label style={{color:"#000000"}} className="form-check-label" htmlFor="cinta_cR">
                                                     Cera Resina
                                                 </label>
                                             </div>
                                             <div className="form-check col-3 mx-auto my-auto">
                                                 <input className="form-check-input" type="radio" {...register("cinta")} id="cinta_ning" defaultChecked="True" value="Ninguna"/>
-                                                <label className="form-check-label" htmlFor="cinta_ning">
+                                                <label style={{color:"#000000"}} className="form-check-label" htmlFor="cinta_ning">
                                                     Ninguna
                                                 </label>
                                             </div>
@@ -779,20 +779,20 @@ const SolicitudCotizacion=()=> {
                                         <div className="form-control" id="divcheckratio3 col-4" style={{display: "flex", flexDirection: "row", background: "#a5afb6"}}>
                                             <div className="form-check col-6">
                                                 <input className="form-check-input" type="radio" {...register("tipo_cinta")} id="cinta_fija" defaultChecked="" value="fija"/>
-                                                <label className="form-check-label" htmlFor="cinta_fija">
+                                                <label style={{color:"#000000"}} className="form-check-label" htmlFor="cinta_fija">
                                                     Fija
                                                 </label>
                                             </div>
                                             <div className="form-check col-6">
                                                 <input className="form-check-input" type="radio" {...register("tipo_cinta")} id="cinta_variable" value="Varibles"/>
-                                                <label className="form-check-label" htmlFor="canidades_ref_son_dif">
+                                                <label style={{color:"#000000"}} className="form-check-label" htmlFor="canidades_ref_son_dif">
                                                     Variable
                                                 </label>
                                             </div>
 
                                         </div>
                                     </div>
-                                    <label htmlFor="divcintas"></label>
+                                    <label style={{color:"#000000"}} htmlFor="divcintas"></label>
 
 
                                 </div>
@@ -813,7 +813,7 @@ const SolicitudCotizacion=()=> {
                                             <div className="form-control p-1 m-1" style={{background: "transparent ", border: "none"}}>
                                                 <div className="form-check col-6">
                                                     <input className="form-check-input" type="radio" {...register("presentacion_rollos")} id="presentacion_rollos" value="rollos"/>
-                                                    <label className="form-check-label" htmlFor="presentacion_rollos">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="presentacion_rollos">
                                                         En rollos
                                                     </label>
 
@@ -821,11 +821,11 @@ const SolicitudCotizacion=()=> {
                                                 <div className="form-control m-1" style={{display: "flex", flexDirection: "row"}}>
                                                     <div className="form-floating  mx-auto p-1 col-3">
                                                         <input type="number" className="form-control" id="rollos_por" {...register("rollos_por")}/>
-                                                        <label htmlFor="rollos_por">Rollos por (Etiqs.)</label>
+                                                        <label style={{color:"#000000"}} htmlFor="rollos_por">Rollos por (Etiqs.)</label>
                                                     </div>
                                                     <div className="form-floating  mx-auto p-1 col-3">
                                                         <input type="number" className="form-control" id="etiq_ancho" {...register("etiq_ancho")}/>
-                                                        <label htmlFor="etiq_ancho">Etiq. Ancho</label>
+                                                        <label style={{color:"#000000"}} htmlFor="etiq_ancho">Etiq. Ancho</label>
                                                     </div>
                                                     <div className="form-floating mx-auto p-1 col-3" >
                                                         <select className="form-select bg-secondary-subtle-r" id="core" {...register("core")} aria-label="core"  >
@@ -834,11 +834,11 @@ const SolicitudCotizacion=()=> {
                                                             <option value="A" >Adhesivo</option>
 
                                                         </select>
-                                                        <label htmlFor="core">Core <b>∅</b></label>
+                                                        <label style={{color:"#000000"}} htmlFor="core">Core <b>∅</b></label>
                                                     </div>
                                                     <div className="form-floating  mx-auto p-1 col-3">
                                                         <input type="number" className="form-control" id="posicion_presentacion" {...register("posicion_presentacion")}/>
-                                                        <label htmlFor="posicion_presentacion">Posición</label>
+                                                        <label style={{color:"#000000"}} htmlFor="posicion_presentacion">Posición</label>
                                                     </div>
                                                 </div>
                                             </div>
@@ -846,7 +846,7 @@ const SolicitudCotizacion=()=> {
                                             <div className="form-control p-1 m-1" style={{background: "transparent ", border: "none"}}>
                                                 <div className="form-check col-6">
                                                     <input className="form-check-input" type="radio" {...register("presentacion")} id="presentacion_hojas" value="hojas"/>
-                                                    <label className="form-check-label" htmlFor="presentacion_hojas">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="presentacion_hojas">
                                                         En hojas
                                                     </label>
 
@@ -854,11 +854,11 @@ const SolicitudCotizacion=()=> {
                                                 <div className="form-control m-1" style={{display: "flex", flexDirection: "row"}}>
                                                     <div className="form-floating  mx-auto p-1 col-5">
                                                         <input type="number" className="form-control" id="etiquetas_hoja" {...register("etiquetas_hoja")}/>
-                                                        <label htmlFor="etiquetas_hoja">Etiquetas por Hoja</label>
+                                                        <label style={{color:"#000000"}} htmlFor="etiquetas_hoja">Etiquetas por Hoja</label>
                                                     </div>
                                                     <div className="form-floating  mx-auto p-1 col-5">
                                                         <input type="number" className="form-control" id="hojas_paquete" {...register("hojas_paquete")}/>
-                                                        <label htmlFor="hojas_paquete">Hojas por paquete</label>
+                                                        <label style={{color:"#000000"}} htmlFor="hojas_paquete">Hojas por paquete</label>
                                                     </div>
                                                 </div>
 
@@ -867,7 +867,7 @@ const SolicitudCotizacion=()=> {
                                         </div>
 
                                     </div>
-                                    <label htmlFor="divcintas"></label>
+                                    <label style={{color:"#000000"}} htmlFor="divcintas"></label>
 
 
                                 </div>
@@ -880,7 +880,7 @@ const SolicitudCotizacion=()=> {
                             
                                 <div className="form-floating  mx-auto p-1 col-3">
                                     <input type="number" className="form-control" id="ciudades_entrega" {...register("ciudades_entrega")}/>
-                                    <label htmlFor="ciudades_entrega">Ciudades</label>
+                                    <label style={{color:"#000000"}} htmlFor="ciudades_entrega">Ciudades</label>
                                 </div>
 
                         
@@ -893,7 +893,7 @@ const SolicitudCotizacion=()=> {
 
                                 <div className="form-floating  mx-auto p-1 col-3">
                                     <input type="text" className="form-control" id="puntos_entrega" {...register("puntos_entrega")}/>
-                                    <label htmlFor="puntos_entrega">Puntos de entrega</label>
+                                    <label style={{color:"#000000"}} htmlFor="puntos_entrega">Puntos de entrega</label>
                                 </div>
 
                             </div>
@@ -909,7 +909,7 @@ const SolicitudCotizacion=()=> {
                                 </div>
                                 <div className="form-floating  mx-auto p-1 col-2">
                                     <input type="text" className="form-control" id="comision" {...register("comision")} value="3"/>
-                                    <label htmlFor="comision">Comisión (%)</label>
+                                    <label style={{color:"#000000"}} htmlFor="comision">Comisión (%)</label>
                                 </div>
                             
                                 <div className="form-floating mx-auto p-1 col-2" style={{paddingRight:"2px"}}>
@@ -919,7 +919,7 @@ const SolicitudCotizacion=()=> {
                                         <option value="Ninguno">Externo</option>
 
                                     </select>
-                                    <label htmlFor="">Tipo</label>
+                                    <label style={{color:"#000000"}} htmlFor="">Tipo</label>
                                 </div>
                                 <div className="form-floating  mx-auto p-1 col-3">
 

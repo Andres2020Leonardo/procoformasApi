@@ -58,20 +58,26 @@
 
 
 .animacionMenu{
-  background-color: --primary-blue;
+  background-color: #f5f5f5;
   transition: width 0.3s ease, height 0.3s ease;
 }
 
 .animacionMenu:hover .view{
   display: none;
+  opacity: 0;
+  transition: opacity 0.5s ease, height 0.5s ease;
 }
 .animacionMenu:hover .hidden{
   display: block;
+  opacity: 1;
+  transition: opacity 0.5s ease, height 0.5s ease;
 }
 .hidden{ display: none;}
-
+.animacionMenu:hover .hoverLink{
+  background: #D9D9D9;
+}
 .hoverLink:hover{
-  background-color: #0d1f4d;
+  background: #c4c3c3 !important;
   border-radius: 10px;
   margin-left: none !important;
   margin-right: none !important;
@@ -100,6 +106,25 @@
 }
 .hoverLink{
   background: none;
+  z-index: 200 !important;
+}
+.colla-sidebar{
+  background: #D9D9D9;
+  margin-top: -10px !important;
+  z-index: 100 !important;
+}
+.colla-sidebar button{
+  background: #f5f5f5 !important;
+}
+.colla-sidebar button p{
+  white-space: nowrap 
+}
+.colla-sidebar button:hover{
+  background: #ffffff !important;
+}
+.hoverLink p{
+  font-weight: 900 !important;
+  color: #000000;
 }
 .navegadorOpenBody{
   overflow-y: auto !important;
@@ -135,20 +160,22 @@
   background-color: #62A34B;
 }
 label::after{
-  background: #f5f5f5 !important;
-  color: black;
+  background: #ffffff !important;
+  color: #000000 !important;
+  opacity: 1 !important;
   
   
 }
+label{color: #000000;}
 label::before{
   background: #f5f5f5 !important;
   color: black;
   
 }
 input[type="text"],input[type="number"],input[type="datetime-local"],input[type="email"],input[type="date"]{
-  background: #f5f5f5 ;
-  border: #666666 1px solid;
-  color: black;
+  background: #ffffff !important;
+  border: #2E9B48 3px solid !important;
+  color: black !important;
   box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
 }
 .bg-secondary-subtle-r{
@@ -173,9 +200,7 @@ input[type="text"],input[type="number"],input[type="datetime-local"],input[type=
   /* Aplica la animación */
   animation: spin 2s linear infinite;
 }
-.carousel-item {
-  background: #011034 !important;
-}
+
 .card {
   background: #f5f5f5 !important;
 }
@@ -188,3 +213,46 @@ input[type="text"],input[type="number"],input[type="datetime-local"],input[type=
   }
 }
 
+select{
+  background: #ffffff !important;
+  border: #2E9B48 3px solid !important;
+  color: black !important;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+.shearchinputs{
+  background: #ffffff !important;
+  border: #2E9B48 3px solid !important;
+  border-radius: 6px;
+  padding: 0 !important;
+  color: black !important;
+  margin-top: 0.4px !important;
+  box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.175) !important;
+}
+.shearchinputs input{
+  border: none !important;
+  margin-top: 5px !important;
+  width: 50% !important;
+}
+.css-1wgn40h-MuiInputBase-root-MuiOutlinedInput-root input{
+  width: 80% !important;
+}
+.shearchinputs label[data-shrink="true"]{
+  top:9px !important;
+  background: #ffffff;
+  left: -10px !important;
+  border-radius: 6px !important;
+  padding-inline: 5px !important;
+}
+fieldset{
+  display: none !important;
+  background: transparent !important;
+}
+fieldset legend{
+  background: transparent !important;
+}
+fieldset legend span{
+  background: transparent !important;
+}
+.MuiOutlinedInput-root{
+  padding: 5.05px !important ;
+}

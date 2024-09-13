@@ -389,7 +389,7 @@ const Cotizacion=()=> {
             
             <div id="contenedorbody" className=" navegadorOpenBody" >
                 <form id="formularioCotizacion" method="POST" className="col-12 " style={{display: "flex", flexDirection: "row"}}>
-                    <div className="carousel-item active mx-auto"  style={{ padding: "1%", zoom: "80% !important"}}>
+                    <div className="carousel-item active mx-auto"  style={{padding: "1%", zoom: "90% "}}>   
                         <div className="card scroll-divs-card"  style={{  marginBottom: "20px",  background: "#011034 !important" }}>
                             <div className="card-body" >
                                 <h3 className="col-12 text-black bold" style={{textAlign: "center"}}>Cotización</h3>
@@ -399,51 +399,51 @@ const Cotizacion=()=> {
                                        
                                         <div className="form-floating  mx-auto p-1 " >
                                             <input type="text" className="form-control shadow-lg" id="tipoCotizacion" {...register("tipoCotizacion")}/>
-                                            <label htmlFor="tipoCotizacion">Tipo</label>
+                                            <label style={{color:"#000000"}} htmlFor="tipoCotizacion">Tipo</label>
                                         </div>
 
 
                                         <div className="form-floating  mx-auto p-1 " >
                                             <input type="number" className="form-control" id="solicitud" {...register("solicitud")} onBlur={(e)=>searchSolicitud(e.target.value)}/>
-                                            <label htmlFor="solicitud">Solicitud</label>
+                                            <label style={{color:"#000000"}} htmlFor="solicitud">Solicitud</label>
                                         </div>
 
                                         <div className="form-floating  mx-auto p-1 col-2 ">
                                             <input type="text" className="form-control" id="cliente" {...register("cliente")} readOnly={true} />
-                                            <label htmlFor="cliente">Cliente</label>
+                                            <label style={{color:"#000000"}} htmlFor="cliente">Cliente</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="producto" {...register("producto")} readOnly={true} />
-                                            <label htmlFor="producto">Producto</label>
+                                            <label style={{color:"#000000"}} htmlFor="producto">Producto</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="gradoDificultad" {...register("gradoDificultad")} readOnly={true} />
-                                            <label htmlFor="gradoDificultad">Dificultad</label>
+                                            <label style={{color:"#000000"}} htmlFor="gradoDificultad">Dificultad</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="unidad" {...register("unidad")} readOnly={true} />
-                                            <label htmlFor="unidad">Unidad</label>
+                                            <label style={{color:"#000000"}} htmlFor="unidad">Unidad</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="unidadRefDistintas" {...register("unidadRefDistintas")} readOnly={true} />
-                                            <label htmlFor="unidadRefDistintas">Ref. Dist.</label>
+                                            <label style={{color:"#000000"}} htmlFor="unidadRefDistintas">Ref. Dist.</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="anchoEspe" {...register("anchoEspe")} readOnly={true} style={{background: ""}}/>
-                                            <label htmlFor="anchoEspe">Ancho</label>
+                                            <label style={{color:"#000000"}} htmlFor="anchoEspe">Ancho</label>
                                         </div>
                                         <b className="my-auto" style={{fontSize: "18px", color: "#000000"}}>X</b>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="avanceEspe" {...register("avanceEspe")} readOnly={true} style={{background: ""}} />
-                                            <label htmlFor="avanceEspe">Avance</label>
+                                            <label style={{color:"#000000"}} htmlFor="avanceEspe">Avance</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="unidadPlanchas" {...register("unidadPlanchas")} readOnly={true}  />
-                                            <label htmlFor="unidadPlanchas">C. Plancha</label>
+                                            <label style={{color:"#000000"}} htmlFor="unidadPlanchas">C. Plancha</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="unidadTintas" {...register("unidadTintas")} readOnly={true}  />
-                                            <label htmlFor="unidadTintas">c. Tinta</label>
+                                            <label style={{color:"#000000"}} htmlFor="unidadTintas">c. Tinta</label>
                                         </div>
 
 
@@ -451,156 +451,156 @@ const Cotizacion=()=> {
                                     <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                         <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
                                             <input type="text" className="form-control" id="cantidad1" {...register("cantidad1")} readOnly={true}  />
-                                            <label htmlFor="cantidad1">Cantidad 1</label>
+                                            <label style={{color:"#000000"}} htmlFor="cantidad1">Cantidad 1</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
                                             <input type="text" className="form-control" id="cantidad2" {...register("cantidad2")} readOnly={true}  />
-                                            <label htmlFor="cantidad2">Cantidad 2</label>
+                                            <label style={{color:"#000000"}} htmlFor="cantidad2">Cantidad 2</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
                                             <input type="text" className="form-control" id="cantidad3" {...register("cantidad3")} readOnly={true} />
-                                            <label htmlFor="cantidad3">Cantidad 3</label>
+                                            <label style={{color:"#000000"}} htmlFor="cantidad3">Cantidad 3</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
                                             <input type="text" className="form-control" id="cantidad4" {...register("cantidad4")} readOnly={true}  />
-                                            <label htmlFor="cantidad4">Cantidad 4</label>
+                                            <label style={{color:"#000000"}} htmlFor="cantidad4">Cantidad 4</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
                                             <input type="text" className="form-control" id="cantidad5" {...register("cantidad5")} readOnly={true}  />
-                                            <label htmlFor="cantidad5">Cantidad 5</label>
+                                            <label style={{color:"#000000"}} htmlFor="cantidad5">Cantidad 5</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
                                             <input type="text" className="form-control" id="cantidad6" {...register("cantidad6")} readOnly={true}  />
-                                            <label htmlFor="cantidad6">Cantidad 6</label>
+                                            <label style={{color:"#000000"}} htmlFor="cantidad6">Cantidad 6</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
                                             <input type="text" className="form-control" id="cantidad7" {...register("v")} readOnly={true}  />
-                                            <label htmlFor="cantidad7">Cantidad 7</label>
+                                            <label style={{color:"#000000"}} htmlFor="cantidad7">Cantidad 7</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
                                             <input type="text" className="form-control" id="cantidad8" {...register("cantidad8")} readOnly={true}  />
-                                            <label htmlFor="cantidad8">Cantidad 8</label>
+                                            <label style={{color:"#000000"}} htmlFor="cantidad8">Cantidad 8</label>
                                         </div>
                                     </div>
                                     <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                         <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
                                             <input type="text" className="form-control" id="entrega1" {...register("entrega1")} readOnly={true}  />
-                                            <label htmlFor="entrega1">Entrega 1</label>
+                                            <label style={{color:"#000000"}} htmlFor="entrega1">Entrega 1</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
                                             <input type="text" className="form-control" id="entrega2" {...register("entrega2")} readOnly={true}  />
-                                            <label htmlFor="entrega2">Entrega 2</label>
+                                            <label style={{color:"#000000"}} htmlFor="entrega2">Entrega 2</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
                                             <input type="text" className="form-control" id="entrega3" {...register("entrega3")} readOnly={true}  />
-                                            <label htmlFor="entrega3">Entrega 3</label>
+                                            <label style={{color:"#000000"}} htmlFor="entrega3">Entrega 3</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
                                             <input type="text" className="form-control" id="entrega4" {...register("entrega4")} readOnly={true}  />
-                                            <label htmlFor="entrega4">Entrega 4</label>
+                                            <label style={{color:"#000000"}} htmlFor="entrega4">Entrega 4</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
                                             <input type="text" className="form-control" id="entrega5" {...register("entrega5")} readOnly={true}  />
-                                            <label htmlFor="entrega5">Entrega 5</label>
+                                            <label style={{color:"#000000"}} htmlFor="entrega5">Entrega 5</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
                                             <input type="text" className="form-control" id="entrega6" {...register("entrega6")} readOnly={true}  />
-                                            <label htmlFor="entrega6">Entrega 6</label>
+                                            <label style={{color:"#000000"}} htmlFor="entrega6">Entrega 6</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
                                             <input type="text" className="form-control" id="entrega7" {...register("v")} readOnly={true}  />
-                                            <label htmlFor="entrega7">Entrega 7</label>
+                                            <label style={{color:"#000000"}} htmlFor="entrega7">Entrega 7</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
                                             <input type="text" className="form-control" id="entrega8" {...register("entrega8")} readOnly={true}  />
-                                            <label htmlFor="entrega8">Entregas 8</label>
+                                            <label style={{color:"#000000"}} htmlFor="entrega8">Entregas 8</label>
                                         </div>
                                     </div>
                                     <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="supAplica" {...register("supAplica")} readOnly={true}  />
-                                            <label htmlFor="supAplica">Sup. Aplica</label>
+                                            <label style={{color:"#000000"}} htmlFor="supAplica">Sup. Aplica</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="usoFinal" {...register("usoFinal")} readOnly={true}  />
-                                            <label htmlFor="usoFinal">Uso final</label>
+                                            <label style={{color:"#000000"}} htmlFor="usoFinal">Uso final</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="troquel" {...register("troquel")} readOnly={true}  />
-                                            <label htmlFor="troquel">Troquel</label>
+                                            <label style={{color:"#000000"}} htmlFor="troquel">Troquel</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="par" {...register("par")} readOnly={true}  />
-                                            <label htmlFor="par">P.A.R</label>
+                                            <label style={{color:"#000000"}} htmlFor="par">P.A.R</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 col-2">
                                             <input type="text" className="form-control" id="material" {...register("material")} readOnly={true}  />
-                                            <label htmlFor="material">Sustrato</label>
+                                            <label style={{color:"#000000"}} htmlFor="material">Sustrato</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="adhesivo" {...register("adhesivo")} readOnly={true}  />
-                                            <label htmlFor="adhesivo">Adhesivo</label>
+                                            <label style={{color:"#000000"}} htmlFor="adhesivo">Adhesivo</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="Cubrimiento" {...register("Cubrimiento")} readOnly={true}  />
-                                            <label htmlFor="Cubrimiento">Cubrimiento</label>
+                                            <label style={{color:"#000000"}} htmlFor="Cubrimiento">Cubrimiento</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="t1" {...register("t1")} readOnly={true}  />
-                                            <label htmlFor="t1">Tinta 1</label>
+                                            <label style={{color:"#000000"}} htmlFor="t1">Tinta 1</label>
                                         </div>
                                         <b className="my-auto" style={{fontSize: "18px", color: "#ffffff"}}>X</b>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="t2" {...register("t2")} readOnly={true}  />
-                                            <label htmlFor="t2">Tinta 2</label>
+                                            <label style={{color:"#000000"}} htmlFor="t2">Tinta 2</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="acabado" {...register("acabado")} readOnly={true}  />
-                                            <label htmlFor="acabado">Acabado</label>
+                                            <label style={{color:"#000000"}} htmlFor="acabado">Acabado</label>
                                         </div>
                                     </div>
                                     <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="rollos_por" {...register("rollos_por")} readOnly={true}  />
-                                            <label htmlFor="rollos_por">Rollas por.</label>
+                                            <label style={{color:"#000000"}} htmlFor="rollos_por">Rollas por.</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="EtiqAncho" {...register("EtiqAncho")} readOnly={true}  />
-                                            <label htmlFor="EtiqAncho">Etiq. ancho</label>
+                                            <label style={{color:"#000000"}} htmlFor="EtiqAncho">Etiq. ancho</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="Core" {...register("Core")} readOnly={true}  />
-                                            <label htmlFor="Core">Core</label>
+                                            <label style={{color:"#000000"}} htmlFor="Core">Core</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="posi" {...register("posi")} readOnly={true}  />
-                                            <label htmlFor="posi">Posición</label>
+                                            <label style={{color:"#000000"}} htmlFor="posi">Posición</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1">
                                             <input type="text" className="form-control" id="EtiqHoja" {...register("EtiqHoja")} readOnly={true}  />
-                                            <label htmlFor="EtiqHoja">Etiq. Hoja</label>
+                                            <label style={{color:"#000000"}} htmlFor="EtiqHoja">Etiq. Hoja</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="HojasPaq" {...register("HojasPaq")} readOnly={true}  />
-                                            <label htmlFor="HojasPaq">Hojas paq.</label>
+                                            <label style={{color:"#000000"}} htmlFor="HojasPaq">Hojas paq.</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="ciudades" {...register("ciudades")} readOnly={true}  />
-                                            <label htmlFor="ciudades">Ciudades</label>
+                                            <label style={{color:"#000000"}} htmlFor="ciudades">Ciudades</label>
 
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="puntos_enttrega" {...register("puntos_enttrega")} readOnly={true}  />
-                                            <label htmlFor="puntos_enttrega">Puntos_entrega</label>
+                                            <label style={{color:"#000000"}} htmlFor="puntos_enttrega">Puntos_entrega</label>
                                         </div>
 
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="Vendedor" {...register("Vendedor")} readOnly={true}  />
-                                            <label htmlFor="Vendedor">Vendedor</label>
+                                            <label style={{color:"#000000"}} htmlFor="Vendedor">Vendedor</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="comi" {...register("comi")} readOnly={true}  />
-                                            <label htmlFor="comi">Comis. (%)</label>
+                                            <label style={{color:"#000000"}} htmlFor="comi">Comis. (%)</label>
                                         </div>
                                     </div>
                                     <h4 className="col-12 text-black mt-3 bold " style={{textAlign: "center"}}>Planeación y costo troquel</h4>
@@ -611,37 +611,37 @@ const Cotizacion=()=> {
                                             <div className="form-control mx-auto" id="costoTroquel" style={{display: "flex", flexDirection:"row", height: "80px !important"}}>
                                                 <div className="form-check">
                                                     <input className="form-check-input" type="radio" {...register("costoTroquelTipo")} id="costoTroquelExistente" checked="" value="Existente"/>
-                                                    <label className="form-check-label" htmlFor="costoTroquelExistente">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="costoTroquelExistente">
                                                         Existente
                                                     </label>
                                                 </div>
                                                 <div className="form-check mx-auto">
                                                     <input className="form-check-input" type="radio" {...register("costoTroquelTipo")} id="costoTroquelNuevo" value="Nuevo"/>
-                                                    <label className="form-check-label" htmlFor="costoTroquelNuevo">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="costoTroquelNuevo">
                                                         Nuevo
                                                     </label>
                                                 </div>
                                                 <div className="form-check mx-auto">
                                                     <input className="form-check-input" type="radio" {...register("costoTroquelTipo")} id="costoTroquelNinguno" value="Ninguno"/>
-                                                    <label className="form-check-label" htmlFor="costoTroquelNinguno">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="costoTroquelNinguno">
                                                         Ninguno
                                                     </label>
                                                 </div>
                                                 <div className="form-check mx-auto">
                                                     <input className="form-check-input" type="radio" {...register("costoTroquelTipo")} id="costoTroquelNuevoEspecial" value="Nuevo Especial"/>
-                                                    <label className="form-check-label" htmlFor="costoTroquelNuevoEspecial">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="costoTroquelNuevoEspecial">
                                                         Nuevo Especial
                                                     </label>
                                                 </div>
                                                 <div className="form-check mx-auto">
                                                     <input className="form-check-input secondary" type="radio" {...register("costoTroquelTipo")} id="costoTroquelOtro" value="Nuevo Especial"/>
-                                                    <label className="form-check-label" htmlFor="costoTroquelOtro" style={{display: "flex", flexDirection:"row"}}>
+                                                    <label  className="form-check-label" htmlFor="costoTroquelOtro" style={{display: "flex",color:"#000000", flexDirection:"row"}}>
                                                         Otro <input type="text" className="form-control ms-2" id="costoTroquelTipoOtro" {...register("costoTroquelTipoOtro")} placeholder="Cual?"/>
                                                     </label>
                                                 </div>
 
                                             </div>
-                                            <label htmlFor="costoTroquel">Tipo de troquel</label>
+                                            <label style={{color:"#000000"}} htmlFor="costoTroquel">Tipo de troquel</label>
                                         </div>
 
 
@@ -700,19 +700,19 @@ const Cotizacion=()=> {
                                             <option value="No Aplica">No Aplica</option>
 
                                         </select>
-                                        <label htmlFor="UnidadPAR">Unidad P.A.R.</label>
+                                        <label style={{color:"#000000"}} htmlFor="UnidadPAR">Unidad P.A.R.</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 " style={{width: "15% !important"}}>
                                         <input type="text" className="form-control" id="CUnidad" {...register("CUnidad")} value="0"/>
-                                        <label htmlFor="CUnidad">Unidad</label>
+                                        <label style={{color:"#000000"}} htmlFor="CUnidad">Unidad</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 " style={{width: "15% !important"}}>
                                         <input type="text" className="form-control" id="around" {...register("around")} value="0"/>
-                                        <label htmlFor="around">Around</label>
+                                        <label style={{color:"#000000"}} htmlFor="around">Around</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 " style={{width: "15% !important"}}>
                                         <input type="text" className="form-control" id="across" {...register("across")} value="0" />
-                                        <label htmlFor="across">Across</label>
+                                        <label style={{color:"#000000"}} htmlFor="across">Across</label>
                                     </div>
 
 
@@ -724,14 +724,14 @@ const Cotizacion=()=> {
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("sustratoTipo")} id="sustratoTipoBasico" value="Básico"/>
-                                                    <label className="form-check-label" htmlFor="sustratoTipoBasico">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="sustratoTipoBasico">
                                                         Básico
                                                     </label>
                                                 </div>
 
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("sustratoTipo")} id="sustratoTipoAlternativo" value="Alternativo"/>
-                                                    <label className="form-check-label" htmlFor="sustratoTipoAlternativo">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="sustratoTipoAlternativo">
                                                         Alternativo
                                                     </label>
                                                 </div>
@@ -739,15 +739,15 @@ const Cotizacion=()=> {
                                             </div>
 
                                         </div>
-                                        <label htmlFor="sustratotipodiv">Sustrato</label>
+                                        <label style={{color:"#000000"}} htmlFor="sustratotipodiv">Sustrato</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="espacioexteriores" {...register("espacioexteriores")} value="0" />
-                                        <label htmlFor="espacioexteriores">Espacio en exterior</label>
+                                        <label style={{color:"#000000"}} htmlFor="espacioexteriores">Espacio en exterior</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="espacioentreetiquetas" {...register("espacioentreetiquetas")} value="0" />
-                                        <label htmlFor="espacioentreetiquetas">Espacio entre etiquetas</label>
+                                        <label style={{color:"#000000"}} htmlFor="espacioentreetiquetas">Espacio entre etiquetas</label>
                                     </div>
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
@@ -785,11 +785,11 @@ const Cotizacion=()=> {
 
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="precioMaterial" {...register("precioMaterial")}  value="0"/>
-                                        <label htmlFor="precioMaterial">Precio</label>
+                                        <label style={{color:"#000000"}} htmlFor="precioMaterial">Precio</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="anchoMaterialC" {...register("anchoMaterialC")} />
-                                        <label htmlFor="anchoMaterialC">Ancho</label>
+                                        <label style={{color:"#000000"}} htmlFor="anchoMaterialC">Ancho</label>
                                     </div>
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
@@ -827,11 +827,11 @@ const Cotizacion=()=> {
 
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="precioAcabado" {...register("precioAcabado")} value="0"/>
-                                        <label htmlFor="precioAcabado">Precio</label>
+                                        <label style={{color:"#000000"}} htmlFor="precioAcabado">Precio</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="anchoLaminacionC" {...register("anchoLaminacionC")} />
-                                        <label htmlFor="anchoLaminacionC">Ancho Laminacion</label>
+                                        <label style={{color:"#000000"}} htmlFor="anchoLaminacionC">Ancho Laminacion</label>
                                     </div>
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
@@ -869,60 +869,60 @@ const Cotizacion=()=> {
 
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="" className="form-control" id="precioCold" {...register("precioCold")} value="0"/>
-                                        <label htmlFor="precioCold">Precio</label>
+                                        <label style={{color:"#000000"}} htmlFor="precioCold">Precio</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="anchoColdC" {...register("anchoColdC")} />
-                                        <label htmlFor="anchoColdC">Ancho Cold Foild</label>
+                                        <label style={{color:"#000000"}} htmlFor="anchoColdC">Ancho Cold Foild</label>
                                     </div>
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="CubrimientoCoti1" {...register("CubrimientoCoti1")} value="100"/>
-                                        <label htmlFor="CubrimientoCoti1">Cubrimiento (%)</label>
+                                        <label style={{color:"#000000"}} htmlFor="CubrimientoCoti1">Cubrimiento (%)</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 col-3">
                                         <select className="form-select" id="tipoTinta1" {...register("tipoTinta1")} aria-label="tipoTinta1">
                                             <option value="0" >Ninguno</option>
                                             
                                         </select>
-                                        <label htmlFor="tipoTinta1">Tipo de tinta</label>
+                                        <label style={{color:"#000000"}} htmlFor="tipoTinta1">Tipo de tinta</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="grTinta1" {...register("grTinta1")} readOnly={true} value="0"/>
-                                        <label htmlFor="grTinta1">$Gr. tinta (m &sup2)</label>
+                                        <label style={{color:"#000000"}} htmlFor="grTinta1">$Gr. tinta (m &sup2)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="PlanchasTinta1" {...register("PlanchasTinta1")} value="0"/>
-                                        <label htmlFor="PlanchasTinta1">Planchas</label>
+                                        <label style={{color:"#000000"}} htmlFor="PlanchasTinta1">Planchas</label>
                                     </div>
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="CubrimientoCoti2" {...register("CubrimientoCoti2")} value="100"/>
-                                        <label htmlFor="CubrimientoCoti2">Cubrimiento (%)</label>
+                                        <label style={{color:"#000000"}} htmlFor="CubrimientoCoti2">Cubrimiento (%)</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 col-3">
                                         <select className="form-select" id="tipoTinta2" {...register("tipoTinta2")} aria-label="tipoTinta2">
                                             <option value="0" >Ninguno</option>
                                            
                                         </select>
-                                        <label htmlFor="tipoTinta2">Tipo de tinta</label>
+                                        <label style={{color:"#000000"}} htmlFor="tipoTinta2">Tipo de tinta</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="grTinta2" {...register("grTinta2")} readOnly={true} value="0"/>
-                                        <label htmlFor="grTinta2">$Gr. tinta (m &sup2)</label>
+                                        <label style={{color:"#000000"}} htmlFor="grTinta2">$Gr. tinta (m &sup2)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="PlanchasTinta2" {...register("PlanchasTinta2")} value="0"/>
-                                        <label htmlFor="PlanchasTinta2">Planchas</label>
+                                        <label style={{color:"#000000"}} htmlFor="PlanchasTinta2">Planchas</label>
                                     </div>
 
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="CubrimientoCoti3" {...register("CubrimientoCoti3")} value="100"/>
-                                        <label htmlFor="CubrimientoCoti3">Cubrimiento (%)</label>
+                                        <label style={{color:"#000000"}} htmlFor="CubrimientoCoti3">Cubrimiento (%)</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 col-3">
                                         <select className="form-select" id="tipoTinta3" {...register("tipoTinta3")} aria-label="tipoTinta3">
@@ -930,22 +930,22 @@ const Cotizacion=()=> {
                                             <option  th:each="tinta : ${tintas}"   th:value="${tinta.getTinta()}" th:text="${tinta.getTinta()}" th:attr="attr-precio=${tinta.precioGramo}, attr-gramosM2=${tinta.gramosM2}"></option>
 
                                         </select>
-                                        <label htmlFor="tipoTinta3">Tipo de tinta</label>
+                                        <label style={{color:"#000000"}} htmlFor="tipoTinta3">Tipo de tinta</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="grTinta3" {...register("grTinta3")} readOnly={true} value="0"/>
-                                        <label htmlFor="grTinta3">$Gr. tinta (m &sup2)</label>
+                                        <label style={{color:"#000000"}} htmlFor="grTinta3">$Gr. tinta (m &sup2)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="PlanchasTinta3" {...register("PlanchasTinta3")} value="0" />
-                                        <label htmlFor="PlanchasTinta3">Planchas</label>
+                                        <label style={{color:"#000000"}} htmlFor="PlanchasTinta3">Planchas</label>
                                     </div>
 
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="CubrimientoCoti4" {...register("CubrimientoCoti4")} value="100"/>
-                                        <label htmlFor="CubrimientoCoti4">Cubrimiento (%)</label>
+                                        <label style={{color:"#000000"}} htmlFor="CubrimientoCoti4">Cubrimiento (%)</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 col-3">
                                         <select className="form-select" id="tipoTinta4" {...register("tipoTinta4")} aria-label="tipoTinta4">
@@ -953,15 +953,15 @@ const Cotizacion=()=> {
                                             <option  th:each="tinta : ${tintas}"   th:value="${tinta.getTinta()}" th:text="${tinta.getTinta()}" th:attr="attr-precio=${tinta.precioGramo}, attr-gramosM2=${tinta.gramosM2}"></option>
 
                                         </select>
-                                        <label htmlFor="tipoTinta4">Tipo de tinta</label>
+                                        <label style={{color:"#000000"}} htmlFor="tipoTinta4">Tipo de tinta</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="grTinta4" {...register("grTinta4")} readOnly={true} value="0"/>
-                                        <label htmlFor="grTinta4">$Gr. tinta (m&sup2)</label>
+                                        <label style={{color:"#000000"}} htmlFor="grTinta4">$Gr. tinta (m&sup2)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="PlanchasTinta4" {...register("PlanchasTinta4")} value="0"/>
-                                        <label htmlFor="PlanchasTinta4">Planchas</label>
+                                        <label style={{color:"#000000"}} htmlFor="PlanchasTinta4">Planchas</label>
                                     </div>
 
                                 </div>
@@ -970,19 +970,19 @@ const Cotizacion=()=> {
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="CambPlanchas" {...register("CambPlanchas")}  attr-precio="0"  value="0"/>
-                                        <label htmlFor="CambPlanchas">Camb. planchas</label>
+                                        <label style={{color:"#000000"}} htmlFor="CambPlanchas">Camb. planchas</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="diferirEnTinta1" {...register("diferirEnTinta1")} />
-                                        <label htmlFor="diferirEnTinta1">Diferir en (Etiq.)</label>
+                                        <label style={{color:"#000000"}} htmlFor="diferirEnTinta1">Diferir en (Etiq.)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="metros" {...register("metros")} readOnly={true}/>
-                                        <label htmlFor="metros" >Metros lineales</label>
+                                        <label style={{color:"#000000"}} htmlFor="metros" >Metros lineales</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="avanceReal" readOnly={true}/>
-                                        <label htmlFor="avanceReal" >Avance</label>
+                                        <label style={{color:"#000000"}} htmlFor="avanceReal" >Avance</label>
                                     </div>
                                 </div>
                                 <h4 className="col-12 text-white mt-3" style={{textAlign: "center"}}>Graduaciones</h4>
@@ -991,20 +991,20 @@ const Cotizacion=()=> {
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="GradPlanchas" {...register("GradPlanchas")}  attr-precio="12000" value="0" />
-                                        <label htmlFor="GradPlanchas">#Grad. Planchas</label>
+                                        <label style={{color:"#000000"}} htmlFor="GradPlanchas">#Grad. Planchas</label>
                                     </div>
 
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="GradPAR" {...register("GradPAR")}  attr-precio="20000" value="0"/>
-                                        <label htmlFor="GradPAR">#Grad. P.A.R.</label>
+                                        <label style={{color:"#000000"}} htmlFor="GradPAR">#Grad. P.A.R.</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3">
                                         <input type="text" className="form-control" id="PrepTintas" {...register("PrepTintas")}  attr-precio="8000" value="0"/>
-                                        <label htmlFor="PrepTintas">#Prep. Tintas</label>
+                                        <label style={{color:"#000000"}} htmlFor="PrepTintas">#Prep. Tintas</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="CambiosTintas" {...register("CambiosTintas")}  attr-precio="5000" value="0"/>
-                                        <label htmlFor="CambiosTintas">#Cambios Tinta</label>
+                                        <label style={{color:"#000000"}} htmlFor="CambiosTintas">#Cambios Tinta</label>
                                     </div>
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
@@ -1013,60 +1013,60 @@ const Cotizacion=()=> {
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("IRAdhesivo")} id="opsiG1" value="Si"  attr-precio="12000" attr-tiempo="10"/>
-                                                    <label className="form-check-label" htmlFor="opsiG1">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="opsiG1">
                                                         Si
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("IRAdhesivo")} id="opnoG1" value="No"  attr-precio="0" checked/>
-                                                    <label className="form-check-label" htmlFor="opnoG1">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="opnoG1">
                                                         No
                                                     </label>
                                                 </div>
                                             </div>
 
                                         </div>
-                                        <label htmlFor="divg1">Imp. Rev. Adhesivo</label>
+                                        <label style={{color:"#000000"}} htmlFor="divg1">Imp. Rev. Adhesivo</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-4 ">
                                         <div className="form-control" id="divg2" style={{display: "flex", flexDirection: "column"}}>
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("IRLiner")} id="opsiG2" value="Si"  attr-precio="5000" attr-tiempo="15"/>
-                                                    <label className="form-check-label" htmlFor="opsiG2">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="opsiG2">
                                                         Si
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("IRLiner")} id="opnoG2" value="No" attr-precio="0" checked/>
-                                                    <label className="form-check-label" htmlFor="opnoG2">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="opnoG2">
                                                         No
                                                     </label>
                                                 </div>
                                             </div>
 
                                         </div>
-                                        <label htmlFor="divg2">Imp. Rev. Liner</label>
+                                        <label style={{color:"#000000"}} htmlFor="divg2">Imp. Rev. Liner</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-4 ">
                                         <div className="form-control" id="divg3" style={{display: "flex", flexDirection: "column"}}>
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("TroquelGraduacion")} id="opsiG3" value="Si" attr-precio="10000" attr-tiempo="10"/>
-                                                    <label className="form-check-label" htmlFor="opsiG3">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="opsiG3">
                                                         Si
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("TroquelGraduacion")} id="opnoG3" value="No" attr-precio="0" checked/>
-                                                    <label className="form-check-label" htmlFor="opnoG3">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="opnoG3">
                                                         No
                                                     </label>
                                                 </div>
                                             </div>
 
                                         </div>
-                                        <label htmlFor="divg3">Troquel</label>
+                                        <label style={{color:"#000000"}} htmlFor="divg3">Troquel</label>
                                     </div>
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
@@ -1075,60 +1075,60 @@ const Cotizacion=()=> {
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("ShokAir")} id="opsiG4" value="Si" attr-precio="20000" attr-tiempo="25"/>
-                                                    <label className="form-check-label" htmlFor="opsiG4">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="opsiG4">
                                                         Si
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("ShokAir")} id="opnoG4" value="No" attr-precio="0" checked/>
-                                                    <label className="form-check-label" htmlFor="opnoG4">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="opnoG4">
                                                         No
                                                     </label>
                                                 </div>
                                             </div>
 
                                         </div>
-                                        <label htmlFor="divg4">Shok Air</label>
+                                        <label style={{color:"#000000"}} htmlFor="divg4">Shok Air</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-4 ">
                                         <div className="form-control" id="divg5" style={{display: "flex", flexDirection: "column"}}>
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("ponchadoFc")} id="opsiG5" value="Si" attr-precio="20000" attr-tiempo="15"/>
-                                                    <label className="form-check-label" htmlFor="opsiG5">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="opsiG5">
                                                         Si
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("ponchadoFc")} id="opnoG5" value="No" attr-precio="0" checked/>
-                                                    <label className="form-check-label" htmlFor="opnoG5">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="opnoG5">
                                                         No
                                                     </label>
                                                 </div>
                                             </div>
 
                                         </div>
-                                        <label htmlFor="divg5">Ponchado FC</label>
+                                        <label style={{color:"#000000"}} htmlFor="divg5">Ponchado FC</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-4 ">
                                         <div className="form-control" id="divg6" style={{display: "flex", flexDirection: "column"}}>
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("MesaShetter")} id="opsiG6" value="Si" attr-precio="10000" attr-tiempo="15"/>
-                                                    <label className="form-check-label" htmlFor="opsiG6">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="opsiG6">
                                                         Si
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("MesaShetter")} id="opnoG6" value="No" attr-precio="0" checked/>
-                                                    <label className="form-check-label" htmlFor="opnoG6">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="opnoG6">
                                                         No
                                                     </label>
                                                 </div>
                                             </div>
 
                                         </div>
-                                        <label htmlFor="divg6">Mesa Shetter</label>
+                                        <label style={{color:"#000000"}} htmlFor="divg6">Mesa Shetter</label>
                                     </div>
                                 </div>
                                 <h4 className="col-12 text-white mt-3" style={{textAlign: "center"}}>Impresion</h4>
@@ -1139,19 +1139,19 @@ const Cotizacion=()=> {
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("velocidadImp")} id="velocidadImp300" value="300" checked />
-                                                    <label className="form-check-label" htmlFor="velocidadImp300">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="velocidadImp300">
                                                         Muy baja (300)
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("velocidadImp")} id="velocidadImp750" value="750" />
-                                                    <label className="form-check-label" htmlFor="velocidadImp750">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="velocidadImp750">
                                                         Normal (750)
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("velocidadImp")} id="velocidadImp1000" value="1000" />
-                                                    <label className="form-check-label" htmlFor="velocidadImp1000">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="velocidadImp1000">
                                                         Alta (1000)
                                                     </label>
                                                 </div>
@@ -1159,46 +1159,46 @@ const Cotizacion=()=> {
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("velocidadImp")} id="velocidadImp500" value="500" />
-                                                    <label className="form-check-label" htmlFor="velocidadImp500">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="velocidadImp500">
                                                         baja (500)
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("velocidadImp")} id="velocidadImp1300" value="1300" />
-                                                    <label className="form-check-label" htmlFor="velocidadImp1300">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="velocidadImp1300">
                                                         Muy Alta (1300)
                                                     </label>
                                                 </div>
 
                                                 <div className="form-check mx-auto">
                                                     <input className="form-check-input secondary" type="radio" {...register("velocidadImp")} id="velocidadImpotro" value="Otro"/>
-                                                    <label className="form-check-label" htmlFor="velocidadImpotro" style={{display: "flex", flexDirection:"row"}}>
+                                                    <label  className="form-check-label" htmlFor="velocidadImpotro" style={{display: "flex",color:"#000000", flexDirection:"row"}}>
                                                         Otro <input type="text" className="form-control ms-2" id="velocidadImpvalor" {...register("velocidadImpvalor")} placeholder="Cual?"/>
                                                     </label>
                                                 </div>
                                             </div>
 
                                         </div>
-                                        <label htmlFor="impresionV">Velocidad</label>
+                                        <label style={{color:"#000000"}} htmlFor="impresionV">Velocidad</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-6 ">
                                         <div className="form-control" id="maquinadiv" style={{display: "flex", flexDirection: "column",height: "130px"}}>
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroq" value="Troq Bco" th:attr="attr-precio=${troqBco.getPrecio()}" checked/>
-                                                    <label className="form-check-label" htmlFor="maquinaTroq">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="maquinaTroq">
                                                         Troq Bco
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroqAqv1" value="Aq4 UV1" th:attr="attr-precio=${Aq4UV1.getPrecio()}"/>
-                                                    <label className="form-check-label" htmlFor="maquinaTroqAqv1">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="maquinaTroqAqv1">
                                                         Aq4 UV1
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroqUv5" value="AUV5 UV6" th:attr="attr-precio=${UV5UV6.getPrecio()}"/>
-                                                    <label className="form-check-label" htmlFor="maquinaTroqUv5">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="maquinaTroqUv5">
                                                         UV5 UV6
                                                     </label>
                                                 </div>
@@ -1210,25 +1210,25 @@ const Cotizacion=()=> {
 
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroqAq6" value="Aq6 UV1" th:attr="attr-precio=${Aq6UV1.getPrecio()}"/>
-                                                    <label className="form-check-label" htmlFor="maquinaTroqAq6">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="maquinaTroqAq6">
                                                         Aq6 UV1
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroqAq7" value='Aq7 UV1 (13")' th:attr="attr-precio=${Aq7UV1.getPrecio()}"/>
-                                                    <label className="form-check-label" htmlFor="maquinaTroqAq7">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="maquinaTroqAq7">
                                                         Aq7 UV1 (13")
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroqTirama" value='Tirama' th:attr="attr-precio=${Tirama.getPrecio()}"/>
-                                                    <label className="form-check-label" htmlFor="maquinaTroqTirama">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="maquinaTroqTirama">
                                                         Tirama
                                                     </label>
                                                 </div>
                                             </div>
                                         </div>
-                                        <label htmlFor="maquinadiv">Maquina</label>
+                                        <label style={{color:"#000000"}} htmlFor="maquinadiv">Maquina</label>
                                     </div>
                                 </div>
                                 <h4 className="col-12 text-white mt-3" style={{textAlign: "center"}}>Impresion variable en zebra</h4>
@@ -1238,15 +1238,15 @@ const Cotizacion=()=> {
 
                                     <div className="form-floating  mx-auto p-1 " style={{width: "25% !important"}}>
                                         <input type="text" className="form-control" id="etiqAlAncho" {...register("etiqAlAncho")}/>
-                                        <label htmlFor="etiqAlAncho">#Etiq. al ancho</label>
+                                        <label style={{color:"#000000"}} htmlFor="etiqAlAncho">#Etiq. al ancho</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 " style={{width: "25% !important"}}>
                                         <input type="text" className="form-control" id="avanceZebra" {...register("avanceZebra")}/>
-                                        <label htmlFor="avanceZebra">Avance (cms)</label>
+                                        <label style={{color:"#000000"}} htmlFor="avanceZebra">Avance (cms)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 " style={{width: "25% !important"}}>
                                         <input type="text" className="form-control" id="RefDistintasZebra" {...register("RefDistintasZebra")} attr-precio="5000"/>
-                                        <label htmlFor="RefDistintasZebra">Ref. Distintas</label>
+                                        <label style={{color:"#000000"}} htmlFor="RefDistintasZebra">Ref. Distintas</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 " style={{width: "25% !important"}}>
                                         <select className="form-select" id="CintaZebra" {...register("CintaZebra")} aria-label="ciudad">
@@ -1254,7 +1254,7 @@ const Cotizacion=()=> {
                                             <option value="Resina" attr-precio="2.00">Resina</option>
                                             <option value="Cera Resina" attr-precio="1.50">Cera Resina</option>
                                         </select>
-                                        <label htmlFor="CintaZebra" attr-precio="1.50">Cinta</label>
+                                        <label style={{color:"#000000"}} htmlFor="CintaZebra" attr-precio="1.50">Cinta</label>
                                     </div>
 
                                 </div>
@@ -1266,19 +1266,19 @@ const Cotizacion=()=> {
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("terminacionEn")} id="terminacionEnR" value="Rebobinado" />
-                                                    <label className="form-check-label" htmlFor="terminacionEnR">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="terminacionEnR">
                                                     Rebobinado
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("terminacionEn")} id="terminacionEnH" value="En hojas"/>
-                                                    <label className="form-check-label" htmlFor="terminacionEnH">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="terminacionEnH">
                                                         En hojas
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("terminacionEn")} id="terminacionEnD" value="Doblado"/>
-                                                    <label className="form-check-label" htmlFor="terminacionEnD">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="terminacionEnD">
                                                         Doblado
                                                     </label>
                                                 </div>
@@ -1286,15 +1286,15 @@ const Cotizacion=()=> {
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "25% !important"}}>
                                                     <input type="text" className="form-control" id="EtiqXRollo" {...register("etiqAlAncho")} attr-precio="0"/>
-                                                    <label htmlFor="etiqAlAncho">#Etiq. X Rollo</label>
+                                                    <label style={{color:"#000000"}} htmlFor="etiqAlAncho">#Etiq. X Rollo</label>
                                                 </div>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "25% !important"}}>
                                                     <input type="text" className="form-control" id="EtiqXHoja1" {...register("etiqAlAncho")} attr-precio="0"/>
-                                                    <label htmlFor="etiqAlAncho">#Etiq. X Hoja</label>
+                                                    <label style={{color:"#000000"}} htmlFor="etiqAlAncho">#Etiq. X Hoja</label>
                                                 </div>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "25% !important"}}>
                                                     <input type="text" className="form-control" id="EtiqXHoja2" {...register("etiqAlAncho")} attr-precio="0"/>
-                                                    <label htmlFor="etiqAlAncho">#Etiq. X Hoja</label>
+                                                    <label style={{color:"#000000"}} htmlFor="etiqAlAncho">#Etiq. X Hoja</label>
                                                 </div>
                                             </div>
 
@@ -1310,25 +1310,25 @@ const Cotizacion=()=> {
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-check col-3">
                                                     <input className="form-check-input" type="radio" {...register("recargoTrnsporte")} id="recargoTrnsporteCM" value="Corte Manual" />
-                                                    <label className="form-check-label" htmlFor="terminacionEnR">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="terminacionEnR">
                                                         Corte Manual
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-3">
                                                     <input className="form-check-input" type="radio" {...register("recargoTrnsporte")} id="recargoTrnsporteDM" value="Doblado Manual"/>
-                                                    <label className="form-check-label" htmlFor="terminacionEnH">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="terminacionEnH">
                                                         Doblado Manual
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-3">
                                                     <input className="form-check-input" type="radio" {...register("recargoTrnsporte")} id="recargoTrnsporteCR" value="Reproceso de Corte y Rebobinado"/>
-                                                    <label className="form-check-label" htmlFor="terminacionEnD">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="terminacionEnD">
                                                         Reproceso de Corte y Rebobinado
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-3">
                                                     <input className="form-check-input" type="radio" {...register("recargoTrnsporte")} id="recargoTrnsporteOtro" value="Reproceso de Corte y Rebobinado"/>
-                                                    <label className="form-check-label" htmlFor="recargoTrnsporteOtro">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="recargoTrnsporteOtro">
                                                         Otro recargo <input  type="text" placeholder="motivo" {...register("motivorecargo")}/>
                                                     </label>
                                                 </div>
@@ -1336,38 +1336,38 @@ const Cotizacion=()=> {
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "25% !important"}}>
                                                     <input type="text" className="form-control" id="recargoTrnsporteCMCosto" {...register("recargoTrnsporteCMCosto")} />
-                                                    <label htmlFor="recargoTrnsporteCMCosto">$ C/U</label>
+                                                    <label style={{color:"#000000"}} htmlFor="recargoTrnsporteCMCosto">$ C/U</label>
                                                 </div>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "25% !important"}}>
                                                     <input type="text" className="form-control" id="recargoTrnsporteDMCosto" {...register("recargoTrnsporteDMCosto")} />
-                                                    <label htmlFor="recargoTrnsporteDMCosto">$ C/U</label>
+                                                    <label style={{color:"#000000"}} htmlFor="recargoTrnsporteDMCosto">$ C/U</label>
                                                 </div>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "25% !important"}}>
                                                     <input type="text" className="form-control" id="recargoTrnsporteCRCosto" {...register("recargoTrnsporteCRCosto")} />
-                                                    <label htmlFor="recargoTrnsporteCRCosto">$ C/U</label>
+                                                    <label style={{color:"#000000"}} htmlFor="recargoTrnsporteCRCosto">$ C/U</label>
                                                 </div>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "25% !important"}}>
                                                     <input type="text" className="form-control" id="recargoTrnsporteOtroCosto" {...register("recargoTrnsporteOtroCosto")} />
-                                                    <label htmlFor="recargoTrnsporteOtroCosto">$ C/U</label>
+                                                    <label style={{color:"#000000"}} htmlFor="recargoTrnsporteOtroCosto">$ C/U</label>
                                                 </div>
                                             </div>
                                             <hr style={{width:"95%" ,marginTop: "-1px", border: "#ffffff 2px solid"}}/>
                                             <div style={{display: "flex", flexDirection:"row", marginTop: "5px"}}>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("transporteCiudad")} id="valleaburratrans" value="Valle de aburra" attr-precio="0" checked/>
-                                                    <label className="form-check-label" htmlFor="valleaburratrans">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="valleaburratrans">
                                                         Valle de aburra
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("transporteCiudad")} id="ciudad_principal_transporte_select" value="Ciudad principal" attr-precio="0"/>
-                                                    <label className="form-check-label" htmlFor="ciudad_principal_transporte_select">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="ciudad_principal_transporte_select">
                                                         Ciudad principal <input  type="text" placeholder="Cual?" {...register("ciudad_principal_transporte")}/>
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
                                                     <input className="form-check-input" type="radio" {...register("transporteCiudad")} id="otras_ciudades_transporte_select" value="Otras Ciudades/Municipios" attr-precio="0"/>
-                                                    <label className="form-check-label" htmlFor="otras_ciudades_transporte_select">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="otras_ciudades_transporte_select">
                                                         Otras Ciudades/Municipios <input  type="text" placeholder="Cual?" {...register("otras_ciudades_transporte")}/>
                                                     </label>
                                                 </div>
