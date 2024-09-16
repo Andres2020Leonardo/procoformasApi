@@ -246,7 +246,7 @@ const SolicitudCotizacion=()=> {
                                         onChange={(event, newValue) => {setValueCiudad(newValue);setValue("ciudad_cliente",newValue.id)}}
                                         options={allDatas?.ciudades}
                                         getOptionLabel={(option) => option.nombre}
-                                        renderInput={(params) => <TextField {...params} require label="Seleccionar ciudad" />}
+                                        renderInput={(params) => <TextField {...params} required label="Seleccionar ciudad" />}
                                         isOptionEqualToValue={(option, value) => option.id === value?.id}
                                         disabled={valueClienteId==1?false:true}
                                         />
