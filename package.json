@@ -18,16 +18,21 @@
     "axios": "^1.7.5",
     "chart.js": "^4.4.4",
     "crypto-js": "^4.2.0",
+    "datatables.net": "^2.1.6",
+    "jquery": "^3.7.1",
     "less": "^4.2.0",
     "less-loader": "^12.2.0",
     "react": "^18.3.1",
     "react-chartjs-2": "^5.2.0",
+    "react-data-table-component": "^7.6.2",
     "react-dom": "^18.3.1",
     "react-google-recaptcha": "^3.1.0",
     "react-hook-form": "^7.53.0",
     "react-modal": "^3.16.1",
     "react-router-dom": "^6.26.1",
-    "recharts": "^2.12.7"
+    "react-tabulator": "^0.21.0",
+    "recharts": "^2.12.7",
+    "tabulator-tables": "^6.2.5"
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",

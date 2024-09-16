@@ -67,3 +67,70 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+.tabulator-col{
+  background-color: transparent !important;
+}
+.tabulator-headers{
+  background-color: transparent !important;
+}
+.tabulator-header-contents{
+  background-color: transparent !important;
+}
+.tabulator-header{
+  background-color: transparent !important;
+}
+.tabulator{
+  background-color: transparent !important;
+  border: none !important;
+}
+.tabulator-row.tabulator-selected{
+    background-color: #2E9B48;
+    color: #000000;
+}
+.tabulator-row.tabulator-selected:hover{
+  background-color: #2E9B48;
+  color: #000000;
+}
+.tabulator-tableholder::-webkit-scrollbar {
+  height: 10px; /* Altura de la barra de desplazamiento horizontal */
+}
+
+.tabulator-tableholder::-webkit-scrollbar-thumb {
+  background-color: #2E9B48; /* Color de la barra de desplazamiento */
+  border-radius: 10px; /* Bordes redondeados de la barra */
+}
+
+.tabulator-tableholder::-webkit-scrollbar-thumb:hover {
+  background-color: #175325; /* Color de la barra al pasar el ratón */
+}
+
+.tabulator-tableholder::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Color de la pista de la barra de desplazamiento */
+  border-radius: 10px; /* Bordes redondeados de la pista */
+}
+
+.tabulator-footer{
+  background-color: transparent !important;
+}
+.tabulator-paginator button{
+  background: #2E9B48 !important;
+  opacity: 1 !important;
+  color: #000000;
+  zoom: 0.8;
+  border-radius: 8px !important;
+}
+.tabulator-header-filter input{
+  border-radius: 8px;
+}
+.tabulator-row{
+  color: #000000;
+}
+.tabulator-row:hover{
+  background: #3a8ad4 !important;
+}
+.checkbutonTables{
+  background: #2E9B48;
+}
+.modalcoti{
+  z-index: 500 !important;
+}
