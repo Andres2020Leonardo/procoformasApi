@@ -158,7 +158,7 @@ const SolicitudCotizacion=()=> {
                             <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row"}}>
                             
                                 <div className="form-floating mx-auto p-1 col-4 " >
-                                    <select className="form-select bg-secondary-subtle-r " id="tipo_cotizacion" {...register("tipo_cotizacion",require=true)} aria-label="Tipo cotización">
+                                    <select className="form-select bg-secondary-subtle-r " id="tipo_cotizacion" {...register("tipo_cotizacion",{required:'campo requerido'})} aria-label="Tipo cotización">
                                         <option value="N" >Nueva</option>
                                         <option value="R">Repetida</option>
 
@@ -216,17 +216,17 @@ const SolicitudCotizacion=()=> {
 
                             
                                 <div className="form-floating  mx-auto p-1 col-3 " >
-                                    <input type="text" className="form-control" id="nombre_cliente" {...register("nombre_cliente",require=true)} disabled={valueClienteId==1?false:true}/>
+                                    <input type="text" className="form-control" id="nombre_cliente" {...register("nombre_cliente",{required:'campo requerido'})} disabled={valueClienteId==1?false:true}/>
                                     <label style={{color:"#000000"}} htmlFor="nombre_cliente" >Nombre cliente</label>
                                 </div>
                             
                                 <div className="form-floating  mx-auto p-1 col-3">
-                                    <input type="text" className="form-control" id="nit_cliente" {...register("nit_cliente",require=true)} disabled={valueClienteId==1?false:true}/>
+                                    <input type="text" className="form-control" id="nit_cliente" {...register("nit_cliente",{required:'campo requerido'})} disabled={valueClienteId==1?false:true}/>
                                     <label style={{color:"#000000"}} htmlFor="nit_cliente">Nit</label>
                                 </div>
                             
                                 <div className="form-floating mx-auto p-1 col-3" style={{paddingRight:"2px"}}>
-                                    <select className="form-select bg-secondary-subtle-r" id="forma_pago" aria-label="forma_pago" {...register("forma_pago",require=true)} >
+                                    <select className="form-select bg-secondary-subtle-r" id="forma_pago" aria-label="forma_pago" {...register("forma_pago",{required:'campo requerido'})} >
 
                                         <option value="N" >Forma de pago</option>
                                         <option value="R">Repetida</option>
@@ -259,7 +259,7 @@ const SolicitudCotizacion=()=> {
 
                                 
                                 <div className="form-floating  mx-auto p-1 col-2" >
-                                    <input type="text" className="form-control" id="telefono1" {...register("telefono1",require=true)} disabled={valueClienteId==1?false:true}/>
+                                    <input type="text" className="form-control" id="telefono1" {...register("telefono1",{required:'campo requerido'})} disabled={valueClienteId==1?false:true}/>
                                     <label style={{color:"#000000"}} htmlFor="descripcion_producto">Teléfono</label>
                                 </div>
                                 
@@ -269,7 +269,7 @@ const SolicitudCotizacion=()=> {
                                 </div>
                             
                                 <div className="form-floating  mx-auto p-1 col-5">
-                                    <input type="email" className="form-control" id="email" {...register("email",require=true)} disabled={valueClienteId==1?false:true}/>
+                                    <input type="email" className="form-control" id="email" {...register("email",{required:'campo requerido'})} disabled={valueClienteId==1?false:true}/>
                                     <label style={{color:"#000000"}} htmlFor="Existencia">Email</label>
                                 </div>
 
@@ -279,7 +279,7 @@ const SolicitudCotizacion=()=> {
                             
                                 <div className="form-floating col-12 mx-auto " >
                                     <div className="form-floating  mx-auto p-1" >
-                                        <input type="text" className="form-control" id="contacto" {...register("contacto",require=true)} disabled={valueClienteId==1?false:true}/>
+                                        <input type="text" className="form-control" id="contacto" {...register("contacto",{required:'campo requerido'})} disabled={valueClienteId==1?false:true}/>
                                         <label style={{color:"#000000"}} htmlFor="contacto">Contacto</label>
                                     </div>
                                 </div>
@@ -288,7 +288,7 @@ const SolicitudCotizacion=()=> {
                                 
                                 <div className="form-floating   "  style={{width: "90% "}}>
                                     <div className="form-floating  mx-auto p-1" >
-                                        <input type="text" className="form-control" id="direccion" {...register("direccion",require=true)} disabled={valueClienteId==1?false:true}/>
+                                        <input type="text" className="form-control" id="direccion" {...register("direccion",{required:'campo requerido'})} disabled={valueClienteId==1?false:true}/>
                                         <label style={{color:"#000000"}} htmlFor="direccion">Direccion</label>
                                     </div>
                                 </div>
@@ -308,7 +308,7 @@ const SolicitudCotizacion=()=> {
                                         onChange={(event, newValue) => {setValueProducto(newValue);setValue("producto",newValue.id)}}
                                         options={allDatas?.productos}
                                         getOptionLabel={(option) => `${option.codigo}- ${option.nombre}`}
-                                        renderInput={(params) => <TextField {...params} require  label="Seleccionar producto" />}
+                                        renderInput={(params) => <TextField {...params} required label="Seleccionar producto" />}
                                         isOptionEqualToValue={(option, value) => option.id === value?.id}
                                         />
                                 :""}
@@ -334,7 +334,7 @@ const SolicitudCotizacion=()=> {
                             
                                 <div className="form-floating mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
                                     <div className="form-check col-2 mx-auto ">
-                                        <input className="form-check-input" type="radio"   {...register("unidad_seleccion",require=true)} checked={selectedUnidadGlobal=="unidad_una"?true:false} id="unidad_una" value="unidad_una" onChange={()=>setSelectedUnidadGlobal("unidad_una")} />
+                                        <input className="form-check-input" type="radio"   {...register("unidad_seleccion",{required:'campo requerido'})} checked={selectedUnidadGlobal=="unidad_una"?true:false} id="unidad_una" value="unidad_una" onChange={()=>setSelectedUnidadGlobal("unidad_una")} />
                                         <label style={{color:"#000000"}} className="form-check-label" htmlFor="unidad_una">
                                             Una
                                         </label>
@@ -447,7 +447,7 @@ const SolicitudCotizacion=()=> {
                                 </div>
                             
                                 <div className="form-floating mx-auto p-1 col-3 my-auto" >
-                                    <input type="text" className="form-control" id="unidad_ref_distintas" {...register("unidad_ref_distintas",require=true)}/>
+                                    <input type="text" className="form-control" id="unidad_ref_distintas" {...register("unidad_ref_distintas",{required:'campo requerido'})}/>
                                     <label style={{color:"#000000"}} htmlFor="unidad_ref_distintas">Ref. distintas</label>
                                 </div>
 
@@ -455,11 +455,11 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating  mx-auto  col-3 p-1"  >
                                     <div className="col-12 form-control" style={{height: "100px ", display: "flex", flexDirection: "row",background: "#a5afb6",}} id="divcambios">
                                         <div className="form-floating  mx-auto p-1 col-6" >
-                                            <input type="text" className="form-control bgWhite"  id="unidad_planchas" {...register("unidad_planchas",require=true)}/>
+                                            <input type="text" className="form-control bgWhite"  id="unidad_planchas" {...register("unidad_planchas",{required:'campo requerido'})}/>
                                             <label style={{color:"#000000"}} htmlFor="unidad_planchas" className='bgWhiteA'>Planchas</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 col-6" >
-                                            <input type="text" className="form-control bgWhite" id="unidad_tintas" {...register("unidad_tintas",require=true)}/>
+                                            <input type="text" className="form-control bgWhite" id="unidad_tintas" {...register("unidad_tintas",{required:'campo requerido'})}/>
                                             <label style={{color:"#000000"}} htmlFor="unidad_tintas" className='bgWhiteA'>Tintas</label>
                                         </div>
                                     </div>
@@ -495,7 +495,7 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating  mx-auto  col-6 p-1"  >
                                     <div className="col-12 form-control" style={{background: "#a5afb6", height: "auto ", display: "flex", flexDirection: "column"}} id="divcantidad" >
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
-                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%",color:"#000000"}}>1</label><input type="text" className="form-control  bgWhite"  id="cantidad1" {...register("cantidad1",require=true)}/>
+                                            <label className="my-auto  col-2 " style={{fontSize: "20px", marginLeft: "5%",color:"#000000"}}>1</label><input type="text" className="form-control  bgWhite"  id="cantidad1" {...register("cantidad1",{required:'campo requerido'})}/>
 
                                         </div>
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
@@ -532,7 +532,7 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating  mx-auto  col-6 p-1"  >
                                     <div className="col-12 form-control" style={{background: "#a5afb6", height: "auto ",display: "flex", flexDirection: "column"}} id="diventragas">
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
-                                            <input type="text" className="form-control  bgWhite"  id="entrega1" {...register("entrega1",require=true)}/>
+                                            <input type="text" className="form-control  bgWhite"  id="entrega1" {...register("entrega1",{required:'campo requerido'})}/>
 
                                         </div>
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
@@ -581,7 +581,7 @@ const SolicitudCotizacion=()=> {
                             <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row"}}>
                             
                                 <div className="form-floating mx-auto p-1 col-3 " >
-                                    <select className="form-select bg-secondary-subtle-r" id="aplicacion_especificaciones" {...register("aplicacion_especificaciones",require=true)} aria-label="aplicacion">
+                                    <select className="form-select bg-secondary-subtle-r" id="aplicacion_especificaciones" {...register("aplicacion_especificaciones",{required:'campo requerido'})} aria-label="aplicacion">
                                         <option value="M" >Manual</option>
                                         <option value="A">Automática</option>
 
@@ -591,18 +591,18 @@ const SolicitudCotizacion=()=> {
 
                             
                                 <div className="form-floating  mx-auto p-1 col-3" >
-                                    <input type="number" className="form-control" id="ancho_espe" {...register("ancho_espe",require=true)}/>
+                                    <input type="number" className="form-control" id="ancho_espe" {...register("ancho_espe",{required:'campo requerido'})}/>
                                     <label style={{color:"#000000"}} htmlFor="ancho_espe">Ancho (cms)</label>
                                 </div>
 
                             
                                 <div className="form-floating  mx-auto p-1 col-3" >
-                                    <input type="number" className="form-control" id="avance_espe" {...register("avance_espe",require=true)}/>
+                                    <input type="number" className="form-control" id="avance_espe" {...register("avance_espe",{required:'campo requerido'})}/>
                                     <label style={{color:"#000000"}} htmlFor="avance_espe">Avance (cms)</label>
                                 </div>
                             
                                 <div className="form-floating mx-auto p-1 col-3" style={{paddingRight:"2px"}}>
-                                    <select className="form-select bg-secondary-subtle-r" id="troquel" {...register("troquel",require=true)} aria-label="troquel">
+                                    <select className="form-select bg-secondary-subtle-r" id="troquel" {...register("troquel",{required:'campo requerido'})} aria-label="troquel">
                                         <option value="Existe" >Existe</option>
                                         <option value="Nuevo">Nuevo</option>
                                         <option value="Ninguno">Ninguno</option>
@@ -623,7 +623,7 @@ const SolicitudCotizacion=()=> {
                                     onChange={(event, newValue) => {setValueMaterial(newValue);setValue("material",newValue.id)}}
                                     options={allDatas?.materials}
                                     getOptionLabel={(option) => option.material}
-                                    renderInput={(params) => <TextField {...params} require label="Seleccionar material" />}
+                                    renderInput={(params) => <TextField {...params} requiredlabel="Seleccionar material" />}
                                     isOptionEqualToValue={(option, value) => option.id === value?.id}
                                     />:""}
                                     
@@ -667,7 +667,7 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating  mx-auto  col-3 p-1 "  >
                                     <div className="col-12 form-control bg-secondary-subtle-r" style={{height: "100px ", display: "flex", flexDirection: "row"}} id="divcambiosTintas">
                                         <div className="my-auto  mx-auto p-1 col-6" >
-                                            <input type="text" style={{background:"#ffffff"}} className="form-control" id="T1" {...register("T1",require=true)}/>
+                                            <input type="text" style={{background:"#ffffff"}} className="form-control" id="T1" {...register("T1",{required:'campo requerido'})}/>
 
                                         </div>
                                         <b className="my-auto" style={{fontSize: "18px"}}>X</b>
