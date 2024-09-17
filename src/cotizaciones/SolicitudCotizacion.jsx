@@ -300,14 +300,16 @@ const SolicitudCotizacion=()=> {
                         
                             <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row"}}>
                             
-                                <div className="form-floating mx-auto p-1 col-3" >
+                                <div className="form-floating mx-auto p-1 col-6" >
                                 {allDatas?.productos?
                                     <Autocomplete
                                         className='shearchinputs'
                                         value={valueProducto}
-                                        onChange={(event, newValue) => {setValueProducto(newValue);setValue("producto",newValue.id)}}
+                                        onChange={(event, newValue) => {if(newValue!==null){setValueProducto(newValue);setValue("producto",newValue.id);setValue("descripcion_producto",newValue.nombre)}else{
+                                            setValueProducto(null);setValue("producto",null);setValue("descripcion_producto","")
+                                        }}}
                                         options={allDatas?.productos}
-                                        getOptionLabel={(option) => `${option.codigo}- ${option.nombre}`}
+                                        getOptionLabel={(option) => `${option.codigo}`}
                                         renderInput={(params) => <TextField {...params} required label="Seleccionar producto" />}
                                         isOptionEqualToValue={(option, value) => option.id === value?.id}
                                         />
@@ -320,10 +322,10 @@ const SolicitudCotizacion=()=> {
                                     <label style={{color:"#000000"}} htmlFor="descripcion_producto">Descripcion de producto</label>
                                 </div>
                             
-                                <div className="form-floating  mx-auto p-1 col-3">
+                                {/* <div className="form-floating  mx-auto p-1 col-3">
                                     <input type="text" className="form-control" id="Existencia" {...register("Existencia_producto")}/>
                                     <label style={{color:"#000000"}} htmlFor="Existencia">Existencia</label>
-                                </div>
+                                </div> */}
 
                             </div>
                         
@@ -620,10 +622,10 @@ const SolicitudCotizacion=()=> {
                                 <Autocomplete
                                     className='shearchinputs'
                                     value={valueMaterial}
-                                    onChange={(event, newValue) => {setValueMaterial(newValue);setValue("material",newValue.id)}}
+                                    onChange={(event, newValue) => {if(newValue!==null){setValueMaterial(newValue);setValue("material",newValue.id)}else{setValueMaterial(null);setValue("material",null)}}}
                                     options={allDatas?.materials}
                                     getOptionLabel={(option) => option.material}
-                                    renderInput={(params) => <TextField {...params} requiredlabel="Seleccionar material" />}
+                                    renderInput={(params) => <TextField {...params} required label="Seleccionar material" />}
                                     isOptionEqualToValue={(option, value) => option.id === value?.id}
                                     />:""}
                                     
@@ -635,7 +637,7 @@ const SolicitudCotizacion=()=> {
                                 <Autocomplete
                                     className='shearchinputs'
                                     value={valueAcabado}
-                                    onChange={(event, newValue) => {setValueAcabado(newValue);setValue("acabado",newValue.id)}}
+                                    onChange={(event, newValue) => {if(newValue!==null){setValueAcabado(newValue);setValue("acabado",newValue.id)}else{setValueAcabado(null);setValue("acabado",null)}}}
                                     options={allDatas?.acabados}
                                     getOptionLabel={(option) => option.acabado}
                                     renderInput={(params) => <TextField {...params} label="Seleccionar acabado" />}
@@ -649,7 +651,7 @@ const SolicitudCotizacion=()=> {
                                 <Autocomplete
                                     className='shearchinputs'
                                     value={valueCold}
-                                    onChange={(event, newValue) => {setValueCold(newValue);setValue("cold_foild",newValue.id)}}
+                                    onChange={(event, newValue) => {if(newValue!==null){setValueCold(newValue);setValue("cold_foild",newValue.id)}else{setValueAcabado(null);setValue("cold_foild",null)}}}
                                     options={allDatas?.coldFoilds}
                                     getOptionLabel={(option) => option.coldFoild}
                                     renderInput={(params) => <TextField {...params} label="Seleccionar Cold Foild" />}

@@ -421,14 +421,13 @@ const Cotizacion=()=> {
         //// precio adicional maquina
         let precio_adicional_maquina=0;
         ///add
-        console.log(document.getElementById('GradPlanchas').getAttribute('attr-precio'));
-        let precioGraduacionPlanchas=parseFloat(document.getElementById('GradPlanchas').attr('attr-precio'))*parseFloat($('GradPlanchas'));
-        let CambPlanchas=parseFloat($('CambPlanchas').attr('attr-precio'))*parseFloat($('CambPlanchas'));
-        let GradPAR=parseFloat($('GradPAR').attr('attr-precio'))*parseFloat($('GradPAR'));
-        let PrepTintas=parseFloat($('PrepTintas').attr('attr-precio'))*parseFloat($('PrepTintas'));
-        let CambiosTintas=parseFloat($('CambiosTintas').attr('attr-precio'))*parseFloat($('CambiosTintas'));
+        let precioGraduacionPlanchas=parseFloat(document.getElementById('GradPlanchas').getAttribute('attr-precio'))*parseFloat(watch('GradPlanchas'));
+        let CambPlanchas=parseFloat(document.getElementById('CambPlanchas').getAttribute('attr-precio'))*parseFloat(watch('CambPlanchas'));
+        let GradPAR=parseFloat(document.getElementById('GradPAR').getAttribute('attr-precio'))*parseFloat(watch('GradPAR'));
+        let PrepTintas=parseFloat(document.getElementById('PrepTintas').getAttribute('attr-precio'))*parseFloat(watch('PrepTintas'));
+        let CambiosTintas=parseFloat( document.getElementById('CambiosTintas').getAttribute('attr-precio'))*parseFloat(watch('CambiosTintas'));
         if (precioGraduacionPlanchas>0){
-            tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat($('GradPlanchas'))*10)
+            tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat(watch('GradPlanchas'))*10)
             precio_adicional_maquina=precio_adicional_maquina+precioGraduacionPlanchas;
         }
         if (PrepTintas>0){
@@ -439,80 +438,67 @@ const Cotizacion=()=> {
             precio_adicional_maquina=precio_adicional_maquina+CambPlanchas;
         }
         if (GradPAR>0){
-            tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat($('GradPAR'))*15)
+            tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat(watch('GradPAR'))*15)
             precio_adicional_maquina=precio_adicional_maquina+GradPAR;
         }
         if (CambiosTintas>0){
-            tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat($('CambiosTintas'))*15)
+            tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat(watch('CambiosTintas'))*15)
             precio_adicional_maquina=precio_adicional_maquina+CambiosTintas;
         }
         //// impRevAd
-        var IRAdhesivo = $('input[name="IRAdhesivo"]:checked');
-
-        if (IRAdhesivo.length > 0) {
-            if(IRAdhesivo=="Si"){
-                precio_adicional_maquina=precio_adicional_maquina*parseFloat(IRAdhesivo.attr('attr-precio'))
-                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(IRAdhesivo.attr('attr-tiempo'));
-            }ShokAir
-        } else {
-            alert("Por favor, selecciona una opción IRAdhesivo.");
-        }
+        var IRAdhesivo = document.querySelector('input[name="IRAdhesivo"]:checked');
+        
+            if(IRAdhesivo.value=="Si"){
+                precio_adicional_maquina=precio_adicional_maquina*parseFloat(IRAdhesivo.getAttribute('attr-precio'))
+                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(IRAdhesivo.getAttribute('attr-tiempo'));
+            }
+      
         ///// imprevline
-        var IRLiner = $('input[name="IRLiner"]:checked');
-        if (IRLiner.length > 0) {
+        var IRLiner = document.querySelector('input[name="IRLiner"]:checked');
+       
             if(IRLiner=="Si"){
-                precio_adicional_maquina=precio_adicional_maquina+parseFloat(IRLiner.attr('attr-precio'))
-                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(IRLiner.attr('attr-tiempo'));
+                precio_adicional_maquina=precio_adicional_maquina+parseFloat(IRLiner.getAttribute('attr-precio'))
+                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(IRLiner.getAttribute('attr-tiempo'));
             }
-        } else {
-            alert("Por favor, selecciona una opción IRLiner.");
-        }
+      
         ///// troquel
-        var TroquelGraduacion = $('input[name="TroquelGraduacion"]:checked');
-        if (TroquelGraduacion.length > 0) {
-            if(TroquelGraduacion=="Si"){
-                precio_adicional_maquina=precio_adicional_maquina*parseFloat(TroquelGraduacion.attr('attr-precio'))
-                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(TroquelGraduacion.attr('attr-tiempo'));
+        var TroquelGraduacion = document.querySelector('input[name="TroquelGraduacion"]:checked');
+       
+            if(TroquelGraduacion.value=="Si"){
+                precio_adicional_maquina=precio_adicional_maquina*parseFloat(TroquelGraduacion.getAttribute('attr-precio'))
+                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(TroquelGraduacion.getAttribute('attr-tiempo'));
             }
-        } else {
-            alert("Por favor, selecciona una opción TroquelGraduacion.");
-        }
+   
         ////// Shok air
-        var ShokAir = $('input[name="ShokAir"]:checked');
-        if (ShokAir.length > 0) {
-            if(ShokAir=="Si"){
-                precio_adicional_maquina=precio_adicional_maquina*parseFloat(ShokAir.attr('attr-precio'))
-                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(ShokAir.attr('attr-tiempo'));
+        var ShokAir = document.querySelector('input[name="ShokAir"]:checked');
+       
+            if(ShokAir.value=="Si"){
+                precio_adicional_maquina=precio_adicional_maquina*parseFloat(ShokAir.getAttribute('attr-precio'))
+                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(ShokAir.getAttribute('attr-tiempo'));
             }
-        } else {
-            alert("Por favor, selecciona una opción ShokAir. ");
-        }
+      
         ///// ponchado
-        var ponchadoFc = $('input[name="IRAdhesivo"]:checked');
-        if (ponchadoFc.length > 0) {
-            if(ponchadoFc=="Si"){
-                precio_adicional_maquina=precio_adicional_maquina*parseFloat(ponchadoFc.attr('attr-precio'))
-                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(ponchadoFc.attr('attr-tiempo'));
+        var ponchadoFc = document.querySelector('input[name="ponchadoFc"]:checked');
+       
+            if(ponchadoFc.value=="Si"){
+                precio_adicional_maquina=precio_adicional_maquina*parseFloat(ponchadoFc.getAttribute('attr-precio'))
+                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(ponchadoFc.getAttribute('attr-tiempo'));
             }
-        } else {
-            alert("Por favor, selecciona una opción ponchadoFc.");
-        }
+     
         ///// mesa shetter
-        var MesaShetter = $('input[name="IRAdhesivo"]:checked');
-        if (MesaShetter.length > 0) {
-            if(MesaShetter=="Si"){
-                precio_adicional_maquina=precio_adicional_maquina*parseFloat(MesaShetter.attr('attr-precio'))
-                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(MesaShetter.attr('attr-tiempo'));
+        var MesaShetter =document.querySelector('input[name="MesaShetter"]:checked');
+  
+            if(MesaShetter.value=="Si"){
+                precio_adicional_maquina=precio_adicional_maquina*parseFloat(MesaShetter.getAttribute('attr-precio'))
+                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(MesaShetter.getAttribute('attr-tiempo'));
             }ShokAir
-        } else {
-            alert("Por favor, selecciona una opción MesaShetter.");
-        }
+     
         ///// velocidadImp
-        var velocidadImp = $('input[name="velocidadImp"]:checked');
+        var velocidadImp = document.querySelector('input[name="velocidadImp"]:checked');
         let velocidad=0
         if (velocidadImp.length > 0) {
-            if (velocidadImp=="Otro"){
-                velocidad=parseFloat($('velocidadImpvalor'));
+            if (velocidadImp.value=="Otro"){
+                velocidad=parseFloat(watch('velocidadImpvalor'));
             }else{
                 velocidad=parseFloat(velocidadImp);
             }
@@ -521,10 +507,10 @@ const Cotizacion=()=> {
             alert("Por favor, selecciona una opción velocidadImp.");
         }
         ///// maquina
-        var maquina = $('input[name="maquina"]:checked');
+        var maquina = document.querySelector('input[name="maquina"]:checked');
         let maquinaprecio=0
-        if (maquina.length > 0) {
-            maquinaprecio = parseFloat(maquina.attr('attr-precio'));
+        if (maquina) {
+            maquinaprecio = parseFloat(maquina.getAttribute('attr-precio'));
         } else {
             alert("Por favor, selecciona una opción maquina.");
         }
@@ -537,40 +523,38 @@ const Cotizacion=()=> {
         let Costo_total_maquina=0
         Costo_total_maquina=Costo_total_trabajo+Costo_tiempo_adicional
         ///// fin radios
-        let etiqAlAncho=$('etiqAlAncho').attr('attr-precio');
-        let avanceZebra=$('avanceZebra').attr('attr-precio');
-        let RefDistintasZebra=$('RefDistintasZebra').attr('attr-precio');
+        let etiqAlAncho=document.getElementById('etiqAlAncho').getAttribute('attr-precio');
+        let avanceZebra=document.getElementById('avanceZebra').getAttribute('attr-precio');
+        let RefDistintasZebra=document.getElementById('RefDistintasZebra').getAttribute('attr-precio');
         /// cinta
-        var CintaZebra = $('CintaZebra option:selected');
-        var CintaZebraprecio = parseFloat(CintaZebra.attr('attr-precio'));
+        var CintaZebra = document.getElementById('CintaZebra');
+        var CintaZebraprecio = parseFloat(CintaZebra.options[CintaZebra.selectedIndex].getAttribute('attr-precio'));
         ///// transporteCiudad
-        var transporteCiudad = $('input[name="transporteCiudad"]:checked');
+        var transporteCiudad = document.querySelector('input[name="transporteCiudad"]:checked');
         let transporteCiudadprecio=0
-        if (transporteCiudad.length > 0) {
-            transporteCiudadprecio = parseFloat(transporteCiudad.attr('attr-precio'));
-        } else {
-            alert("Por favor, selecciona una opción transporteCiudad.");
-        }
-        var materialValor = $("#toggleButtonMaterial").text();
+        if (transporteCiudad) {
+            transporteCiudadprecio = parseFloat(transporteCiudad.getAttribute('attr-precio'));
+        } 
+        var materialValor = toggleButtonMaterial.current.querySelector('p').textContent;
         let materialValorprecio=0
         if (materialValor=="Material") {
             alert("Por favor, selecciona una opción de Material.");
         } else {
-            materialValorprecio =parseFloat(metroslineales)*(parseFloat($("#anchoMaterialC"))/100)*parseFloat($("#precioMaterial"));
+            materialValorprecio =parseFloat(metroslineales)*(parseFloat(watch("anchoMaterialC"))/100)*parseFloat(watch("precioMaterial"));
         }
-        var acabadoValor = $("#toggleButtonAcabado").text();
+        var acabadoValor =  toggleButtonAcabado.current.querySelector('p').textContent;
         let acabadoValorprecio=0
         if (acabadoValor=="Acabado") {
             acabadoValorprecio = parseFloat(0);
         } else {
-            acabadoValorprecio = parseFloat(metroslineales)*(parseFloat($("#anchoMaterialC"))/100)*parseFloat($("#precioAcabado"));
+            acabadoValorprecio = parseFloat(metroslineales)*(parseFloat(watch("anchoMaterialC"))/100)*parseFloat(watch("precioAcabado"));
         }
-        var coldValor = $("#toggleButtonCold").text();
+        var coldValor = toggleButtonCold.current.querySelector('p').textContent;
         let coldValorprecio=0
         if (coldValor=="Cold Foild") {
             coldValorprecio = parseFloat(0);
         } else {
-            coldValorprecio = parseFloat(metroslineales)*(parseFloat($("#anchoMaterialC"))/100)*parseFloat($("#precioCold"));
+            coldValorprecio = parseFloat(metroslineales)*(parseFloat(watch("anchoMaterialC"))/100)*parseFloat(watch("precioCold"));
         }
 
 
@@ -585,43 +569,58 @@ const Cotizacion=()=> {
 
 
         let costo_total=coldValorprecio+materialValorprecio+acabadoValorprecio+Costo_total_maquina+precioGraduacionPlanchas+CambPlanchas+GradPAR+PrepTintas+CambiosTintas+costoPlanchasporEtiqueta(cantidad)+calcularValorTotalTintas(cantidad)+transporteCiudadprecio
-        var tbody = $("#TablaCotizaciones tbody");
-        var tr= $("<tr>");
-        var coti = $("<td>").text(coti);
-        var cantidadtd = $("<td>").text(Math.round(cantidad));
-        var materialValorpreciotd = $("<td>").text(Math.round(materialValorprecio));
-        var acabadoValorpreciotd = $("<td>").text(Math.round(acabadoValorprecio));
-        var coldValorpreciotd = $("<td>").text(Math.round(coldValorprecio));
-        var Costo_total_maquinatd = $("<td>").text(Math.round(Costo_total_maquina));
-        var horas_maquina = $("<td>").text(horasMaquinaReales);
-        var precioGraduacionPlanchastd = $("<td>").text(Math.round(precioGraduacionPlanchas));
-        var CambPlanchastd = $("<td>").text(Math.round(CambPlanchas));
-        var GradPARtd = $("<td>").text(GradPAR);
-        var CambiosTintastd = $("<td>").text(Math.round(CambiosTintas));
-        var PrepTintastd = $("<td>").text(Math.round(PrepTintas));
-        var costoPlanchasporEtiquetatd = $("<td>").text(Math.round(costoPlanchasporEtiqueta(cantidad)));
-        var calcularValorTotalTintastd = $("<td>").text(Math.round(calcularValorTotalTintas(cantidad)));
-        var transporteCiudadpreciotd = $("<td>").text("hhh");
-        var costo_totaltd = $("<td>").text(Math.round(costo_total));
-        tr.append(coti);
-        tr.append(cantidadtd);
-        tr.append(materialValorpreciotd);
-        tr.append(acabadoValorpreciotd);
-        tr.append(coldValorpreciotd);
-        tr.append(Costo_total_maquinatd);
-        tr.append(horas_maquina);
-        tr.append(precioGraduacionPlanchastd);
-        tr.append(CambPlanchastd);
-        tr.append(GradPARtd);
-        tr.append(CambiosTintastd);
-        tr.append(PrepTintastd);
-        tr.append(costoPlanchasporEtiquetatd);
-        tr.append(calcularValorTotalTintastd);
-        tr.append(transporteCiudadpreciotd);
-        tr.append(costo_totaltd);
-        tbody.append(tr);
+        
+        
+        var coti = (coti);
+        var cantidadtd = (Math.round(cantidad));
+        var materialValorpreciotd = (Math.round(materialValorprecio));
+        var acabadoValorpreciotd = (Math.round(acabadoValorprecio));
+        var coldValorpreciotd = (Math.round(coldValorprecio));
+        var Costo_total_maquinatd = (Math.round(Costo_total_maquina));
+        var horas_maquina = (horasMaquinaReales);
+        var precioGraduacionPlanchastd = (Math.round(precioGraduacionPlanchas));
+        var CambPlanchastd = (Math.round(CambPlanchas));
+        var GradPARtd = (GradPAR);
+        var CambiosTintastd = (Math.round(CambiosTintas));
+        var PrepTintastd = (Math.round(PrepTintas));
+        var costoPlanchasporEtiquetatd = (Math.round(costoPlanchasporEtiqueta(cantidad)));
+        var calcularValorTotalTintastd = (Math.round(calcularValorTotalTintas(cantidad)));
+        var transporteCiudadpreciotd = ("");
+        var costo_totaltd = (Math.round(costo_total));
 
-        return Math.round(costo_total)
+        let cotizando ={
+            'coti':coti,
+            'cantidadtd':cantidadtd,
+            'materialValorpreciotd':materialValorpreciotd,
+            'acabadoValorpreciotd':acabadoValorpreciotd,
+            'coldValorpreciotd':coldValorpreciotd,
+            'Costo_total_maquinatd':Costo_total_maquinatd,
+            'horas_maquina':horas_maquina,
+            'precioGraduacionPlanchastd':precioGraduacionPlanchastd,
+            'CambPlanchastd':CambPlanchastd,
+            'GradPARtd':GradPARtd,
+            'CambiosTintastd':CambiosTintastd,
+            'PrepTintastd':PrepTintastd,
+            'costoPlanchasporEtiquetatd':costoPlanchasporEtiquetatd,
+            'calcularValorTotalTintastd':calcularValorTotalTintastd,
+            'transporteCiudadpreciotd':transporteCiudadpreciotd,
+            'costo_totaltd':costo_totaltd
+            }
+        console.log(cotizando)
+        return   cotizando;
+    }
+    const[allCoti,setAllCoti]=useState({})
+    const constructionCotizacion=()=>{
+        alert('click')
+        for (let index = 1; index < 10; index++) {
+            let cantidad_select="cantidad"+index;
+           
+                if (parseFloat(watch(cantidad_select))>0){
+                    let coOb = costoTotal(watch(cantidad_select),index);
+                    setAllCoti({...allCoti, coOb })
+                }
+            
+        }
     }
     return (
         
@@ -1684,53 +1683,35 @@ const Cotizacion=()=> {
                                     </div>
                                 </div>
                                 <div className="col-12" style={{display: "flex", flexDirection:"row"}}>
-                                    <button id="cotizarB" type="button" className="btn btn-success mx-auto col-8 text-white mt-3 mb-2 p-2" onClick={()=>costoTotal(1000,1)}>Cotizar</button>
+                                    <button id="cotizarB" type="button" className="btn btn-success mx-auto col-8 text-white mt-3 mb-2 p-2" onClick={constructionCotizacion}>Cotizar</button>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </form>
-                <div className="modal fade" id="exampleModal" tabIndex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
-                    <div className="modal-dialog modal-xl">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h1 className="modal-title fs-5" id="exampleModalLabel">Cotizaciones</h1>
-                                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                            </div>
-                            <div className="modal-body">
-                                <table id="TablaCotizaciones">
-                                    <thead>
-                                    <tr>
-                                        <th scope="col">Cotización</th>
-                                        <th scope="col">Cantidad Etiquetas</th>
-                                        <th scope="col">Costo Material</th>
-                                        <th scope="col">Costo Acabado</th>
-                                        <th scope="col">Costo Cold foild</th>
-                                        <th scope="col">Costo Maquina</th>
-                                        <th scope="col">Horas Maquina</th>
-                                        <th scope="col">Costo Graduación Planchas</th>
-                                        <th scope="col">Costo Cambio de plancha</th>
-                                        <th scope="col">Costo Graduación P.A.R</th>
-                                        <th scope="col">Costo Cambio de tintas</th>
-                                        <th scope="col">Costo Prep. tintas</th>
-                                        <th scope="col">Costo Planchas</th>
-                                        <th scope="col">Costo Tintas</th>
-                                        <th scope="col">Costo Transporte</th>
-                                        <th scope="col">Costo Total</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-
-                                    </tbody>
-                                </table>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                                <button type="button" className="btn btn-primary">Guardar cotizaciones</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                {allCoti.length>0 &&  <TabulatorTable
+                columns={[
+                {title: 'Cotización',field:'coti'},
+                {title:'Cantidad Etiquetas',field:'cantidadtd'},
+                {title:'Costo Material',field:'materialValorpreciotd'},
+                {title:'Costo Acabado',field:'acabadoValorpreciotd'},
+                {title:'Costo Cold foild',field:'coldValorpreciotd'},
+                {title:'Costo Maquina',field:'Costo_total_maquinatd'},
+                {title:'Horas Maquina',field:'horas_maquina'},
+                {title:'Costo Graduación Planchas',field:'precioGraduacionPlanchastd'},
+                {title:'Costo Cambio de plancha',field:'CambPlanchastd'},
+                {title:'Costo Graduación P.A.R',field:'GradPARtd'},
+                {title:'Costo Cambio de tintas',field:'CambiosTintastd'},
+                {title:'Costo Prep. tintas',field:'PrepTintastd'},
+                {title:'Costo Planchas',field:'costoPlanchasporEtiquetatd'},
+                {title:'Costo Tintas',field:'calcularValorTotalTintastd'},
+                {title:'Costo Transporte',field:'transporteCiudadpreciotd'},
+                {title:'Costo Total',field:'costo_totaltd'}
+               ]}
+               data={allCoti}
+                ></TabulatorTable>}
+               
+                                        
             </div>
             }
         
