@@ -12,6 +12,8 @@ const Cotizacion=()=> {
     const [checkStatus,setCheckStatus] = useState(false);
     const [checkStatusView,setCheckStatusView] = useState(true);
     const [allDatas,setAllDatas] = useState({});
+    const [mostrartabla,setMostrartabla]=useState(false);
+    const [allCoti,setAllCoti]=useState([])
     const logo = "./img/cdpLogo2.png";
     const optionsTables = {
         paginationSize: 5, 
@@ -118,7 +120,7 @@ const Cotizacion=()=> {
         ponchadoFc:0,
         MesaShetter:0,
         velocidadImp:0,
-        velocidadImpvalor:0,
+        velocidadImpvalor:300,
         maquina:0,
         etiqAlAncho:0,
         avanceZebra:0,
@@ -232,7 +234,7 @@ const Cotizacion=()=> {
             );
             
             setAllDatas(response.data)
-            console.log(allDatas);
+            console.log(response.data);
           } catch (error) {
             console.error('Error fetching data:', error);
           } finally {
@@ -259,6 +261,10 @@ const Cotizacion=()=> {
        
 
     }
+    const handleRowSelectedCoti=(datos)=>{       
+        console.log(datos);
+       
+      }
       /// tabla troquel
       const toggleButtonTroquel =useRef(null);
       const [toggleButtonTroquelIsopen,setToggleButtonTroquelIsopen]=useState(false);
@@ -496,19 +502,17 @@ const Cotizacion=()=> {
         ///// velocidadImp
         var velocidadImp = document.querySelector('input[name="velocidadImp"]:checked');
         let velocidad=0
-        if (velocidadImp.length > 0) {
+      
             if (velocidadImp.value=="Otro"){
                 velocidad=parseFloat(watch('velocidadImpvalor'));
             }else{
                 velocidad=parseFloat(velocidadImp);
             }
 
-        } else {
-            alert("Por favor, selecciona una opción velocidadImp.");
-        }
         ///// maquina
         var maquina = document.querySelector('input[name="maquina"]:checked');
         let maquinaprecio=0
+        console.log("maqu",maquina)
         if (maquina) {
             maquinaprecio = parseFloat(maquina.getAttribute('attr-precio'));
         } else {
@@ -528,7 +532,11 @@ const Cotizacion=()=> {
         let RefDistintasZebra=document.getElementById('RefDistintasZebra').getAttribute('attr-precio');
         /// cinta
         var CintaZebra = document.getElementById('CintaZebra');
-        var CintaZebraprecio = parseFloat(CintaZebra.options[CintaZebra.selectedIndex].getAttribute('attr-precio'));
+        var CintaZebraprecio=0
+        if(CintaZebra.selectedIndex!==-1){
+            CintaZebraprecio = parseFloat(CintaZebra.options[CintaZebra.selectedIndex].getAttribute('attr-precio'));
+        }
+       
         ///// transporteCiudad
         var transporteCiudad = document.querySelector('input[name="transporteCiudad"]:checked');
         let transporteCiudadprecio=0
@@ -568,7 +576,7 @@ const Cotizacion=()=> {
 
 
 
-        let costo_total=coldValorprecio+materialValorprecio+acabadoValorprecio+Costo_total_maquina+precioGraduacionPlanchas+CambPlanchas+GradPAR+PrepTintas+CambiosTintas+costoPlanchasporEtiqueta(cantidad)+calcularValorTotalTintas(cantidad)+transporteCiudadprecio
+        let costo_total=avanceZebra+RefDistintasZebra+etiqAlAncho+coldValorprecio+materialValorprecio+acabadoValorprecio+Costo_total_maquina+precioGraduacionPlanchas+CambPlanchas+GradPAR+PrepTintas+CambiosTintas+costoPlanchasporEtiqueta(cantidad)+calcularValorTotalTintas(cantidad)+transporteCiudadprecio+CintaZebraprecio
         
         
         var coti = (coti);
@@ -606,22 +614,27 @@ const Cotizacion=()=> {
             'transporteCiudadpreciotd':transporteCiudadpreciotd,
             'costo_totaltd':costo_totaltd
             }
-        console.log(cotizando)
+        
         return   cotizando;
     }
-    const[allCoti,setAllCoti]=useState({})
-    const constructionCotizacion=()=>{
-        alert('click')
+    
+    const constructionCotizacion=()=>{        
         for (let index = 1; index < 10; index++) {
             let cantidad_select="cantidad"+index;
            
                 if (parseFloat(watch(cantidad_select))>0){
                     let coOb = costoTotal(watch(cantidad_select),index);
-                    setAllCoti({...allCoti, coOb })
+                    setAllCoti(prevData => [...prevData, coOb]);
                 }
             
         }
+        setMostrartabla(true);
     }
+    const obtenerMaquinaPorNombre = (nombreProducto) => {
+         let preciow = allDatas.maquinas.filter(maquina => maquina.nombre === nombreProducto);
+         return preciow[0].precio
+    };
+  
     return (
         
         <>  {loadingIcon && <div className="position-fixed rounded p-1 shadow-lg" style={{zIndex:200,top:10,right:20,height:"8vh",width:"5vw",background:"#498ac2"}}><FontAwesomeIcon className="fa-spin fa-beat-fade text-white" style={{height:"90%"}}   icon={faArrowsRotate}/></div>}
@@ -1190,7 +1203,11 @@ const Cotizacion=()=> {
                                     <div className="form-floating mx-auto p-1 col-3">
                                         <select className="form-select" id="tipoTinta1" {...register("tipoTinta1")} aria-label="tipoTinta1">
                                             <option  >Ninguno</option>
-                                            
+                                            {allDatas.tintas.map(tinta => (
+                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.valorMinimo}  attr-gramosM2={tinta.gramosM2}>
+                                                    {tinta.tinta}
+                                                </option>
+                                            ))}
                                         </select>
                                         <label style={{color:"#000000"}} htmlFor="tipoTinta1">Tipo de tinta</label>
                                     </div>
@@ -1211,7 +1228,11 @@ const Cotizacion=()=> {
                                     <div className="form-floating mx-auto p-1 col-3">
                                         <select className="form-select" id="tipoTinta2" {...register("tipoTinta2")} aria-label="tipoTinta2">
                                             <option  >Ninguno</option>
-                                           
+                                            {allDatas.tintas.map(tinta => (
+                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.valorMinimo}  attr-gramosM2={tinta.gramosM2}>
+                                                    {tinta.tinta}
+                                                </option>
+                                            ))}
                                         </select>
                                         <label style={{color:"#000000"}} htmlFor="tipoTinta2">Tipo de tinta</label>
                                     </div>
@@ -1233,8 +1254,12 @@ const Cotizacion=()=> {
                                     <div className="form-floating mx-auto p-1 col-3">
                                         <select className="form-select" id="tipoTinta3" {...register("tipoTinta3")} aria-label="tipoTinta3">
                                             <option  >Ninguno</option>
-                                            <option  th:each="tinta : ${tintas}"   th:value="${tinta.getTinta()}" th:text="${tinta.getTinta()}" th:attr="attr-precio=${tinta.precioGramo}, attr-gramosM2=${tinta.gramosM2}"></option>
-
+                                            {allDatas.tintas.map(tinta => (
+                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.valorMinimo}  attr-gramosM2={tinta.gramosM2}>
+                                                    {tinta.tinta}
+                                                </option>
+                                            ))}
+                                           
                                         </select>
                                         <label style={{color:"#000000"}} htmlFor="tipoTinta3">Tipo de tinta</label>
                                     </div>
@@ -1256,8 +1281,11 @@ const Cotizacion=()=> {
                                     <div className="form-floating mx-auto p-1 col-3">
                                         <select className="form-select" id="tipoTinta4" {...register("tipoTinta4")} aria-label="tipoTinta4">
                                             <option  >Ninguno</option>
-                                            <option  th:each="tinta : ${tintas}"   th:value="${tinta.getTinta()}" th:text="${tinta.getTinta()}" th:attr="attr-precio=${tinta.precioGramo}, attr-gramosM2=${tinta.gramosM2}"></option>
-
+                                           {allDatas.tintas.map(tinta => (
+                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.valorMinimo}  attr-gramosM2={tinta.gramosM2}>
+                                                    {tinta.tinta}
+                                                </option>
+                                            ))}
                                         </select>
                                         <label style={{color:"#000000"}} htmlFor="tipoTinta4">Tipo de tinta</label>
                                     </div>
@@ -1491,19 +1519,19 @@ const Cotizacion=()=> {
                                         <div className="form-control" id="maquinadiv" style={{display: "flex", flexDirection: "column",height: "130px"}}>
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-check col-4">
-                                                    <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroq" value="Troq Bco" th:attr="attr-precio=${troqBco.getPrecio()}" checked/>
+                                                    <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroq" value="Troq Bco" attr-precio={obtenerMaquinaPorNombre("Troq Bco")}  checked/>
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="maquinaTroq">
                                                         Troq Bco
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
-                                                    <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroqAqv1" value="Aq4 UV1" th:attr="attr-precio=${Aq4UV1.getPrecio()}"/>
+                                                    <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroqAqv1" value="Aq4 UV1" attr-precio={obtenerMaquinaPorNombre("Aq4 UV1")}/>
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="maquinaTroqAqv1">
                                                         Aq4 UV1
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
-                                                    <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroqUv5" value="AUV5 UV6" th:attr="attr-precio=${UV5UV6.getPrecio()}"/>
+                                                    <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroqUv5" value="AUV5 UV6" attr-precio={obtenerMaquinaPorNombre("UV5 UV6")}/>
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="maquinaTroqUv5">
                                                         UV5 UV6
                                                     </label>
@@ -1515,19 +1543,19 @@ const Cotizacion=()=> {
                                             <div style={{display: "flex", flexDirection:"row"}}>
 
                                                 <div className="form-check col-4">
-                                                    <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroqAq6" value="Aq6 UV1" th:attr="attr-precio=${Aq6UV1.getPrecio()}"/>
+                                                    <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroqAq6" value="Aq6 UV1" attr-precio={obtenerMaquinaPorNombre("Aq6 UV1")}/>
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="maquinaTroqAq6">
                                                         Aq6 UV1
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
-                                                    <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroqAq7" value='Aq7 UV1 (13")' th:attr="attr-precio=${Aq7UV1.getPrecio()}"/>
+                                                    <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroqAq7" value='Aq7 UV1 (13")' attr-precio={obtenerMaquinaPorNombre("Aq7 UV1 (13'')")}/>
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="maquinaTroqAq7">
                                                         Aq7 UV1 (13")
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
-                                                    <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroqTirama" value='Tirama' th:attr="attr-precio=${Tirama.getPrecio()}"/>
+                                                    <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroqTirama" value='Tirama' attr-precio={obtenerMaquinaPorNombre("Tirama")}/>
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="maquinaTroqTirama">
                                                         Tirama
                                                     </label>
@@ -1689,27 +1717,38 @@ const Cotizacion=()=> {
                         </div>
                     </div>
                 </form>
-                {allCoti.length>0 &&  <TabulatorTable
-                columns={[
-                {title: 'Cotización',field:'coti'},
-                {title:'Cantidad Etiquetas',field:'cantidadtd'},
-                {title:'Costo Material',field:'materialValorpreciotd'},
-                {title:'Costo Acabado',field:'acabadoValorpreciotd'},
-                {title:'Costo Cold foild',field:'coldValorpreciotd'},
-                {title:'Costo Maquina',field:'Costo_total_maquinatd'},
-                {title:'Horas Maquina',field:'horas_maquina'},
-                {title:'Costo Graduación Planchas',field:'precioGraduacionPlanchastd'},
-                {title:'Costo Cambio de plancha',field:'CambPlanchastd'},
-                {title:'Costo Graduación P.A.R',field:'GradPARtd'},
-                {title:'Costo Cambio de tintas',field:'CambiosTintastd'},
-                {title:'Costo Prep. tintas',field:'PrepTintastd'},
-                {title:'Costo Planchas',field:'costoPlanchasporEtiquetatd'},
-                {title:'Costo Tintas',field:'calcularValorTotalTintastd'},
-                {title:'Costo Transporte',field:'transporteCiudadpreciotd'},
-                {title:'Costo Total',field:'costo_totaltd'}
-               ]}
-               data={allCoti}
-                ></TabulatorTable>}
+                
+                {mostrartabla && 
+                    <div className="bg-success top-50 start-50 translate-middle" style={{position:"fixed",width:"85vw",height:"80vh",zIndex:"400"}}>
+                                <FontAwesomeIcon
+                                    icon={faX}
+                                    className=" absolute top-8 right-6 cursor-pointer text-[10px] sm:text-xs"
+                                    onClick={()=>setMostrartabla(false)}
+                                />
+                                <TabulatorTable
+                                    columns={[
+                                    {title: 'Cotización',field:'coti'},
+                                    {title:'Cantidad Etiquetas',field:'cantidadtd'},
+                                    {title:'Costo Material',field:'materialValorpreciotd'},
+                                    {title:'Costo Acabado',field:'acabadoValorpreciotd'},
+                                    {title:'Costo Cold foild',field:'coldValorpreciotd'},
+                                    {title:'Costo Maquina',field:'Costo_total_maquinatd'},
+                                    {title:'Horas Maquina',field:'horas_maquina'},
+                                    {title:'Costo Graduación Planchas',field:'precioGraduacionPlanchastd'},
+                                    {title:'Costo Cambio de plancha',field:'CambPlanchastd'},
+                                    {title:'Costo Graduación P.A.R',field:'GradPARtd'},
+                                    {title:'Costo Cambio de tintas',field:'CambiosTintastd'},
+                                    {title:'Costo Prep. tintas',field:'PrepTintastd'},
+                                    {title:'Costo Planchas',field:'costoPlanchasporEtiquetatd'},
+                                    {title:'Costo Tintas',field:'calcularValorTotalTintastd'},
+                                    {title:'Costo Transporte',field:'transporteCiudadpreciotd'},
+                                    {title:'Costo Total',field:'costo_totaltd'}
+                                ]}
+                                action={handleRowSelectedCoti}
+                                data={allCoti}
+                                
+                                ></TabulatorTable>
+                    </div>}
                
                                         
             </div>

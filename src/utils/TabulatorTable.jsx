@@ -3,7 +3,7 @@ import React, { useEffect, useState,useRef } from "react";
 import {TabulatorFull as Tabulator} from "tabulator-tables"; //import Tabulator library
 import "tabulator-tables/dist/css/tabulator.min.css";
 
-const TabulatorTable = ({ data,columns,action }) => {
+const TabulatorTable = ({ data,columns,action=null }) => {
   const tableRef = useRef(null);
   let tabla;
   const localeConfig = {
@@ -40,11 +40,12 @@ const TabulatorTable = ({ data,columns,action }) => {
   };
 
 
- 
+  
   
 
   useEffect(() => {
     if (tableRef.current) {
+      console.log(data)
       tabla=new Tabulator(tableRef.current, {
         data: data,
         columns: columns,
@@ -54,9 +55,12 @@ const TabulatorTable = ({ data,columns,action }) => {
         selectableRows: 1,       
        
       });
-      tabla.on("rowSelectionChanged", function(data){
-        action(data)
-      });
+   
+        tabla.on("rowSelectionChanged", function(data){
+          action(data)
+        });
+      
+      
     }
   }, []);
 
