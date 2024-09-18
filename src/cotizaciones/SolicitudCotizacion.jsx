@@ -20,7 +20,10 @@ const SolicitudCotizacion=()=> {
         const [valueAcabado, setValueAcabado] = useState(null);
         const [valueProducto, setValueProducto] = useState(null);
         const [valueCiudad, setValueCiudad] = useState(null);
+        const [valueCiudadAlls, setValueCiudadAlls] = useState([]);
+        
         const [valueCiudadId, setValueCiudadId] = useState(null);
+        const [valueAsesorId, setValueAsesorId] = useState(null);
         const [valueCliente, setValueCliente] = useState(null);
         const [valueClienteId, setValueClienteId] = useState(null);
         const {
@@ -110,6 +113,9 @@ const SolicitudCotizacion=()=> {
                   
                 );
                 setAllDatas(response.data)
+                console.log(response.data)
+                const emailToken =Decrypt(localStorage.getItem("SesionToken"));
+                setValue('digitado',emailToken)
               } catch (error) {
                 console.error('Error fetching data:', error);
               } finally {
@@ -136,6 +142,24 @@ const SolicitudCotizacion=()=> {
             fetchData();
         }, [valueCiudadId])
         const { msg } = alert;
+
+        const fechaTime=new Date();
+        const anio = fechaTime.getFullYear();
+        const mes = ("0" + (fechaTime.getMonth() + 1)).slice(-2); // Los meses comienzan desde 0
+        const dia = ("0" + fechaTime.getDate()).slice(-2);
+        
+        const fechaFormateada = `${anio}-${mes}-${dia}`;
+
+        const nuevaFecha = new Date(fechaTime);
+        nuevaFecha.setDate(nuevaFecha.getDate() + 30);
+
+        // Formatear la nueva fecha
+        const nuevoAnio = nuevaFecha.getFullYear();
+        const nuevoMes = ("0" + (nuevaFecha.getMonth() + 1)).slice(-2);
+        const nuevoDia = ("0" + nuevaFecha.getDate()).slice(-2);
+
+        const nuevaFechaFormateada = `${nuevoAnio}-${nuevoMes}-${nuevoDia}`;
+        setValue("fecha_vigencia", nuevaFechaFormateada);
   return (
     <>  
     {loadingIcon && <div className="position-fixed rounded p-1 shadow-lg" style={{zIndex:200,top:10,right:20,height:"8vh",width:"5vw",background:"#498ac2"}}><FontAwesomeIcon className="fa-spin fa-beat-fade text-white" style={{height:"90%"}}   icon={faArrowsRotate}/></div>}
@@ -159,8 +183,8 @@ const SolicitudCotizacion=()=> {
                             
                                 <div className="form-floating mx-auto p-1 col-4 " >
                                     <select className="form-select bg-secondary-subtle-r " id="tipo_cotizacion" {...register("tipo_cotizacion",{required:'campo requerido'})} aria-label="Tipo cotización">
-                                        <option value="N" >Nueva</option>
-                                        <option value="R">Repetida</option>
+                                        <option value={"N"} >Nueva</option>
+                                        <option value={"R"}>Repetida</option>
 
                                     </select>
                                     <label style={{color:"#000000"}} htmlFor="tipo_cotizacion">Tipo</label>
@@ -169,13 +193,13 @@ const SolicitudCotizacion=()=> {
                             
 
                                 <div className="form-floating  mx-auto p-1 col-4" >
-                                    <input type="datetime-local" className="form-control" value={fecha} id="fecha_cotizacion" {...register("fecha_cotizacion")} readOnly />
+                                    <input type="date" className="form-control" value={fechaFormateada} id="fecha_cotizacion" {...register("fecha_cotizacion")} readOnly />
                                     <label style={{color:"#000000"}} htmlFor="fecha_cotizacion">Fecha</label>
                                 </div>
 
                             
                                 <div className="form-floating  mx-auto p-1 col-4">
-                                    <input type="date" className="form-control" id="fecha_vigencia" {...register("fecha_vigencia")} value={fechaExpiracion} />
+                                    <input type="date" className="form-control" id="fecha_vigencia" {...register("fecha_vigencia")}  />
                                     <label style={{color:"#000000"}} htmlFor="fecha_vigencia">Vigencia</label>
                                 </div>
                         
@@ -226,10 +250,18 @@ const SolicitudCotizacion=()=> {
                                 </div>
                             
                                 <div className="form-floating mx-auto p-1 col-3" style={{paddingRight:"2px"}}>
-                                    <select className="form-select bg-secondary-subtle-r" id="forma_pago" aria-label="forma_pago" {...register("forma_pago",{required:'campo requerido'})} >
+                                    <select  defaultValue="Segun reglas de negocio" className="form-select bg-secondary-subtle-r" id="forma_pago" aria-label="forma_pago" {...register("forma_pago",{required:'campo requerido'})} >
 
-                                        <option value="N" >Forma de pago</option>
-                                        <option value="R">Repetida</option>
+                                        <option value={"Contado"}>Contado</option>
+                                        <option value={"8 días"}>8 días</option>
+                                        <option value={"15 días"}>15 días</option>
+                                        <option value={"30 días"}>30 días</option>
+                                        <option value={"45 días"}>45 días</option>
+                                        <option value={"60 días"}>60 días</option>
+                                        <option value={"90 días"}>90 días</option>
+                                        <option value={"50% 50"}>50% 50%</option>
+                                        <option value={"75 días"}>75 días</option>
+                                        <option value={"Segun reglas de negocio"} >Segun reglas de negocio</option>
 
                                     </select>
                                     <label style={{color:"#000000"}} htmlFor="forma_pago">Forma de pago</label>
@@ -886,16 +918,21 @@ const SolicitudCotizacion=()=> {
                                 </div>
 
                         
-                                <div className="form-floating mx-auto p-1 col-6" style={{paddingRight:"2px"}}>
-                                    <select className="form-select bg-secondary-subtle-r" id="ciudad_entrega-select" {...register("ciudad_entrega")} multiple aria-label="ciudad_entrega"  data-placeholder="Seleccionar ciudad/es...">
-                                        <option  th:each="ciudad : ${ciudades}"   th:value="${ciudad.id}" th:text="${ciudad.nombre}"></option>
-                                    </select>
-
-                                </div>
-
-                                <div className="form-floating  mx-auto p-1 col-3">
-                                    <input type="text" className="form-control" id="puntos_entrega" {...register("puntos_entrega")}/>
-                                    <label style={{color:"#000000"}} htmlFor="puntos_entrega">Puntos de entrega</label>
+                                <div className="form-floating mx-auto p-1 col-9" style={{paddingRight:"2px"}}>
+                                
+                                    {allDatas?.ciudades?
+                                    <Autocomplete
+                                        className='shearchinputs'
+                                        value={valueCiudadAlls}
+                                        onChange={(event, newValue) => {setValueCiudadAlls(newValue);setValue("ciudad_entrega",valueCiudadAlls.map(item => item.id))}}
+                                        options={allDatas?.ciudades}
+                                        getOptionLabel={(option) => option.nombre}
+                                        renderInput={(params) => <TextField {...params} required label="Seleccionar puntos de entrega" />}
+                                        isOptionEqualToValue={(option, value) => option.id === value?.id}
+                                        multiple
+                                    />
+                                
+                                :""}
                                 </div>
 
                             </div>
@@ -903,11 +940,20 @@ const SolicitudCotizacion=()=> {
                             <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row"}}>
                         
                                 <div className="form-floating  mx-auto p-1 col-5">
-
-                                    <select className="form-select bg-secondary-subtle-r" id="asesor-select" {...register("asesor")} aria-label="asesor">
-                                        <option value="" >Seleccionar Asesor...</option>
-                                        <option  th:each="asesor : ${asesores}"   th:value="${asesor.getId()}" th:text="${asesor.getName()}"></option>
-                                    </select>
+                                {allDatas?.users?
+                                <Autocomplete
+                                        className='shearchinputs'
+                                        value={valueAsesorId}
+                                        onChange={(event, newValue) => {setValueAsesorId(newValue);setValue("asesor",newValue.id)}}
+                                        options={allDatas?.users}
+                                        getOptionLabel={(option) => option.name}
+                                        renderInput={(params) => <TextField {...params} required label="Seleccionar Asesor" />}
+                                        isOptionEqualToValue={(option, value) => option.id === value?.id}
+                                        
+                                        />
+                                    
+                                        :""}
+                       
                                 </div>
                                 <div className="form-floating  mx-auto p-1 col-2">
                                     <input type="text" className="form-control" id="comision" {...register("comision")} value="3"/>
@@ -924,11 +970,9 @@ const SolicitudCotizacion=()=> {
                                     <label style={{color:"#000000"}} htmlFor="">Tipo</label>
                                 </div>
                                 <div className="form-floating  mx-auto p-1 col-3">
-
-                                    <select className="form-select bg-secondary-subtle-r" id="digitado-select" {...register("digitado")} aria-label="digitado">
-                                        <option value="" >Seleccionar digitador por...</option>
-                                        <option  th:each="asesor : ${asesores}"   th:value="${asesor.getId()}" th:text="${asesor.getName()}"></option>
-                                    </select>
+                                    <input type="text" readOnly className="form-control hidden" id="digitado" {...register("digitado")} />
+                                    <input type="text" readOnly className="form-control" id="digitado" value={Decrypt(localStorage.getItem("NameToken"))} />
+                                   
                                 </div>
                             
 

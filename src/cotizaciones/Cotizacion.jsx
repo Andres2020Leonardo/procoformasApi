@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { set, useForm } from "react-hook-form";
 import ClientAxios from "../config/ClientAxios";
 import Decrypt from "../config/Decrypt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -6,6 +6,7 @@ import { faAngleDown, faAngleUp, faArrowDown, faArrowsRotate, faArrowUp, faCheck
 import { useEffect, useRef, useState } from "react";
 import DataTable from 'react-data-table-component';
 import TabulatorTable from "../utils/TabulatorTable";
+import OCRComponent from "../utils/OCRComponent";
 
 const Cotizacion=()=> {
     const [loadingIcon,setLoadingIcon] = useState(false);
@@ -82,7 +83,7 @@ const Cotizacion=()=> {
         around:0,
         across:0,
         sustratoTipo:0,
-        espacioexteriores:0,
+        espacioexteriores:0.7,
         espacioentreetiquetas:0,
         precioMaterial:0,
         anchoMaterialC:0,
@@ -90,19 +91,19 @@ const Cotizacion=()=> {
         anchoLaminacionC:0,
         precioCold:0,
         anchoColdC:0,
-        CubrimientoCoti1:0,
+        CubrimientoCoti1:100,
         tipoTinta1:0,
         grTinta1:0,
         PlanchasTinta1:0,
-        CubrimientoCoti2:0,
+        CubrimientoCoti2:100,
         tipoTinta2:0,
         grTinta2:0,
         PlanchasTinta2:0,
-        CubrimientoCoti3:0,
+        CubrimientoCoti3:100,
         tipoTinta3:0,
         grTinta3:0,
         PlanchasTinta3:0,
-        CubrimientoCoti4:0,
+        CubrimientoCoti4:100,
         tipoTinta4:0,
         grTinta4:0,
         PlanchasTinta4:0,
@@ -234,7 +235,6 @@ const Cotizacion=()=> {
             );
             
             setAllDatas(response.data)
-            console.log(response.data);
           } catch (error) {
             console.error('Error fetching data:', error);
           } finally {
@@ -304,7 +304,7 @@ const Cotizacion=()=> {
         if(datos.length==1){
             let dato =datos[0];
             setValue('precioMaterial',dato.precio);
-          
+            setValue('metros',calcularMetros(watch('cantidad1')))
             if (toggleButtonMaterial.current) {
                 toggleButtonMaterial.current.querySelector('p').textContent = 'Material: '+dato.material;
                 toggleButtonMaterial.current.classList.add('checkbutonTables')
@@ -323,7 +323,6 @@ const Cotizacion=()=> {
       const toggleButtonAcabado =useRef(null);
       const [toggleButtonAcabadoIsopen,setToggleButtonAcabadoIsopen]=useState(false);
       const handleRowSelectedAcabado=(datos)=>{
-        console.log(datos)
         
         if(datos.length==1){
             let dato =datos[0];
@@ -347,7 +346,6 @@ const Cotizacion=()=> {
       const toggleButtonCold =useRef(null);
       const [toggleButtonColdIsopen,setToggleButtonColdIsopen]=useState(false);
       const handleRowSelectedCold=(datos)=>{
-        console.log(datos)
         
         if(datos.length==1){
             let dato =datos[0];
@@ -383,14 +381,16 @@ const Cotizacion=()=> {
         let CAMBIO_DE_PLANCHAS=parseFloat(watch('CambPlanchas'))*50
         let sumaTotal=constante+REGISTRO_COLORES+MATERIAL_SIN_DESPERDICIO+REGISTRO_DE_TROQUEL+CAMBIO_DE_ROLLO+CAMBIO_DE_PLANCHAS
         let metros=(sumaTotal>1000)?sumaTotal=sumaTotal+50:sumaTotal=sumaTotal+30;
-
+        console.log('metros',metros)
         return  Math.round(metros);
     }
     function calcularCostoTintaM2(){
         let valor_tintas=( parseFloat(watch('grTinta1'))*(parseFloat(watch('CubrimientoCoti1'))/100))+( parseFloat(watch('grTinta2'))*(parseFloat(watch('CubrimientoCoti2'))/100))+( parseFloat(watch('grTinta3'))*(parseFloat(watch('CubrimientoCoti3'))/100))+( parseFloat(watch('grTinta4'))*(parseFloat(watch('CubrimientoCoti4'))/100))
+      
         return Math.round(valor_tintas)
     }
     function calcularValorTotalTintas(cantidad){
+        
         cantidad = parseFloat(cantidad)
         let area_total_etiquetasCM2=calcularAreaEtiqueta()*cantidad;
         let area_total_etiquetasM2=area_total_etiquetasCM2/10000;
@@ -400,7 +400,6 @@ const Cotizacion=()=> {
     }
     function numeroDePlanchas() {
         let texto_acabado=toggleButtonAcabado.current.querySelector('p').textContent;
-        console.log("acabado prueba",texto_acabado);
         let planchas=parseFloat(watch('PlanchasTinta1'))+parseFloat(watch('PlanchasTinta2'))+parseFloat(watch('PlanchasTinta3'))+parseFloat(watch('PlanchasTinta4'))
         if (texto_acabado.includes("PARCIAL")){
             planchas=planchas+1
@@ -440,7 +439,7 @@ const Cotizacion=()=> {
             precio_adicional_maquina=precio_adicional_maquina+PrepTintas;
         }
         if (CambPlanchas>0){
-            ///tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat($('GradPlanchas'))*10)
+            // tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat(watch('GradPlanchas'))*10)
             precio_adicional_maquina=precio_adicional_maquina+CambPlanchas;
         }
         if (GradPAR>0){
@@ -455,6 +454,7 @@ const Cotizacion=()=> {
         var IRAdhesivo = document.querySelector('input[name="IRAdhesivo"]:checked');
         
             if(IRAdhesivo.value=="Si"){
+                
                 precio_adicional_maquina=precio_adicional_maquina*parseFloat(IRAdhesivo.getAttribute('attr-precio'))
                 tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(IRAdhesivo.getAttribute('attr-tiempo'));
             }
@@ -502,17 +502,17 @@ const Cotizacion=()=> {
         ///// velocidadImp
         var velocidadImp = document.querySelector('input[name="velocidadImp"]:checked');
         let velocidad=0
-      
+        
             if (velocidadImp.value=="Otro"){
                 velocidad=parseFloat(watch('velocidadImpvalor'));
             }else{
-                velocidad=parseFloat(velocidadImp);
+                velocidad=parseFloat(watch('velocidadImp'));
             }
 
         ///// maquina
         var maquina = document.querySelector('input[name="maquina"]:checked');
         let maquinaprecio=0
-        console.log("maqu",maquina)
+        
         if (maquina) {
             maquinaprecio = parseFloat(maquina.getAttribute('attr-precio'));
         } else {
@@ -521,11 +521,16 @@ const Cotizacion=()=> {
         /// calculo valor maquina
 
         let trabajohoras=metroslineales/velocidad;
+        
+       
         tiempo_adicional_maquina=tiempo_adicional_maquina/60
+        
         let Costo_tiempo_adicional=maquinaprecio*tiempo_adicional_maquina
         let Costo_total_trabajo=trabajohoras*maquinaprecio
         let Costo_total_maquina=0
         Costo_total_maquina=Costo_total_trabajo+Costo_tiempo_adicional
+    
+       
         ///// fin radios
         let etiqAlAncho=document.getElementById('etiqAlAncho').getAttribute('attr-precio');
         let avanceZebra=document.getElementById('avanceZebra').getAttribute('attr-precio');
@@ -540,7 +545,7 @@ const Cotizacion=()=> {
         ///// transporteCiudad
         var transporteCiudad = document.querySelector('input[name="transporteCiudad"]:checked');
         let transporteCiudadprecio=0
-        if (transporteCiudad) {
+        if (false) {
             transporteCiudadprecio = parseFloat(transporteCiudad.getAttribute('attr-precio'));
         } 
         var materialValor = toggleButtonMaterial.current.querySelector('p').textContent;
@@ -576,7 +581,7 @@ const Cotizacion=()=> {
 
 
 
-        let costo_total=avanceZebra+RefDistintasZebra+etiqAlAncho+coldValorprecio+materialValorprecio+acabadoValorprecio+Costo_total_maquina+precioGraduacionPlanchas+CambPlanchas+GradPAR+PrepTintas+CambiosTintas+costoPlanchasporEtiqueta(cantidad)+calcularValorTotalTintas(cantidad)+transporteCiudadprecio+CintaZebraprecio
+        let costo_total=parseFloat(avanceZebra)+parseFloat(RefDistintasZebra)+parseFloat(etiqAlAncho)+parseFloat(coldValorprecio)+parseFloat(materialValorprecio)+parseFloat(acabadoValorprecio)+parseFloat(Costo_total_maquina)+parseFloat(precioGraduacionPlanchas)+parseFloat(CambPlanchas)+parseFloat(GradPAR)+parseFloat(PrepTintas)+parseFloat(CambiosTintas)+parseFloat(costoPlanchasporEtiqueta(cantidad))+parseFloat(calcularValorTotalTintas(cantidad))+parseFloat(transporteCiudadprecio)+parseFloat(CintaZebraprecio);
         
         
         var coti = (coti);
@@ -595,6 +600,7 @@ const Cotizacion=()=> {
         var calcularValorTotalTintastd = (Math.round(calcularValorTotalTintas(cantidad)));
         var transporteCiudadpreciotd = ("");
         var costo_totaltd = (Math.round(costo_total));
+
 
         let cotizando ={
             'coti':coti,
@@ -637,7 +643,7 @@ const Cotizacion=()=> {
   
     return (
         
-        <>  {loadingIcon && <div className="position-fixed rounded p-1 shadow-lg" style={{zIndex:200,top:10,right:20,height:"8vh",width:"5vw",background:"#498ac2"}}><FontAwesomeIcon className="fa-spin fa-beat-fade text-white" style={{height:"90%"}}   icon={faArrowsRotate}/></div>}
+        <>  {loadingIcon && <div className="position-fixed rounded p-1 shadow-lg" style={{zIndex:200,top:10,right:20,height:"8vh",width:"5vw",background:"#498ac2"}}><FontAwesomeIcon className="fa-spin fa-beat-fade text-black" style={{height:"90%"}}   icon={faArrowsRotate}/></div>}
             {checkStatusView ? <></> :  checkStatus ? <div className="position-fixed rounded p-1 shadow-lg" style={{zIndex:200,top:10,right:20,height:"8vh",width:"5vw",background:"#498ac2"}}><FontAwesomeIcon className=" fa-beat-fade text-success" style={{height:"90%"}}   icon={faCheck}/></div>:<div className="position-fixed rounded p-1 shadow-lg" style={{zIndex:200,top:10,right:20,height:"8vh",width:"5vw",background:"#498ac2"}}><FontAwesomeIcon className="fa-beat-fade text-danger" style={{height:"90%"}}   icon={faX}/></div>}
             
             {!allDatas?.clientes?<div className="navegadorOpenBody d-flex  h-100vh"><img
@@ -861,7 +867,7 @@ const Cotizacion=()=> {
                                         </div>
                                     </div>
                                     <h4 className="col-12 text-black mt-3 bold " style={{textAlign: "center"}}>Planeación y costo troquel</h4>
-                                    <hr style={{marginTop:" -1px", border: "#ffffff 2px solid"}}/>
+                                    <hr style={{marginTop:" -1px", border: "#000000 2px solid"}}/>
                                     <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
 
                                         <div className="form-floating  mx-auto p-1 col-12 ">
@@ -1201,10 +1207,10 @@ const Cotizacion=()=> {
                                         <label style={{color:"#000000"}} htmlFor="CubrimientoCoti1">Cubrimiento (%)</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 col-3">
-                                        <select className="form-select" id="tipoTinta1" {...register("tipoTinta1")} aria-label="tipoTinta1">
+                                        <select className="form-select" id="tipoTinta1" {...register("tipoTinta1")} onChange={(e)=>setValue('grTinta1',parseFloat(e.target.selectedOptions[0].getAttribute('attr-precio'))*parseFloat(e.target.selectedOptions[0].getAttribute('attr-gramosM2')))} aria-label="tipoTinta1">
                                             <option  >Ninguno</option>
                                             {allDatas.tintas.map(tinta => (
-                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.valorMinimo}  attr-gramosM2={tinta.gramosM2}>
+                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.precioGramo}  attr-gramosM2={tinta.gramosM2}>
                                                     {tinta.tinta}
                                                 </option>
                                             ))}
@@ -1213,7 +1219,7 @@ const Cotizacion=()=> {
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="grTinta1" {...register("grTinta1")} readOnly={true} />
-                                        <label style={{color:"#000000"}} htmlFor="grTinta1">$Gr. tinta (m &sup2)</label>
+                                        <label style={{color:"#000000"}} htmlFor="grTinta1">$Gr. tinta (m²)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="PlanchasTinta1" {...register("PlanchasTinta1")} />
@@ -1226,10 +1232,10 @@ const Cotizacion=()=> {
                                         <label style={{color:"#000000"}} htmlFor="CubrimientoCoti2">Cubrimiento (%)</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 col-3">
-                                        <select className="form-select" id="tipoTinta2" {...register("tipoTinta2")} aria-label="tipoTinta2">
+                                        <select className="form-select" id="tipoTinta2" {...register("tipoTinta2")} onChange={(e)=>setValue('grTinta2',parseFloat(e.target.selectedOptions[0].getAttribute('attr-precio'))*parseFloat(e.target.selectedOptions[0].getAttribute('attr-gramosM2')))} aria-label="tipoTinta2">
                                             <option  >Ninguno</option>
                                             {allDatas.tintas.map(tinta => (
-                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.valorMinimo}  attr-gramosM2={tinta.gramosM2}>
+                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.precioGramo}  attr-gramosM2={tinta.gramosM2}>
                                                     {tinta.tinta}
                                                 </option>
                                             ))}
@@ -1238,7 +1244,7 @@ const Cotizacion=()=> {
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="grTinta2" {...register("grTinta2")} readOnly={true} />
-                                        <label style={{color:"#000000"}} htmlFor="grTinta2">$Gr. tinta (m &sup2)</label>
+                                        <label style={{color:"#000000"}} htmlFor="grTinta2">$Gr. tinta (m²)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="PlanchasTinta2" {...register("PlanchasTinta2")} />
@@ -1252,10 +1258,10 @@ const Cotizacion=()=> {
                                         <label style={{color:"#000000"}} htmlFor="CubrimientoCoti3">Cubrimiento (%)</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 col-3">
-                                        <select className="form-select" id="tipoTinta3" {...register("tipoTinta3")} aria-label="tipoTinta3">
+                                        <select className="form-select" id="tipoTinta3" {...register("tipoTinta3")} onChange={(e)=>setValue('grTinta3',parseFloat(e.target.selectedOptions[0].getAttribute('attr-precio'))*parseFloat(e.target.selectedOptions[0].getAttribute('attr-gramosM2')))} aria-label="tipoTinta3">
                                             <option  >Ninguno</option>
                                             {allDatas.tintas.map(tinta => (
-                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.valorMinimo}  attr-gramosM2={tinta.gramosM2}>
+                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.precioGramo}  attr-gramosM2={tinta.gramosM2}>
                                                     {tinta.tinta}
                                                 </option>
                                             ))}
@@ -1265,7 +1271,7 @@ const Cotizacion=()=> {
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="grTinta3" {...register("grTinta3")} readOnly={true} />
-                                        <label style={{color:"#000000"}} htmlFor="grTinta3">$Gr. tinta (m &sup2)</label>
+                                        <label style={{color:"#000000"}} htmlFor="grTinta3">$Gr. tinta (m²)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="PlanchasTinta3" {...register("PlanchasTinta3")}  />
@@ -1279,10 +1285,10 @@ const Cotizacion=()=> {
                                         <label style={{color:"#000000"}} htmlFor="CubrimientoCoti4">Cubrimiento (%)</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 col-3">
-                                        <select className="form-select" id="tipoTinta4" {...register("tipoTinta4")} aria-label="tipoTinta4">
+                                        <select className="form-select" id="tipoTinta4"  {...register("tipoTinta4")}  onChange={(e)=>setValue('grTinta4',parseFloat(e.target.selectedOptions[0].getAttribute('attr-precio'))*parseFloat(e.target.selectedOptions[0].getAttribute('attr-gramosM2')))} aria-label="tipoTinta4">
                                             <option  >Ninguno</option>
                                            {allDatas.tintas.map(tinta => (
-                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.valorMinimo}  attr-gramosM2={tinta.gramosM2}>
+                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.precioGramo}  attr-gramosM2={tinta.gramosM2}>
                                                     {tinta.tinta}
                                                 </option>
                                             ))}
@@ -1291,7 +1297,7 @@ const Cotizacion=()=> {
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="grTinta4" {...register("grTinta4")} readOnly={true} />
-                                        <label style={{color:"#000000"}} htmlFor="grTinta4">$Gr. tinta (m&sup2)</label>
+                                        <label style={{color:"#000000"}} htmlFor="grTinta4">$Gr. tinta (m²)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="PlanchasTinta4" {...register("PlanchasTinta4")} />
@@ -1300,7 +1306,7 @@ const Cotizacion=()=> {
 
                                 </div>
 
-                            <hr style={{marginTop:" -1px", border: "#ffffff 2px solid"}}/>
+                            <hr style={{marginTop:" -1px", border: "#000000 2px solid"}}/>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="CambPlanchas" {...register("CambPlanchas")}  attr-precio="0"  />
@@ -1319,9 +1325,9 @@ const Cotizacion=()=> {
                                         <label style={{color:"#000000"}} htmlFor="avanceReal" >Avance</label>
                                     </div>
                                 </div>
-                                <h4 className="col-12 text-white mt-3" style={{textAlign: "center"}}>Graduaciones</h4>
+                                <h4 className="col-12 text-black mt-3" style={{textAlign: "center"}}>Graduaciones</h4>
 
-                                <hr style={{marginTop:" -1px", border: "#ffffff 2px solid"}}/>
+                                <hr style={{marginTop:" -1px", border: "#000000 2px solid"}}/>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="GradPlanchas" {...register("GradPlanchas")}  attr-precio="12000"  />
@@ -1465,8 +1471,8 @@ const Cotizacion=()=> {
                                         <label style={{color:"#000000"}} htmlFor="divg6">Mesa Shetter</label>
                                     </div>
                                 </div>
-                                <h4 className="col-12 text-white mt-3" style={{textAlign: "center"}}>Impresion</h4>
-                                <hr style={{marginTop:" -1px", border: "#ffffff 2px solid"}}/>
+                                <h4 className="col-12 text-black mt-3" style={{textAlign: "center"}}>Impresion</h4>
+                                <hr style={{marginTop:" -1px", border: "#000000 2px solid"}}/>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-6 ">
                                         <div className="form-control" id="impresionV" style={{display: "flex", flexDirection: "column", height: "130px"}}>
@@ -1565,21 +1571,21 @@ const Cotizacion=()=> {
                                         <label style={{color:"#000000"}} htmlFor="maquinadiv">Maquina</label>
                                     </div>
                                 </div>
-                                <h4 className="col-12 text-white mt-3" style={{textAlign: "center"}}>Impresion variable en zebra</h4>
-                                <hr style={{marginTop:" -1px", border: "#ffffff 2px solid"}}/>
+                                <h4 className="col-12 text-black mt-3" style={{textAlign: "center"}}>Impresion variable en zebra</h4>
+                                <hr style={{marginTop:" -1px", border: "#000000 2px solid"}}/>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
 
 
                                     <div className="form-floating  mx-auto p-1 " style={{width: "25% "}}>
-                                        <input type="text" className="form-control" id="etiqAlAncho" {...register("etiqAlAncho")}/>
+                                        <input type="text" className="form-control" id="etiqAlAncho" attr-precio="0"  {...register("etiqAlAncho")}/>
                                         <label style={{color:"#000000"}} htmlFor="etiqAlAncho">#Etiq. al ancho</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 " style={{width: "25% "}}>
-                                        <input type="text" className="form-control" id="avanceZebra" {...register("avanceZebra")}/>
+                                        <input type="text" className="form-control" id="avanceZebra" attr-precio="0" {...register("avanceZebra")} />
                                         <label style={{color:"#000000"}} htmlFor="avanceZebra">Avance (cms)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 " style={{width: "25% "}}>
-                                        <input type="text" className="form-control" id="RefDistintasZebra" {...register("RefDistintasZebra")} attr-precio="5000"/>
+                                        <input type="text" className="form-control" id="RefDistintasZebra"   {...register("RefDistintasZebra")} attr-precio="5000"/>
                                         <label style={{color:"#000000"}} htmlFor="RefDistintasZebra">Ref. Distintas</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 " style={{width: "25% "}}>
@@ -1592,8 +1598,8 @@ const Cotizacion=()=> {
                                     </div>
 
                                 </div>
-                                <h4 className="col-12 text-white mt-3" style={{textAlign: "center"}}>Terminacion y empaque</h4>
-                                <hr style={{marginTop:" -1px", border: "#ffffff 2px solid"}}/>
+                                <h4 className="col-12 text-black mt-3" style={{textAlign: "center"}}>Terminacion y empaque</h4>
+                                <hr style={{marginTop:" -1px", border: "#000000 2px solid"}}/>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-12 ">
                                         <div className="form-control" id="" style={{display: "flex", flexDirection: "column", height: "130px"}}>
@@ -1636,9 +1642,9 @@ const Cotizacion=()=> {
 
                                     </div>
                                 </div>
-                                <h4 className="col-12 text-white mt-3" style={{textAlign: "center"}}>Recargo, transporte, mdel y comisión</h4>
-                                <hr style={{marginTop:" -1px", border: "#ffffff 2px solid"}}/>
-                                <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
+                                <h4 className="col-12 text-black mt-3 hidden" style={{textAlign: "center"}}>Recargo, transporte, mdel y comisión</h4>
+                                <hr style={{marginTop:" -1px", border: "#000000 2px solid"}}/>
+                                <div className="col-12 zoom90 " style={{display: "none", flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-12 ">
                                         <div className="form-control" id="" style={{display: "flex", flexDirection: "column", height: "230px"}}>
                                             <div style={{display: "flex", flexDirection:"row"}}>
@@ -1711,44 +1717,143 @@ const Cotizacion=()=> {
                                     </div>
                                 </div>
                                 <div className="col-12" style={{display: "flex", flexDirection:"row"}}>
-                                    <button id="cotizarB" type="button" className="btn btn-success mx-auto col-8 text-white mt-3 mb-2 p-2" onClick={constructionCotizacion}>Cotizar</button>
+                                    <button id="cotizarB" type="button" className="btn btn-success mx-auto col-8 text-black mt-3 mb-2 p-2" onClick={constructionCotizacion}>Cotizar</button>
                                 </div>
                             </div>
                         </div>
                     </div>
+                    
                 </form>
                 
                 {mostrartabla && 
-                    <div className="bg-success top-50 start-50 translate-middle" style={{position:"fixed",width:"85vw",height:"80vh",zIndex:"400"}}>
-                                <FontAwesomeIcon
-                                    icon={faX}
-                                    className=" absolute top-8 right-6 cursor-pointer text-[10px] sm:text-xs"
-                                    onClick={()=>setMostrartabla(false)}
-                                />
-                                <TabulatorTable
-                                    columns={[
-                                    {title: 'Cotización',field:'coti'},
-                                    {title:'Cantidad Etiquetas',field:'cantidadtd'},
-                                    {title:'Costo Material',field:'materialValorpreciotd'},
-                                    {title:'Costo Acabado',field:'acabadoValorpreciotd'},
-                                    {title:'Costo Cold foild',field:'coldValorpreciotd'},
-                                    {title:'Costo Maquina',field:'Costo_total_maquinatd'},
-                                    {title:'Horas Maquina',field:'horas_maquina'},
-                                    {title:'Costo Graduación Planchas',field:'precioGraduacionPlanchastd'},
-                                    {title:'Costo Cambio de plancha',field:'CambPlanchastd'},
-                                    {title:'Costo Graduación P.A.R',field:'GradPARtd'},
-                                    {title:'Costo Cambio de tintas',field:'CambiosTintastd'},
-                                    {title:'Costo Prep. tintas',field:'PrepTintastd'},
-                                    {title:'Costo Planchas',field:'costoPlanchasporEtiquetatd'},
-                                    {title:'Costo Tintas',field:'calcularValorTotalTintastd'},
-                                    {title:'Costo Transporte',field:'transporteCiudadpreciotd'},
-                                    {title:'Costo Total',field:'costo_totaltd'}
-                                ]}
-                                action={handleRowSelectedCoti}
-                                data={allCoti}
-                                
-                                ></TabulatorTable>
-                    </div>}
+                    <div className="bg-success  top-50 start-50 translate-middle" style={{position:"fixed",width:"100vw",height:"100vh",zIndex:"300"}}>
+                        <div className="bg-body rounded top-50 start-50 translate-middle p-4" style={{position:"fixed",width:"85vw",height:"80vh",zIndex:"400"}}>
+                                    <button   onClick={()=>setMostrartabla(false)} style={{position:"absolute",top:8,right:8,width:"30px",height:"30px",display:"flex",alignItems:"center",alignContent:"center"}}><FontAwesomeIcon
+                                        icon={faX}
+                                        
+                                        className=" my-auto mx-auto "
+                                    
+                                    /></button>
+                                    <div className="mt-4"></div>
+                                    <TabulatorTable
+                                        
+                                        columns={[
+                                        {title: 'Cotización',field:'coti'},
+                                        {title:'Cantidad Etiquetas',field:'cantidadtd'},
+                                        {title:'Costo Material',field:'materialValorpreciotd',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:false,
+                                        }},
+                                        {title:'Costo Acabado',field:'acabadoValorpreciotd',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:false,
+                                        }},
+                                        {title:'Costo Cold foild',field:'coldValorpreciotd',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:false,
+                                        }},
+                                        {title:'Costo Maquina',field:'Costo_total_maquinatd',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:false,
+                                        }},
+                                        {title:'Horas Maquina',field:'horas_maquina'},
+                                        {title:'Costo Graduación Planchas',field:'precioGraduacionPlanchastd',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:false,
+                                        }},
+                                        {title:'Costo Cambio de plancha',field:'CambPlanchastd',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:false,
+                                        }},
+                                        {title:'Costo Graduación P.A.R',field:'GradPARtd',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:false,
+                                        }},
+                                        {title:'Costo Cambio de tintas',field:'CambiosTintastd',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:false,
+                                        }},
+                                        {title:'Costo Prep. tintas',field:'PrepTintastd',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:false,
+                                        }},
+                                        {title:'Costo Planchas',field:'costoPlanchasporEtiquetatd',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:false,
+                                        }},
+                                        {title:'Costo Tintas',field:'calcularValorTotalTintastd',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:false,
+                                        }},
+                                        {title:'Costo Transporte',field:'transporteCiudadpreciotd',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:false,
+                                        }},
+                                        {title:'Costo Total',field:'costo_totaltd',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:false,
+                                        }}
+                                    ]}
+                                    action={handleRowSelectedCoti}
+                                    data={allCoti}
+                                    
+                                    ></TabulatorTable>
+                        </div>
+                        
+                    </div>
+                    }
                
                                         
             </div>
