@@ -1,8 +1,9 @@
 
+import jsPDF from "jspdf";
 import React, { useEffect, useState,useRef } from "react"; 
 import {TabulatorFull as Tabulator} from "tabulator-tables"; //import Tabulator library
 import "tabulator-tables/dist/css/tabulator.min.css";
-
+import "jspdf-autotable"; 
 const TabulatorTable = ({ data,columns,action=null }) => {
   const tableRef = useRef(null);
   let tabla;
@@ -51,7 +52,8 @@ const TabulatorTable = ({ data,columns,action=null }) => {
         columns: columns,
         layout: 'fitData',
         pagination: 'local',
-        paginationSize: 5,        
+        paginationSize: 10,
+        paginationSizeSelector: [5, 10, 20, 50,100],
         selectableRows: 1,       
        
       });
@@ -64,9 +66,28 @@ const TabulatorTable = ({ data,columns,action=null }) => {
     }
   }, []);
 
- 
+   // Función para descargar la tabla como PDF
+   const downloadPDF = () => {
+    const doc = new jsPDF();
+    const rows = tabla.getData(); // Obtener los datos de la tabla
+
+    // Agregar un título al PDF
+    doc.text("Tabla de Datos", 10, 10);
+
+    // Agregar los encabezados de las columnas
+    const headers = columns.map(col => col.title);
+    doc.autoTable({
+      head: [headers],
+      body: rows.map(row => columns.map(col => row[col.field])),
+      startY: 20,
+    });
+
+    // Guarda el PDF
+    doc.save("tabla.pdf");
+  };
   return (
-    <div ref={tableRef}></div>
+    <><button onClick={downloadPDF}>Descargar PDF</button><div ref={tableRef}></div></>
+    
   );
 };
 

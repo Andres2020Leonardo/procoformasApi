@@ -5,13 +5,14 @@ import { Autocomplete, TextField } from '@mui/material';
 import Decrypt from '../config/Decrypt';
 import Alert from '../utils/Alert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faArrowsRotate } from '@fortawesome/free-solid-svg-icons';
+import { faArrowsRotate, faX } from '@fortawesome/free-solid-svg-icons';
+import CotizacionPDFViewer from '../utils/CotizacionPDFViewer';
 const logo = "./img/cdpLogo2.png";
 const SolicitudCotizacion=()=> {
         const [loadingIcon,setLoadingIcon] = useState(false);
         const [selectedUnidad, setSelectedUnidad] = useState('1');
         const [selectedUnidadGlobal, setSelectedUnidadGlobal] = useState('1');
-        const [dateTime, setDateTime] = useState("");
+        const [creada, setCreada] = useState(false);
         const [dateTimeExpired, setDateTimeExpired] = useState("");
         const [alert, setAlert] = useState({});
         const [allDatas,setAllDatas] =useState({})
@@ -21,7 +22,8 @@ const SolicitudCotizacion=()=> {
         const [valueProducto, setValueProducto] = useState(null);
         const [valueCiudad, setValueCiudad] = useState(null);
         const [valueCiudadAlls, setValueCiudadAlls] = useState([]);
-        
+        const [mostrarPdf,setMostrarPdf] = useState(false)
+        const [cotizacion,setCotizacion] = useState(false)
         const [valueCiudadId, setValueCiudadId] = useState(null);
         const [valueAsesorId, setValueAsesorId] = useState(null);
         const [valueCliente, setValueCliente] = useState(null);
@@ -73,19 +75,25 @@ const SolicitudCotizacion=()=> {
             try {
                 
                 const response = await ClientAxios.post(`/insertcotizacion`, data)
-                console.log(response)
+                
+                if(response.data!=="Creación fallida."){
+                    setCotizacion(response.data)
+                    setMostrarPdf(true)
+                }
                 setAlert({
-                    msg: response.data,
+                    msg: "Creación exitosa",
                     error: false,
                   });
-                setValue([])
+                
                 setLoadingIcon(false)
+                setCreada(true)
+                console.log("Response Data:", response.data);
             } catch (error) {
                 setAlert({
-                    msg: error.data,
+                    msg: error.data || "Error",
                     error: false,
                   });
-                console.log(error.data)
+                console.log(error)
                 setLoadingIcon(false)
             }
           };
@@ -99,7 +107,9 @@ const SolicitudCotizacion=()=> {
         const fechaExpiracion=""
       
         
-       
+        function reload() {
+            document.location.reload();
+        }
         useEffect(() => {
             async function fetchData() {
               try {
@@ -113,8 +123,9 @@ const SolicitudCotizacion=()=> {
                   
                 );
                 setAllDatas(response.data)
+                
                 console.log(response.data)
-                const emailToken =Decrypt(localStorage.getItem("SesionToken"));
+                const emailToken =Decrypt(localStorage.getItem("SesionToken"));                
                 setValue('digitado',emailToken)
               } catch (error) {
                 console.error('Error fetching data:', error);
@@ -971,7 +982,7 @@ const SolicitudCotizacion=()=> {
                                 </div>
                                 <div className="form-floating  mx-auto p-1 col-3">
                                     <input type="text" readOnly className="form-control hidden" id="digitado" {...register("digitado")} />
-                                    <input type="text" readOnly className="form-control" id="digitado" value={Decrypt(localStorage.getItem("NameToken"))} />
+                                    <input type="text" readOnly className="form-control"  value={Decrypt(localStorage.getItem("NameToken"))} />
                                    
                                 </div>
                             
@@ -979,8 +990,11 @@ const SolicitudCotizacion=()=> {
                             </div>
                             <br/>
                             <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row"}}>
-
-                                <input className="btn btn-success mx-auto  my-auto" type="submit" value="Guardar Cotización" onClick={handleSubmit(onSubmit)}/>
+                                {creada?<input className="btn btn-success mx-auto  my-auto" type="submit" value="Guardar Cotización" onClick={handleSubmit(onSubmit)}/>
+                                 : 
+                                            <input className="btn btn-success mx-auto  my-auto" type="submit" value="Nueva Cotización" onClick={reload}/>
+                                
+                                }
                                    
 
                             </div>
@@ -995,9 +1009,20 @@ const SolicitudCotizacion=()=> {
                 </div>
             </div>
         </form>
-
-    </div>
-
+        {mostrarPdf && 
+                    <div className="bg-success  top-50 start-50 translate-middle" style={{position:"fixed",width:"100vw",height:"100vh",zIndex:"300"}}>
+                        <div className="bg-body rounded top-50 start-50 translate-middle p-4" style={{position:"fixed",width:"85vw",height:"80vh",zIndex:"400"}}>
+                                    <button   onClick={()=>setMostrarPdf(false)} style={{position:"absolute",top:8,right:8,width:"30px",height:"30px",display:"flex",alignItems:"center",alignContent:"center"}}><FontAwesomeIcon
+                                        icon={faX}
+                                        
+                                        className=" my-auto mx-auto bg-body"
+                                    
+                                    /></button>
+                                    <div className="mt-4"></div>
+                                    <CotizacionPDFViewer cotizacion={cotizacion}></CotizacionPDFViewer>
+                        </div>
+                    </div>}
+            </div>
                                     }
 
 

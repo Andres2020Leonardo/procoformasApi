@@ -6,7 +6,7 @@ import { faAngleDown, faAngleUp, faArrowDown, faArrowsRotate, faArrowUp, faCheck
 import { useEffect, useRef, useState } from "react";
 import DataTable from 'react-data-table-component';
 import TabulatorTable from "../utils/TabulatorTable";
-import OCRComponent from "../utils/OCRComponent";
+import ImageOCR from "../utils/ImageOCR";
 
 const Cotizacion=()=> {
     const [loadingIcon,setLoadingIcon] = useState(false);
@@ -181,11 +181,11 @@ const Cotizacion=()=> {
                  setValue("entrega7", response.data.entrega7) 
                  setValue("entrega8", response.data.entrega8) 
                  setValue("troquel", response.data.troquel) 
-                 setValue("material", response.data.material) 
+                 setValue("material", response.data.material || "") 
                  setValue("Cubrimiento", response.data.cubrimiento) 
                  setValue("t1", response.data.t1) 
                  setValue("t2", response.data.t2) 
-                 setValue("acabado", response.data.acabado) 
+                 setValue("acabado", response.data.acabado || "") 
                  setValue("rollos_por", response.data.rollosPor) 
                  setValue("EtiqAncho", response.data.etiqAncho) 
                  setValue("Core", response.data.core) 
@@ -233,7 +233,7 @@ const Cotizacion=()=> {
               }
               
             );
-            
+            console.log(response.data)
             setAllDatas(response.data)
           } catch (error) {
             console.error('Error fetching data:', error);
@@ -305,13 +305,14 @@ const Cotizacion=()=> {
             let dato =datos[0];
             setValue('precioMaterial',dato.precio);
             setValue('metros',calcularMetros(watch('cantidad1')))
+            setValue('materialS',dato.id);
             if (toggleButtonMaterial.current) {
                 toggleButtonMaterial.current.querySelector('p').textContent = 'Material: '+dato.material;
                 toggleButtonMaterial.current.classList.add('checkbutonTables')
               }
         }else{
             setValue('precioMaterial','');
-            
+            setValue('materialS','');
             if (toggleButtonMaterial.current) {
                 toggleButtonMaterial.current.querySelector('p').textContent  =`Material` ;
                 toggleButtonMaterial.current.classList.remove('checkbutonTables')
@@ -327,14 +328,14 @@ const Cotizacion=()=> {
         if(datos.length==1){
             let dato =datos[0];
             setValue('precioAcabado',dato.precio);
-          
+            setValue('acabadoS',dato.id);
             if (toggleButtonAcabado.current) {
                 toggleButtonAcabado.current.querySelector('p').textContent = 'Acabado: '+dato.acabado;
                 toggleButtonAcabado.current.classList.add('checkbutonTables')
               }
         }else{
             setValue('precioAcabado','');
-            
+            setValue('acabadoS','');
             if (toggleButtonAcabado.current) {
                 toggleButtonAcabado.current.querySelector('p').textContent  =`Acabado` ;
                 toggleButtonAcabado.current.classList.remove('checkbutonTables')
@@ -342,6 +343,38 @@ const Cotizacion=()=> {
         }
        
       }
+        /// tabla par
+        const toggleButtonPar =useRef(null);
+        const [toggleButtonParIsopen,setToggleButtonParIsopen]=useState(false);
+        const handleRowSelectedPar=(datos)=>{
+            if(watch('anchoEspe')==""){
+                alert("Falta Ancho Esperado")
+            }else{
+            if(datos.length==1){
+                let dato =datos[0];
+                setValue('CUnidad',dato.unidad);
+                setValue('around',dato.cortes);
+                setValue('across',0);
+                if (toggleButtonPar.current) {
+                    toggleButtonPar.current.querySelector('p').textContent = 'Unidad P.A.R.: '+dato.unidad +"-"+dato.valor +"-"+dato.cortes ;
+                    toggleButtonPar.current.classList.add('checkbutonTables')
+                  }
+                  calcularAvance()
+                  calcularAncho()
+            }else{
+                setValue('CUnidad','');
+                setValue('around','');
+                setValue('across','');
+                if (toggleButtonPar.current) {
+                    toggleButtonPar.current.querySelector('p').textContent  =`Unidad P.A.R.` ;
+                    toggleButtonPar.current.classList.remove('checkbutonTables')
+                  }
+                  calcularAvance()
+                  calcularAncho()
+            }}
+        
+         
+        }
       /// tabla Cold
       const toggleButtonCold =useRef(null);
       const [toggleButtonColdIsopen,setToggleButtonColdIsopen]=useState(false);
@@ -350,14 +383,14 @@ const Cotizacion=()=> {
         if(datos.length==1){
             let dato =datos[0];
             setValue('precioCold',dato.precio);
-          
+            setValue('coldfoildS',dato.id);
             if (toggleButtonCold.current) {
                 toggleButtonCold.current.querySelector('p').textContent = 'Cold Foild: '+dato.coldFoild;
                 toggleButtonCold.current.classList.add('checkbutonTables')
               }
         }else{
             setValue('precioCold','');
-            
+            setValue('coldfoildS','');
             if (toggleButtonCold.current) {
                 toggleButtonCold.current.querySelector('p').textContent  =`Cold Foild` ;
                 toggleButtonCold.current.classList.remove('checkbutonTables')
@@ -917,7 +950,7 @@ const Cotizacion=()=> {
 
                                     <div className="accordion mx-auto p-1  " id="accordionRefTroquel" style={{width: "40% "}}>
                                         <div className="accordion-item">
-                                                <button ref={toggleButtonTroquel} onClick={()=>setToggleButtonTroquelIsopen(!toggleButtonTroquelIsopen)} className="button w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
+                                                <button ref={toggleButtonTroquel} onClick={()=>setToggleButtonTroquelIsopen(!toggleButtonTroquelIsopen)} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
                                                     <p className="my-auto">Ref. Troquel</p>
                                                     {toggleButtonTroquelIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
@@ -963,22 +996,47 @@ const Cotizacion=()=> {
                                             </div>
                                         </div>
                                     </div>
-
-                                    <div className="form-floating mx-auto p-1 " style={{width: "15% "}}>
-                                        <select className="form-select" id="UnidadPAR" {...register("UnidadPAR")} aria-label="UnidadPAR">
-                                            <option value="">Seleccionar Troquel</option>
-                                            <option value="Flexible Existente">FLEXIBLE EXISTENTE</option>
-                                            <option value="Plano Existente">PLANO EXISTENTE</option>
-                                            <option style={{color: "red"}} value="Troquel Nuevo Flexible">TROQUEL NUEVO
-                                                FLEXIBLE</option>
-                                            <option style={{color: "red"}} value="Troquel Nuevo Plano">TROQUEL NUEVO PLANO
-                                            </option>
-                                            <option value="PAR">PAR</option>
-                                            <option value="No Aplica">No Aplica</option>
-
-                                        </select>
-                                        <label style={{color:"#000000"}} htmlFor="UnidadPAR">Unidad P.A.R.</label>
+                                    <div className="accordion mx-auto p-1" id="accordionPar" style={{width: "50% "}}>
+                                        <div className="accordion-item">
+                                        <button ref={toggleButtonPar} onClick={()=>setToggleButtonParIsopen(!toggleButtonParIsopen)} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
+                                                    <p className="my-auto">Unidad P.A.R.</p>
+                                                    {toggleButtonParIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
+                                                   </button>
+                                            <div id="collaPar"   className={`accordion-collapse collapse ${toggleButtonParIsopen && "show"} `}>
+                                                <div className="accordion-body">
+                                                <TabulatorTable columns={[{
+                                                        title: 'Id',
+                                                        field:'id',
+                                                        
+                                                        visible:false
+                                                    },
+                                                    {
+                                                        title: 'Unidad',
+                                                        field:'unidad',
+                                                        headerFilter:"input"
+                                                        
+                                                    },
+                                                    {
+                                                        title: 'Valor',
+                                                        field:'valor',
+                                                        headerFilter:"input"
+                                                        
+                                                    },
+                                                    {
+                                                        title: 'Cortes',
+                                                        field:'cortes',
+                                                        headerFilter:"input"
+                                                        
+                                                    }
+                                                   ]}
+                                                    data={allDatas.pars}
+                                                    action={handleRowSelectedPar}
+                                                    /> </div>
+                                            </div>
+                                        </div>
                                     </div>
+
+                                    
                                     <div className="form-floating  mx-auto p-1 " style={{width: "15% "}}>
                                         <input type="text" className="form-control" id="CUnidad" {...register("CUnidad")} />
                                         <label style={{color:"#000000"}} htmlFor="CUnidad">Unidad</label>
@@ -1031,7 +1089,7 @@ const Cotizacion=()=> {
 
                                     <div className="accordion mx-auto p-1 " id="accordionMaterial" style={{width: "50% "}} >
                                         <div className="accordion-item">
-                                        <button ref={toggleButtonMaterial} onClick={()=>setToggleButtonMaterialIsopen(!toggleButtonMaterialIsopen)} className="button w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
+                                        <button ref={toggleButtonMaterial} onClick={()=>setToggleButtonMaterialIsopen(!toggleButtonMaterialIsopen)} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
                                                     <p className="my-auto">Material</p>
                                                     {toggleButtonMaterialIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
@@ -1090,7 +1148,7 @@ const Cotizacion=()=> {
 
                                     <div className="accordion mx-auto p-1" id="accordionAcabado" style={{width: "50% "}}>
                                         <div className="accordion-item">
-                                                <button ref={toggleButtonAcabado} onClick={()=>setToggleButtonAcabadoIsopen(!toggleButtonAcabadoIsopen)} className="button w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
+                                                <button ref={toggleButtonAcabado} onClick={()=>setToggleButtonAcabadoIsopen(!toggleButtonAcabadoIsopen)} className="button  bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
                                                     <p className="my-auto">Acabado</p>
                                                     {toggleButtonAcabadoIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
@@ -1148,8 +1206,8 @@ const Cotizacion=()=> {
 
                                     <div className="accordion mx-auto p-1" id="accordionCold" style={{width: "50% "}}>
                                         <div className="accordion-item">
-                                        <button ref={toggleButtonCold} onClick={()=>setToggleButtonColdIsopen(!toggleButtonColdIsopen)} className="button w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
-                                                    <p className="my-auto">Acabado</p>
+                                        <button ref={toggleButtonCold} onClick={()=>setToggleButtonColdIsopen(!toggleButtonColdIsopen)} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
+                                                    <p className="my-auto">Cold Foild</p>
                                                     {toggleButtonColdIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
                                             <div id="collaMaterial"   className={`accordion-collapse collapse ${toggleButtonColdIsopen && "show"} `}>
@@ -1203,7 +1261,7 @@ const Cotizacion=()=> {
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="CubrimientoCoti1" {...register("CubrimientoCoti1")} value="100"/>
+                                        <input type="text" className="form-control" id="CubrimientoCoti1" {...register("CubrimientoCoti1")} />
                                         <label style={{color:"#000000"}} htmlFor="CubrimientoCoti1">Cubrimiento (%)</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 col-3">
@@ -1228,7 +1286,7 @@ const Cotizacion=()=> {
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="CubrimientoCoti2" {...register("CubrimientoCoti2")} value="100"/>
+                                        <input type="text" className="form-control" id="CubrimientoCoti2" {...register("CubrimientoCoti2")} />
                                         <label style={{color:"#000000"}} htmlFor="CubrimientoCoti2">Cubrimiento (%)</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 col-3">
@@ -1254,7 +1312,7 @@ const Cotizacion=()=> {
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="CubrimientoCoti3" {...register("CubrimientoCoti3")} value="100"/>
+                                        <input type="text" className="form-control" id="CubrimientoCoti3" {...register("CubrimientoCoti3")} />
                                         <label style={{color:"#000000"}} htmlFor="CubrimientoCoti3">Cubrimiento (%)</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 col-3">
@@ -1281,7 +1339,7 @@ const Cotizacion=()=> {
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="CubrimientoCoti4" {...register("CubrimientoCoti4")} value="100"/>
+                                        <input type="text" className="form-control" id="CubrimientoCoti4" {...register("CubrimientoCoti4")} />
                                         <label style={{color:"#000000"}} htmlFor="CubrimientoCoti4">Cubrimiento (%)</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 col-3">
@@ -1338,6 +1396,7 @@ const Cotizacion=()=> {
                                         <input type="text" className="form-control" id="GradPAR" {...register("GradPAR")}  attr-precio="20000" />
                                         <label style={{color:"#000000"}} htmlFor="GradPAR">#Grad. P.A.R.</label>
                                     </div>
+                                    
                                     <div className="form-floating  mx-auto p-1 col-3">
                                         <input type="text" className="form-control" id="PrepTintas" {...register("PrepTintas")}  attr-precio="8000" />
                                         <label style={{color:"#000000"}} htmlFor="PrepTintas">#Prep. Tintas</label>
@@ -1478,7 +1537,7 @@ const Cotizacion=()=> {
                                         <div className="form-control" id="impresionV" style={{display: "flex", flexDirection: "column", height: "130px"}}>
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-check col-4">
-                                                    <input className="form-check-input" type="radio" {...register("velocidadImp")} id="velocidadImp300" value="300" checked />
+                                                    <input className="form-check-input" type="radio" {...register("velocidadImp")} id="velocidadImp300" value="300"  />
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="velocidadImp300">
                                                         Muy baja (300)
                                                     </label>
@@ -1525,7 +1584,7 @@ const Cotizacion=()=> {
                                         <div className="form-control" id="maquinadiv" style={{display: "flex", flexDirection: "column",height: "130px"}}>
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-check col-4">
-                                                    <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroq" value="Troq Bco" attr-precio={obtenerMaquinaPorNombre("Troq Bco")}  checked/>
+                                                    <input className="form-check-input" type="radio" {...register("maquina")} id="maquinaTroq" value="Troq Bco" attr-precio={obtenerMaquinaPorNombre("Troq Bco")}  />
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="maquinaTroq">
                                                         Troq Bco
                                                     </label>
@@ -1724,14 +1783,14 @@ const Cotizacion=()=> {
                     </div>
                     
                 </form>
-                
+            
                 {mostrartabla && 
                     <div className="bg-success  top-50 start-50 translate-middle" style={{position:"fixed",width:"100vw",height:"100vh",zIndex:"300"}}>
                         <div className="bg-body rounded top-50 start-50 translate-middle p-4" style={{position:"fixed",width:"85vw",height:"80vh",zIndex:"400"}}>
                                     <button   onClick={()=>setMostrartabla(false)} style={{position:"absolute",top:8,right:8,width:"30px",height:"30px",display:"flex",alignItems:"center",alignContent:"center"}}><FontAwesomeIcon
                                         icon={faX}
                                         
-                                        className=" my-auto mx-auto "
+                                        className=" my-auto mx-auto bg-body"
                                     
                                     /></button>
                                     <div className="mt-4"></div>
