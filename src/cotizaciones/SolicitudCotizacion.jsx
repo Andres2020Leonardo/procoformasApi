@@ -938,7 +938,7 @@ const SolicitudCotizacion=()=> {
                                         onChange={(event, newValue) => {setValueCiudadAlls(newValue);setValue("ciudad_entrega",valueCiudadAlls.map(item => item.id))}}
                                         options={allDatas?.ciudades}
                                         getOptionLabel={(option) => option.nombre}
-                                        renderInput={(params) => <TextField {...params} required label="Seleccionar puntos de entrega" />}
+                                        renderInput={(params) => <TextField {...params}  label="Seleccionar puntos de entrega" />}
                                         isOptionEqualToValue={(option, value) => option.id === value?.id}
                                         multiple
                                     />
@@ -958,7 +958,7 @@ const SolicitudCotizacion=()=> {
                                         onChange={(event, newValue) => {setValueAsesorId(newValue);setValue("asesor",newValue.id)}}
                                         options={allDatas?.users}
                                         getOptionLabel={(option) => option.name}
-                                        renderInput={(params) => <TextField {...params} required label="Seleccionar Asesor" />}
+                                        renderInput={(params) => <TextField {...params}  label="Seleccionar Asesor" />}
                                         isOptionEqualToValue={(option, value) => option.id === value?.id}
                                         
                                         />
@@ -990,9 +990,9 @@ const SolicitudCotizacion=()=> {
                             </div>
                             <br/>
                             <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row"}}>
-                                {creada?<input className="btn btn-success mx-auto  my-auto" type="submit" value="Guardar Cotización" onClick={handleSubmit(onSubmit)}/>
+                                {!creada?<input className="btn btn-success mx-auto  my-auto" type="submit" value="Guardar Cotización" onClick={handleSubmit(onSubmit)}/>
                                  : 
-                                            <input className="btn btn-success mx-auto  my-auto" type="submit" value="Nueva Cotización" onClick={reload}/>
+                                            <input className="btn btn-success mx-auto  my-auto" type="button" value="Nueva Cotización" onClick={()=>reload}/>
                                 
                                 }
                                    
