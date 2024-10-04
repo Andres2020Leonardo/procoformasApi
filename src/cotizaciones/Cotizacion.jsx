@@ -15,6 +15,9 @@ const Cotizacion=()=> {
     const [allDatas,setAllDatas] = useState({});
     const [mostrartabla,setMostrartabla]=useState(false);
     const [allCoti,setAllCoti]=useState([])
+    const [valoresPorCiudad,setValoresPorCiudad]=useState([])
+    const [proporcionTroquel,setProporcionTroquel]=useState(0);
+    const [proporcionEtiqueta,setProporcionEtiqueta]=useState(0);
     const logo = "./img/cdpLogo2.png";
     const optionsTables = {
         paginationSize: 5, 
@@ -94,7 +97,7 @@ const Cotizacion=()=> {
         CubrimientoCoti1:100,
         tipoTinta1:0,
         grTinta1:0,
-        PlanchasTinta1:0,
+        PlanchasTinta1:1,
         CubrimientoCoti2:100,
         tipoTinta2:0,
         grTinta2:0,
@@ -108,11 +111,12 @@ const Cotizacion=()=> {
         grTinta4:0,
         PlanchasTinta4:0,
         CambPlanchas:0,
-        diferirEnTinta1:0,
+        diferirEtiqueta:0,
         metros:0,
         GradPlanchas:0,
         GradPAR:0,
         PrepTintas:0,
+        precioHotStamping:0,
         CambiosTintas:0,
         IRAdhesivo:0,
         IRLiner:0,
@@ -137,7 +141,25 @@ const Cotizacion=()=> {
         transporteCiudad:0,
         ciudad_principal_transporte:0,
         otras_ciudades_transporte:0,
+        utilidad:30,
+        comision:3,
       }});
+
+      function buscarClientePorId(id) {
+        let clienteByID = allDatas.clientes.find(cliente => parseInt(cliente.id) === parseInt(id));
+        return clienteByID;
+      }
+      function buscaProductoPorId(id) {
+    
+        let productoId = allDatas.productos.find(producto => parseInt(producto.id) === parseInt(id));
+      
+        return productoId;
+      }
+      function buscaCiudadPorId(id) {    
+        let ciudad = allDatas.ciudades.find(ciudad => parseInt(ciudad.id) === parseInt(id));
+        console.log(ciudad)
+        return ciudad;
+      }
     async function searchSolicitud(value) {
         setLoadingIcon(true)
         try {
@@ -154,8 +176,8 @@ const Cotizacion=()=> {
                  setCheckStatus(true)
                  setCheckStatusView(false)                 
                  setValue("tipoCotizacion", response.data.tipoCotizacion) 
-                 setValue("cliente", response.data.cliente) 
-                 setValue("producto", response.data.producto) 
+                 setValue("cliente", buscarClientePorId(response.data.cliente)?.razonSocial || response.data.cliente) 
+                 setValue("producto", buscaProductoPorId(response.data.producto)?.nombre || response.data.producto) 
                  setValue("gradoDificultad", response.data.gradoDificultad) 
                  setValue("unidad", response.data.unidadUna) 
                  setValue("unidadRefDistintas", response.data.unidadRefDistintas) 
@@ -164,7 +186,7 @@ const Cotizacion=()=> {
                  setValue("unidadPlanchas", response.data.unidadPlanchas) 
                  setValue("unidadTintas", response.data.unidadTintas) 
                  setValue("cantidad1", response.data.cantidad1) 
-                 setValue("diferirEnTinta1", response.data.cantidad1) 
+                 setValue("diferirEtiqueta", response.data.cantidad1) 
                  setValue("cantidad2", response.data.cantidad2) 
                  setValue("cantidad3", response.data.cantidad3) 
                  setValue("cantidad4", response.data.cantidad4) 
@@ -196,6 +218,26 @@ const Cotizacion=()=> {
                  setValue("puntos_enttrega", response.data.puntosEntrega) 
                  setValue("Vendedor", response.data.asesor) 
                  setValue("comi", response.data.comision) 
+                 if((response.data.tinta1+response.data.tinta1)===0){
+                    setValue('comision',1.5)
+                 }
+                 const arrayCiudades = JSON.parse(response.data.ciudadEntrega);
+                 let ciudadSe=""
+                 let valorC=[]
+                 for (let index = 0; index < arrayCiudades.length; index++) {
+                    const element = arrayCiudades[index];
+                    if (index===0) {
+                        ciudadSe=ciudadSe+buscaCiudadPorId(element).nombre                        
+                    }else{
+                        ciudadSe=ciudadSe+" - "+buscaCiudadPorId(element).nombre                       
+                    }
+                    valorC.push(buscaCiudadPorId(element).valorCaja)
+                 }
+                 console.log('ciudadSe',ciudadSe);
+                 console.log('valorC',valorC);
+                 setValue("comi", response.data.comision) 
+                 document.getElementById('ciudad').value=ciudadSe
+                 setValoresPorCiudad(valorC)
                  setTimeout(() => {
                     setCheckStatusView(true)
                 }, 3000);
@@ -233,7 +275,6 @@ const Cotizacion=()=> {
               }
               
             );
-            console.log(response.data)
             setAllDatas(response.data)
           } catch (error) {
             console.error('Error fetching data:', error);
@@ -257,12 +298,12 @@ const Cotizacion=()=> {
             setValue('anchoMaterialC', parseFloat(calculoAncho.toFixed(1)) || 0);
             setValue('anchoLaminacionC', parseFloat(calculoAncho.toFixed(1)) || 0);
             setValue('anchoColdC', parseFloat(calculoAncho.toFixed(1)) || 0);
+            setValue('anchoHotStamping', parseFloat(calculoAncho.toFixed(1)) || 0);
         }
        
 
     }
     const handleRowSelectedCoti=(datos)=>{       
-        console.log(datos);
        
       }
       /// tabla troquel
@@ -398,11 +439,34 @@ const Cotizacion=()=> {
         }
        
       }
-   
+        /// tabla Cold
+        const toggleButtonHotStamping =useRef(null);
+        const [toggleButtonHotStampingIsopen,setToggleButtonHotStampingIsopen]=useState(false);
+        const handleRowSelectedHotStamping=(datos)=>{
+          
+          if(datos.length==1){
+              let dato =datos[0];
+              setValue('precioHotStamping',dato.precio);
+              setValue('HotStamping',dato.id);
+              if (toggleButtonHotStamping.current) {
+                    toggleButtonHotStamping.current.querySelector('p').textContent = 'Cold Foild: '+dato.coldFoild;
+                    toggleButtonHotStamping.current.classList.add('checkbutonTables')
+                }
+          }else{
+              setValue('precioHotStamping','');
+              setValue('HotStamping','');
+              if (toggleButtonHotStamping.current) {
+                    toggleButtonHotStamping.current.querySelector('p').textContent  =`Cold Foild` ;
+                    toggleButtonHotStamping.current.classList.remove('checkbutonTables')
+                }
+          }
+         
+        }
     
     function calcularAreaEtiqueta(){
         return  parseFloat(watch('anchoEspe'))*parseFloat(watch('avanceEspe'));
     }
+    //
     ///Etiq para graduar
     function calcularMetros(cantidad){
         let factor=0.3175;
@@ -410,15 +474,14 @@ const Cotizacion=()=> {
         let REGISTRO_COLORES=(parseFloat(watch('t1'))+parseFloat(watch('t2')))*15;
         let MATERIAL_SIN_DESPERDICIO=((((parseFloat(watch('CUnidad'))*factor)/parseFloat(watch('around')))*cantidad)/parseFloat(watch('across')))/100;
         let REGISTRO_DE_TROQUEL=10;
-        let CAMBIO_DE_ROLLO =(MATERIAL_SIN_DESPERDICIO/1000)>1 ? (MATERIAL_SIN_DESPERDICIO/1000-1)*40 : 0;
+        let CAMBIO_DE_ROLLO =(MATERIAL_SIN_DESPERDICIO/1000)>1 ? (MATERIAL_SIN_DESPERDICIO/999)*40 : 0;
         let CAMBIO_DE_PLANCHAS=parseFloat(watch('CambPlanchas'))*50
         let sumaTotal=constante+REGISTRO_COLORES+MATERIAL_SIN_DESPERDICIO+REGISTRO_DE_TROQUEL+CAMBIO_DE_ROLLO+CAMBIO_DE_PLANCHAS
         let metros=(sumaTotal>1000)?sumaTotal=sumaTotal+50:sumaTotal=sumaTotal+30;
-        console.log('metros',metros)
         return  Math.round(metros);
     }
     function calcularCostoTintaM2(){
-        let valor_tintas=( parseFloat(watch('grTinta1'))*(parseFloat(watch('CubrimientoCoti1'))/100))+( parseFloat(watch('grTinta2'))*(parseFloat(watch('CubrimientoCoti2'))/100))+( parseFloat(watch('grTinta3'))*(parseFloat(watch('CubrimientoCoti3'))/100))+( parseFloat(watch('grTinta4'))*(parseFloat(watch('CubrimientoCoti4'))/100))
+        let valor_tintas=( parseFloat(watch('grTinta1'))*(parseFloat(watch('CubrimientoCoti1'))/100)*parseFloat(watch('PlanchasTinta1')))+( parseFloat(watch('grTinta2'))*(parseFloat(watch('CubrimientoCoti2'))/100)*parseFloat(watch('PlanchasTinta2')))+( parseFloat(watch('grTinta3'))*(parseFloat(watch('CubrimientoCoti3'))/100)*parseFloat(watch('PlanchasTinta3')))+( parseFloat(watch('grTinta4'))*(parseFloat(watch('CubrimientoCoti4'))/100)*parseFloat(watch('PlanchasTinta4')))
       
         return Math.round(valor_tintas)
     }
@@ -427,9 +490,13 @@ const Cotizacion=()=> {
         cantidad = parseFloat(cantidad)
         let area_total_etiquetasCM2=calcularAreaEtiqueta()*cantidad;
         let area_total_etiquetasM2=area_total_etiquetasCM2/10000;
-        let Consumo_tintaGramos=area_total_etiquetasM2*4;
+        let Consumo_tintaGramos=area_total_etiquetasM2;
         let Valor_total_de_tinta=Consumo_tintaGramos*calcularCostoTintaM2();
         return Math.round(Valor_total_de_tinta);
+    }
+    function calcularGramosPorEtiqueta() {
+        let grPE = 4 / calcularAreaEtiqueta()/10000;
+        return grPE
     }
     function numeroDePlanchas() {
         let texto_acabado=toggleButtonAcabado.current.querySelector('p').textContent;
@@ -440,16 +507,117 @@ const Cotizacion=()=> {
         return planchas
 
     }
-    function costoPlanchasporEtiqueta(cantidad) {
+    function proporcionTroquelF(valor) {
+        if(watch('cantidad1')===0){
+            alert('Buscar solicitud')
+        }else{
+            setProporcionTroquel(parseFloat(valor)/parseFloat(watch('cantidad1')))
+        }        
+    }
+    function proporcionEtiquetas(valor) {
+        if(watch('cantidad1')===0){
+            alert('Buscar solicitud')
+        }else{
+            setProporcionEtiqueta(parseFloat(valor)/parseFloat(watch('cantidad1')))
+        }    
+    }
+    function calcularValorTroquel(cantidad,diferir) {
+        if(watch('cantidad1')===0){
+            alert('Buscar solicitud o agregar diferir costo troquel')
+            return 0;
+        }else{
+            let figuras=parseFloat(watch('around'))+parseFloat(watch('across'))
+            let valorFiguras=figuras<=20?220000:figuras>20 && figuras<=35? 270000 : figuras>35 && figuras<=50? 320000 : 370000 
+            let costoT=((((parseFloat(watch('CUnidad'))*0.3175*parseFloat(watch('anchoMaterialC')))*1200)+valorFiguras)/diferir)*cantidad
+            return costoT;
+        }
+    }
+    function costoPlanchasporEtiqueta(cantidad,diferir) {
+     
+
         cantidad = parseFloat(cantidad)
         let cms2 = parseFloat(watch('anchoMaterialC'))  * parseFloat(watch('avanceReal'))
-        let valorPlancaCms2 = cms2*100///costo del cms2 plancha 100
-        let Valorplanchas=valorPlancaCms2*numeroDePlanchas()
-        let valorfinalPlanchas=Valorplanchas/parseFloat(watch('diferirEnTinta1'))*cantidad
+        let valorPlancaCms2 = cms2*100
+        let Valorplanchas=valorPlancaCms2*numeroDePlanchas()  
+        let valorfinalPlanchas=Valorplanchas/(parseFloat(diferir)/cantidad)
+  
         return Math.round(valorfinalPlanchas)
-
+        
+        
     }
-    function costoTotal(cantidad,coti){
+    function costoTerminacionEn(cantidad){
+        let seleccionTerminado=watch('terminacionEn')
+        if (seleccionTerminado==='Rebobinado') {
+            return (calcularMetros(cantidad)/562.5)*10000;
+        }else if (seleccionTerminado==='En hojas') {
+            return (calcularMetros(cantidad)/562.5)*10000;
+        }
+        else if (seleccionTerminado==='Doblado') {
+            return  (calcularMetros(cantidad)/562.5)*10000;
+        }else{
+            alert('selecionar terminación')
+            return 0
+        }
+    }
+    function costoTroquel(cantidad,diferir) {
+        console.log("cantidades",cantidad,diferir )
+        if (watch('troquel')==="plano") {
+            return 100000;
+        }
+        switch (watch('costoTroquelTipo')) {            
+            case 'Existente':
+                return calcularValorTroquel(cantidad,diferir);
+                break;
+            case 'Nuevo':
+                return calcularValorTroquel(cantidad,diferir);
+                break;
+            case 'Nuevo Especial':
+                return calcularValorTroquel(cantidad,diferir);
+                break;
+            case 'otro':
+                return watch('costoTroquelTipoOtro')/diferir;
+                break;
+            case 'Ninguno':
+                return 0;
+                break;
+            default:
+                return 0;
+                break;
+        }
+    }
+    function recargoTrnsporteF() {
+        switch (watch('recargoTrnsporte')) {
+            case 'Corte Manual':
+                return parseFloat(watch('recargoTrnsporteCMCosto'));
+                break;
+            case 'Doblado Manual':
+                return parseFloat(watch('recargoTrnsporteDMCosto'));
+                break;
+            case 'Reproceso de Corte y Rebobinado':
+                return parseFloat(watch('recargoTrnsporteCRCosto'));
+                break;
+            case 'otro':
+                return parseFloat(watch('recargoTrnsporteOtroCosto'));
+                break;
+        
+            default:
+                return 0;
+                break;
+        }
+    }
+    function name(params) {
+        switch (key) {
+            case value:
+                
+                break;
+        
+            default:
+                break;
+        }
+    }
+
+    function costoTotal(cantidad,coti,troquelDif,fotoDife){
+        
         cantidad = parseFloat(cantidad)
         let metroslineales=parseFloat(calcularMetros(cantidad));
         let anchomaterial=parseFloat(watch('anchoMaterialC'));
@@ -563,7 +731,9 @@ const Cotizacion=()=> {
         let Costo_total_maquina=0
         Costo_total_maquina=Costo_total_trabajo+Costo_tiempo_adicional
     
-       
+        
+        let sherpavalor=document.getElementById('sherpa').getAttribute('attr-precio');
+        let preciosherpa=parseFloat(document.getElementById('sherpa').value)*parseFloat(sherpavalor);
         ///// fin radios
         let etiqAlAncho=document.getElementById('etiqAlAncho').getAttribute('attr-precio');
         let avanceZebra=document.getElementById('avanceZebra').getAttribute('attr-precio');
@@ -578,9 +748,12 @@ const Cotizacion=()=> {
         ///// transporteCiudad
         var transporteCiudad = document.querySelector('input[name="transporteCiudad"]:checked');
         let transporteCiudadprecio=0
-        if (false) {
+        if (transporteCiudad) {
             transporteCiudadprecio = parseFloat(transporteCiudad.getAttribute('attr-precio'));
+        }else{
+            alert('Seleccionar destino')
         } 
+
         var materialValor = toggleButtonMaterial.current.querySelector('p').textContent;
         let materialValorprecio=0
         if (materialValor=="Material") {
@@ -614,8 +787,8 @@ const Cotizacion=()=> {
 
 
 
-        let costo_total=parseFloat(avanceZebra)+parseFloat(RefDistintasZebra)+parseFloat(etiqAlAncho)+parseFloat(coldValorprecio)+parseFloat(materialValorprecio)+parseFloat(acabadoValorprecio)+parseFloat(Costo_total_maquina)+parseFloat(precioGraduacionPlanchas)+parseFloat(CambPlanchas)+parseFloat(GradPAR)+parseFloat(PrepTintas)+parseFloat(CambiosTintas)+parseFloat(costoPlanchasporEtiqueta(cantidad))+parseFloat(calcularValorTotalTintas(cantidad))+parseFloat(transporteCiudadprecio)+parseFloat(CintaZebraprecio);
-        
+        let costo_total=parseFloat(avanceZebra)+parseFloat(RefDistintasZebra)+parseFloat(etiqAlAncho)+parseFloat(coldValorprecio)+parseFloat(materialValorprecio)+parseFloat(acabadoValorprecio)+parseFloat(Costo_total_maquina)+parseFloat(precioGraduacionPlanchas)+parseFloat(CambPlanchas)+parseFloat(GradPAR)+parseFloat(PrepTintas)+parseFloat(CambiosTintas)+parseFloat(costoPlanchasporEtiqueta(cantidad,fotoDife))+parseFloat(calcularValorTotalTintas(cantidad))+parseFloat(transporteCiudadprecio)+parseFloat(CintaZebraprecio)+costoTroquel(cantidad,troquelDif)+costoTerminacionEn(cantidad)+recargoTrnsporteF()+parseFloat(preciosherpa);
+        costo_total=costo_total+(costo_total*parseFloat(watch('utilidad'))/100)+(costo_total*parseFloat(watch('comision'))/100)
         
         var coti = (coti);
         var cantidadtd = (Math.round(cantidad));
@@ -629,12 +802,15 @@ const Cotizacion=()=> {
         var GradPARtd = (GradPAR);
         var CambiosTintastd = (Math.round(CambiosTintas));
         var PrepTintastd = (Math.round(PrepTintas));
-        var costoPlanchasporEtiquetatd = (Math.round(costoPlanchasporEtiqueta(cantidad)));
+        var costoPlanchasporEtiquetatd = (Math.round(costoPlanchasporEtiqueta(cantidad,fotoDife)));
         var calcularValorTotalTintastd = (Math.round(calcularValorTotalTintas(cantidad)));
-        var transporteCiudadpreciotd = ("");
+        var transporteCiudadpreciotd = transporteCiudadprecio;
         var costo_totaltd = (Math.round(costo_total));
-
-
+        var constoTerminacion=costoTerminacionEn(cantidad);
+        var costoTroqueltd=costoTroquel(cantidad,troquelDif);
+        var recargoTrnsporteFtd=recargoTrnsporteF();
+        var utilildadtd=(costo_total*parseFloat(watch('utilidad'))/100)
+        var comisiontd = (costo_total*parseFloat(watch('comision'))/100)
         let cotizando ={
             'coti':coti,
             'cantidadtd':cantidadtd,
@@ -651,7 +827,13 @@ const Cotizacion=()=> {
             'costoPlanchasporEtiquetatd':costoPlanchasporEtiquetatd,
             'calcularValorTotalTintastd':calcularValorTotalTintastd,
             'transporteCiudadpreciotd':transporteCiudadpreciotd,
-            'costo_totaltd':costo_totaltd
+            'costo_totaltd':costo_totaltd,
+            'constoTerminacion':constoTerminacion,
+            'costoTroqueltd':costoTroqueltd,
+            'recargoTrnsporteFtd':recargoTrnsporteFtd,
+            'utilildadtd':utilildadtd,
+            'comisiontd':comisiontd,
+            'preciosherpa':parseFloat(preciosherpa)
             }
         
         return   cotizando;
@@ -660,9 +842,10 @@ const Cotizacion=()=> {
     const constructionCotizacion=()=>{        
         for (let index = 1; index < 10; index++) {
             let cantidad_select="cantidad"+index;
-           
+            let cantidad_foto="difFotopolimero"+index;
+            let cantidad_troquel="difTroquel"+index;
                 if (parseFloat(watch(cantidad_select))>0){
-                    let coOb = costoTotal(watch(cantidad_select),index);
+                    let coOb = costoTotal(watch(cantidad_select),index,watch(cantidad_troquel),watch(cantidad_foto));
                     setAllCoti(prevData => [...prevData, coOb]);
                 }
             
@@ -813,6 +996,74 @@ const Cotizacion=()=> {
                                         </div>
                                     </div>
                                     <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
+                                        <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                            <input type="text" className="form-control" id="difFotopolimero1" {...register("difFotopolimero1")}   />
+                                            <label style={{color:"red"}} htmlFor="difFotopolimero1">Dif. Fotop. 1</label>
+                                        </div>
+                                        <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                            <input type="text" className="form-control" id="difFotopolimero2" {...register("difFotopolimero2")}   />
+                                            <label style={{color:"red"}} htmlFor="difFotopolimero2">Dif. Fotop. 2</label>
+                                        </div>
+                                        <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                            <input type="text" className="form-control" id="difFotopolimero3" {...register("difFotopolimero3")}  />
+                                            <label style={{color:"red"}} htmlFor="difFotopolimero3">Dif. Fotop. 3</label>
+                                        </div>
+                                        <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                            <input type="text" className="form-control" id="difFotopolimero4" {...register("difFotopolimero4")}   />
+                                            <label style={{color:"red"}} htmlFor="difFotopolimero4">Dif. Fotop. 4</label>
+                                        </div>
+                                        <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                            <input type="text" className="form-control" id="difFotopolimero5" {...register("difFotopolimero5")}   />
+                                            <label style={{color:"red"}} htmlFor="difFotopolimero5">Dif. Fotop. 5</label>
+                                        </div>
+                                        <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                            <input type="text" className="form-control" id="difFotopolimero6" {...register("difFotopolimero6")}   />
+                                            <label style={{color:"red"}} htmlFor="difFotopolimero6">Dif. Fotop. 6</label>
+                                        </div>
+                                        <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                            <input type="text" className="form-control" id="difFotopolimero7" {...register("difFotopolimero7")}   />
+                                            <label style={{color:"red"}} htmlFor="difFotopolimero7">Dif. Fotop. 7</label>
+                                        </div>
+                                        <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                            <input type="text" className="form-control" id="difFotopolimero8" {...register("difFotopolimero8")}   />
+                                            <label style={{color:"red"}} htmlFor="difFotopolimero8">Dif. Fotop. 8</label>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
+                                        <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                            <input type="text" className="form-control" id="difTroquel1" {...register("difTroquel1")}   />
+                                            <label style={{color:"red"}} htmlFor="difTroquel1">Dif. Troquel 1</label>
+                                        </div>
+                                        <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                            <input type="text" className="form-control" id="difTroquel2" {...register("difTroquel2")}   />
+                                            <label style={{color:"red"}} htmlFor="difTroquel2">Dif. Troquel 2</label>
+                                        </div>
+                                        <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                            <input type="text" className="form-control" id="difTroquel3" {...register("difTroquel3")}  />
+                                            <label style={{color:"red"}} htmlFor="difTroquel3">Dif. Troquel 3</label>
+                                        </div>
+                                        <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                            <input type="text" className="form-control" id="difTroquel4" {...register("difTroquel4")}   />
+                                            <label style={{color:"red"}} htmlFor="difTroquel4">Dif. Troquel 4</label>
+                                        </div>
+                                        <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                            <input type="text" className="form-control" id="difTroquel5" {...register("difTroquel5")}   />
+                                            <label style={{color:"red"}} htmlFor="difTroquel5">Dif. Troquel 5</label>
+                                        </div>
+                                        <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                            <input type="text" className="form-control" id="difTroquel6" {...register("difTroquel6")}   />
+                                            <label style={{color:"red"}} htmlFor="difTroquel6">Dif. Troquel 6</label>
+                                        </div>
+                                        <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                            <input type="text" className="form-control" id="difTroquel7" {...register("difTroquel7")}   />
+                                            <label style={{color:"red"}} htmlFor="difTroquel7">Dif. Troquel 7</label>
+                                        </div>
+                                        <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                            <input type="text" className="form-control" id="difTroquel8" {...register("difTroquel8")}   />
+                                            <label style={{color:"red"}} htmlFor="difTroquel8">Dif. Troquel 8</label>
+                                        </div>
+                                    </div>
+                                    <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="supAplica" {...register("supAplica")} readOnly={true}  />
                                             <label style={{color:"#000000"}} htmlFor="supAplica">Sup. Aplica</label>
@@ -906,7 +1157,7 @@ const Cotizacion=()=> {
                                         <div className="form-floating  mx-auto p-1 col-12 ">
                                             <div className="form-control mx-auto" id="costoTroquel" style={{display: "flex", flexDirection:"row", height: "80px "}}>
                                                 <div className="form-check">
-                                                    <input className="form-check-input" type="radio" {...register("costoTroquelTipo")} id="costoTroquelExistente" checked="" value="Existente"/>
+                                                    <input className="form-check-input" type="radio" {...register("costoTroquelTipo")} id="costoTroquelExistente" value="Existente"/>
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="costoTroquelExistente">
                                                         Existente
                                                     </label>
@@ -930,7 +1181,7 @@ const Cotizacion=()=> {
                                                     </label>
                                                 </div>
                                                 <div className="form-check mx-auto">
-                                                    <input className="form-check-input secondary" type="radio" {...register("costoTroquelTipo")} id="costoTroquelOtro" value="Nuevo Especial"/>
+                                                    <input className="form-check-input secondary" type="radio" {...register("costoTroquelTipo")} id="costoTroquelOtro" value="otro"/>
                                                     <label  className="form-check-label" htmlFor="costoTroquelOtro" style={{display: "flex",color:"#000000", flexDirection:"row"}}>
                                                         Otro <input type="text" className="form-control ms-2" id="costoTroquelTipoOtro" {...register("costoTroquelTipoOtro")} placeholder="Cual?"/>
                                                     </label>
@@ -939,7 +1190,8 @@ const Cotizacion=()=> {
                                             </div>
                                             <label style={{color:"#000000"}} htmlFor="costoTroquel">Tipo de troquel</label>
                                         </div>
-
+                                       
+                                       
 
 
                                     </div>
@@ -1152,7 +1404,7 @@ const Cotizacion=()=> {
                                                     <p className="my-auto">Acabado</p>
                                                     {toggleButtonAcabadoIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
-                                            <div id="collaMaterial"   className={`accordion-collapse collapse ${toggleButtonAcabadoIsopen && "show"} `}>
+                                            <div id="collaacabado"   className={`accordion-collapse collapse ${toggleButtonAcabadoIsopen && "show"} `}>
                                                 <div className="accordion-body">
                                                 <TabulatorTable columns={[{
                                                         title: 'Id',
@@ -1210,7 +1462,7 @@ const Cotizacion=()=> {
                                                     <p className="my-auto">Cold Foild</p>
                                                     {toggleButtonColdIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
-                                            <div id="collaMaterial"   className={`accordion-collapse collapse ${toggleButtonColdIsopen && "show"} `}>
+                                            <div id="collaCold"   className={`accordion-collapse collapse ${toggleButtonColdIsopen && "show"} `}>
                                                 <div className="accordion-body">
                                                 <TabulatorTable columns={[{
                                                         title: 'Id',
@@ -1257,6 +1509,63 @@ const Cotizacion=()=> {
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="anchoColdC" {...register("anchoColdC")} />
                                         <label style={{color:"#000000"}} htmlFor="anchoColdC">Ancho Cold Foild</label>
+                                    </div>
+                                </div>
+                                <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
+
+                                    <div className="accordion mx-auto p-1" id="accordionCold" style={{width: "50% "}}>
+                                        <div className="accordion-item">
+                                        <button ref={toggleButtonCold} onClick={()=>setToggleButtonHotStampingIsopen(!toggleButtonHotStampingIsopen)} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
+                                                    <p className="my-auto">Hot stamping</p>
+                                                    {toggleButtonColdIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
+                                                   </button>
+                                            <div id="collaCold"   className={`accordion-collapse collapse ${toggleButtonHotStampingIsopen && "show"} `}>
+                                                <div className="accordion-body">
+                                                <TabulatorTable columns={[{
+                                                        title: 'Id',
+                                                        field:'id',
+                                                        
+                                                        visible:false
+                                                    },
+                                                    {
+                                                        title: 'Host stamping',
+                                                        field:'hostStamping	',
+                                                        headerFilter:"input"
+                                                        
+                                                    },
+                                                    {
+                                                        title: 'Id lista',
+                                                        field:'idLista',
+                                                        headerFilter:"input"
+                                                        
+                                                    },
+                                                    {
+                                                        title: 'Lista',
+                                                        field:'lista',
+                                                        headerFilter:"input"
+                                                        
+                                                    },
+                                                    {
+                                                        title: 'Precio',
+                                                        field:'precio',
+                                                        headerFilter:"input"
+                                                        
+                                                    }
+                                                   ]}
+                                                    data={allDatas.hotStampings}
+                                                    action={handleRowSelectedHotStamping}
+                                                    /> </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <div className="form-floating  mx-auto p-1 col-3" >
+                                        <input type="text" className="form-control" id="precioHotStamping" {...register("precioHotStamping")} />
+                                        <label style={{color:"#000000"}} htmlFor="precioHotStamping">Precio</label>
+                                    </div>
+                                    <div className="form-floating  mx-auto p-1 col-3" >
+                                        <input type="text" className="form-control" id="anchoHotStamping" {...register("anchoHotStamping")} />
+                                        <label style={{color:"#000000"}} htmlFor="anchoHotStamping">Ancho Cold Foild</label>
                                     </div>
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
@@ -1370,10 +1679,7 @@ const Cotizacion=()=> {
                                         <input type="text" className="form-control" id="CambPlanchas" {...register("CambPlanchas")}  attr-precio="0"  />
                                         <label style={{color:"#000000"}} htmlFor="CambPlanchas">Camb. planchas</label>
                                     </div>
-                                    <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="diferirEnTinta1" {...register("diferirEnTinta1")} />
-                                        <label style={{color:"#000000"}} htmlFor="diferirEnTinta1">Diferir en (Etiq.)</label>
-                                    </div>
+                                  
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="metros" {...register("metros")} readOnly={true}/>
                                         <label style={{color:"#000000"}} htmlFor="metros" >Metros lineales</label>
@@ -1648,7 +1954,7 @@ const Cotizacion=()=> {
                                         <label style={{color:"#000000"}} htmlFor="RefDistintasZebra">Ref. Distintas</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 " style={{width: "25% "}}>
-                                        <select className="form-select" id="CintaZebra" {...register("CintaZebra")} aria-label="ciudad">
+                                        <select className="form-select" id="CintaZebra" {...register("CintaZebra")} >
                                             <option value="Cera" attr-precio="1.00">Cera</option>
                                             <option value="Resina" attr-precio="2.00">Resina</option>
                                             <option value="Cera Resina" attr-precio="1.50">Cera Resina</option>
@@ -1701,79 +2007,104 @@ const Cotizacion=()=> {
 
                                     </div>
                                 </div>
-                                <h4 className="col-12 text-black mt-3 hidden" style={{textAlign: "center"}}>Recargo, transporte, mdel y comisión</h4>
+                                <h4 className="col-12 text-black mt-3" style={{textAlign: "center"}}>Recargo</h4>
                                 <hr style={{marginTop:" -1px", border: "#000000 2px solid"}}/>
-                                <div className="col-12 zoom90 " style={{display: "none", flexDirection:"row"}}>
+                                <div className="col-12 zoom90 " style={{ flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-12 ">
-                                        <div className="form-control" id="" style={{display: "flex", flexDirection: "column", height: "230px"}}>
+                                        <div className="form-control" id="" style={{display: "flex", flexDirection: "column", height: "330px"}}>
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-check col-3">
                                                     <input className="form-check-input" type="radio" {...register("recargoTrnsporte")} id="recargoTrnsporteCM" value="Corte Manual" />
-                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="terminacionEnR">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="recargoTrnsporteCM">
                                                         Corte Manual
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-3">
                                                     <input className="form-check-input" type="radio" {...register("recargoTrnsporte")} id="recargoTrnsporteDM" value="Doblado Manual"/>
-                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="terminacionEnH">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="recargoTrnsporteDM">
                                                         Doblado Manual
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-3">
                                                     <input className="form-check-input" type="radio" {...register("recargoTrnsporte")} id="recargoTrnsporteCR" value="Reproceso de Corte y Rebobinado"/>
-                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="terminacionEnD">
+                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="recargoTrnsporteCR">
                                                         Reproceso de Corte y Rebobinado
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-3">
-                                                    <input className="form-check-input" type="radio" {...register("recargoTrnsporte")} id="recargoTrnsporteOtro" value="Reproceso de Corte y Rebobinado"/>
+                                                    <input className="form-check-input" type="radio" {...register("recargoTrnsporte")} id="recargoTrnsporteOtro" value="otro"/>
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="recargoTrnsporteOtro">
-                                                        Otro recargo <input  type="text" placeholder="motivo" {...register("motivorecargo")}/>
+                                                        Otro recargo
                                                     </label>
                                                 </div>
+                                               
                                             </div>
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "25% "}}>
                                                     <input type="text" className="form-control" id="recargoTrnsporteCMCosto" {...register("recargoTrnsporteCMCosto")} />
-                                                    <label style={{color:"#000000"}} htmlFor="recargoTrnsporteCMCosto">$ C/U</label>
+                                                    <label style={{color:"#000000"}} htmlFor="recargoTrnsporteCMCosto">$ Valor</label>
                                                 </div>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "25% "}}>
                                                     <input type="text" className="form-control" id="recargoTrnsporteDMCosto" {...register("recargoTrnsporteDMCosto")} />
-                                                    <label style={{color:"#000000"}} htmlFor="recargoTrnsporteDMCosto">$ C/U</label>
+                                                    <label style={{color:"#000000"}} htmlFor="recargoTrnsporteDMCosto">$ Valor</label>
                                                 </div>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "25% "}}>
                                                     <input type="text" className="form-control" id="recargoTrnsporteCRCosto" {...register("recargoTrnsporteCRCosto")} />
-                                                    <label style={{color:"#000000"}} htmlFor="recargoTrnsporteCRCosto">$ C/U</label>
+                                                    <label style={{color:"#000000"}} htmlFor="recargoTrnsporteCRCosto">$ Valor</label>
                                                 </div>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "25% "}}>
                                                     <input type="text" className="form-control" id="recargoTrnsporteOtroCosto" {...register("recargoTrnsporteOtroCosto")} />
-                                                    <label style={{color:"#000000"}} htmlFor="recargoTrnsporteOtroCosto">$ C/U</label>
+                                                    <label style={{color:"#000000"}} htmlFor="recargoTrnsporteOtroCosto">$ Valor</label>
                                                 </div>
                                             </div>
-                                            <hr style={{width:"95%" ,marginTop: "-1px", border: "#ffffff 2px solid"}}/>
+                                            <h4 className="col-12 text-black mt-4" style={{textAlign: "center"}}>Ciudad de envio</h4>
+                                            <hr style={{width:"100%" ,marginTop: "10px", border: "#000000 2px solid"}}/>
                                             <div style={{display: "flex", flexDirection:"row", marginTop: "5px"}}>
-                                                <div className="form-check col-4">
-                                                    <input className="form-check-input" type="radio" {...register("transporteCiudad")} id="valleaburratrans" value="Valle de aburra" attr-precio="0" checked/>
-                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="valleaburratrans">
-                                                        Valle de aburra
-                                                    </label>
-                                                </div>
-                                                <div className="form-check col-4">
-                                                    <input className="form-check-input" type="radio" {...register("transporteCiudad")} id="ciudad_principal_transporte_select" value="Ciudad principal" attr-precio="0"/>
-                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="ciudad_principal_transporte_select">
-                                                        Ciudad principal <input  type="text" placeholder="Cual?" {...register("ciudad_principal_transporte")}/>
-                                                    </label>
-                                                </div>
-                                                <div className="form-check col-4">
-                                                    <input className="form-check-input" type="radio" {...register("transporteCiudad")} id="otras_ciudades_transporte_select" value="Otras Ciudades/Municipios" attr-precio="0"/>
-                                                    <label style={{color:"#000000"}} className="form-check-label" htmlFor="otras_ciudades_transporte_select">
-                                                        Otras Ciudades/Municipios <input  type="text" placeholder="Cual?" {...register("otras_ciudades_transporte")}/>
-                                                    </label>
+                                            <div className="form-floating  mx-auto p-1 col-6">
+                                                <input type="text" className="form-control" id="ciudad" readOnly={true}  />
+                                                <label style={{color:"#000000"}} htmlFor="ciudad">Ciudad/es</label>
+
+                                            </div>
+                                            <div className="form-floating mx-auto p-1 col-4 " >
+                                                <select className="form-select bg-secondary-subtle-r " id="ciudadEnvio" {...register("ciudadEnvio",{required:'campo requerido'})} >
+                                                    <option value={""} >Seleccionar</option>
+                                                    <option value={"Ciudad Principal"} >Ciudad Principal</option>
+                                                    <option value={"Ciudad Secundaria"} >Ciudad Secundaria</option>
+                                                    <option value={"Ciudad Terciara"} >Ciudad Terciara</option>
+                                                    <option value={"Ciudad especial 1"} >Ciudad especial 1</option>
+                                                    <option value={"Ciudad especial 2"} >Ciudad especial 2</option>
+
+
+                                                </select>
+                                                <label style={{color:"#000000"}} htmlFor="ciudadEnvio">Ciudad de envio</label>
+                                            </div>
+                                            <div className="form-floating  mx-auto p-1 " style={{width: "25% "}}>
+                                                    <input type="text" className="form-control" id="cajas" {...register("cajas")} />
+                                                    <label style={{color:"#000000"}} htmlFor="cajas">Cajas</label>
                                                 </div>
                                             </div>
                                         </div>
 
                                     </div>
+                                </div>
+                                <h4 className="col-12 text-black mt-3" style={{textAlign: "center"}}>Valores internos</h4>
+                                <hr style={{marginTop:" -1px", border: "#000000 2px solid"}}/>
+                                <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
+                                    <div className="form-floating  mx-auto p-1 " style={{width: "25% "}}>
+                                        <input type="text" className="form-control" id="sherpa" attr-precio="20000"  {...register("sherpa")}/>
+                                        <label style={{color:"#000000"}} htmlFor="sherpa">Sherpa</label>
+                                    </div>
+
+                                    <div className="form-floating  mx-auto p-1 " style={{width: "25% "}}>
+                                        <input type="text" className="form-control" id="utilidad" attr-precio="0"  {...register("utilidad")}/>
+                                        <label style={{color:"#000000"}} htmlFor="utilidad">Utilidad</label>
+                                    </div>
+                                    <div className="form-floating  mx-auto p-1 " style={{width: "25% "}}>
+                                        <input type="text" className="form-control" id="comision" attr-precio="0" {...register("comision")} />
+                                        <label style={{color:"#000000"}} htmlFor="comision">Comision</label>
+                                    </div>
+                                  
+
                                 </div>
                                 <div className="col-12" style={{display: "flex", flexDirection:"row"}}>
                                     <button id="cotizarB" type="button" className="btn btn-success mx-auto col-8 text-black mt-3 mb-2 p-2" onClick={constructionCotizacion}>Cotizar</button>
@@ -1805,7 +2136,7 @@ const Cotizacion=()=> {
                                             symbol:"$",
                                             symbolAfter:false,
                                             negativeSign:true,
-                                            precision:false,
+                                            precision:2,
                                         }},
                                         {title:'Costo Acabado',field:'acabadoValorpreciotd',formatter:"money", formatterParams:{
                                             decimal:",",
@@ -1813,7 +2144,7 @@ const Cotizacion=()=> {
                                             symbol:"$",
                                             symbolAfter:false,
                                             negativeSign:true,
-                                            precision:false,
+                                            precision:2,
                                         }},
                                         {title:'Costo Cold foild',field:'coldValorpreciotd',formatter:"money", formatterParams:{
                                             decimal:",",
@@ -1821,7 +2152,7 @@ const Cotizacion=()=> {
                                             symbol:"$",
                                             symbolAfter:false,
                                             negativeSign:true,
-                                            precision:false,
+                                            precision:2,
                                         }},
                                         {title:'Costo Maquina',field:'Costo_total_maquinatd',formatter:"money", formatterParams:{
                                             decimal:",",
@@ -1829,7 +2160,7 @@ const Cotizacion=()=> {
                                             symbol:"$",
                                             symbolAfter:false,
                                             negativeSign:true,
-                                            precision:false,
+                                            precision:2,
                                         }},
                                         {title:'Horas Maquina',field:'horas_maquina'},
                                         {title:'Costo Graduación Planchas',field:'precioGraduacionPlanchastd',formatter:"money", formatterParams:{
@@ -1838,7 +2169,7 @@ const Cotizacion=()=> {
                                             symbol:"$",
                                             symbolAfter:false,
                                             negativeSign:true,
-                                            precision:false,
+                                            precision:2,
                                         }},
                                         {title:'Costo Cambio de plancha',field:'CambPlanchastd',formatter:"money", formatterParams:{
                                             decimal:",",
@@ -1846,7 +2177,7 @@ const Cotizacion=()=> {
                                             symbol:"$",
                                             symbolAfter:false,
                                             negativeSign:true,
-                                            precision:false,
+                                            precision:2,
                                         }},
                                         {title:'Costo Graduación P.A.R',field:'GradPARtd',formatter:"money", formatterParams:{
                                             decimal:",",
@@ -1854,7 +2185,7 @@ const Cotizacion=()=> {
                                             symbol:"$",
                                             symbolAfter:false,
                                             negativeSign:true,
-                                            precision:false,
+                                            precision:2,
                                         }},
                                         {title:'Costo Cambio de tintas',field:'CambiosTintastd',formatter:"money", formatterParams:{
                                             decimal:",",
@@ -1862,7 +2193,7 @@ const Cotizacion=()=> {
                                             symbol:"$",
                                             symbolAfter:false,
                                             negativeSign:true,
-                                            precision:false,
+                                            precision:2,
                                         }},
                                         {title:'Costo Prep. tintas',field:'PrepTintastd',formatter:"money", formatterParams:{
                                             decimal:",",
@@ -1870,7 +2201,7 @@ const Cotizacion=()=> {
                                             symbol:"$",
                                             symbolAfter:false,
                                             negativeSign:true,
-                                            precision:false,
+                                            precision:2,
                                         }},
                                         {title:'Costo Planchas',field:'costoPlanchasporEtiquetatd',formatter:"money", formatterParams:{
                                             decimal:",",
@@ -1878,7 +2209,7 @@ const Cotizacion=()=> {
                                             symbol:"$",
                                             symbolAfter:false,
                                             negativeSign:true,
-                                            precision:false,
+                                            precision:2,
                                         }},
                                         {title:'Costo Tintas',field:'calcularValorTotalTintastd',formatter:"money", formatterParams:{
                                             decimal:",",
@@ -1886,7 +2217,23 @@ const Cotizacion=()=> {
                                             symbol:"$",
                                             symbolAfter:false,
                                             negativeSign:true,
-                                            precision:false,
+                                            precision:2,
+                                        }},
+                                        {title:'Costo troquel',field:'costoTroqueltd',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:2,
+                                        }},
+                                        {title:'Costo Terminación',field:'constoTerminacion',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:2,
                                         }},
                                         {title:'Costo Transporte',field:'transporteCiudadpreciotd',formatter:"money", formatterParams:{
                                             decimal:",",
@@ -1894,15 +2241,33 @@ const Cotizacion=()=> {
                                             symbol:"$",
                                             symbolAfter:false,
                                             negativeSign:true,
-                                            precision:false,
+                                            precision:2,
                                         }},
+                                        {title:'Costo Recargos',field:'recargoTrnsporteFtd',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:2,
+                                        }},
+                                        {title:'Costo Sherpa',field:'preciosherpa',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:2,
+                                        }},
+                                        
+                                        
                                         {title:'Costo Total',field:'costo_totaltd',formatter:"money", formatterParams:{
                                             decimal:",",
                                             thousand:".",
                                             symbol:"$",
                                             symbolAfter:false,
                                             negativeSign:true,
-                                            precision:false,
+                                            precision:2,
                                         }}
                                     ]}
                                     action={handleRowSelectedCoti}

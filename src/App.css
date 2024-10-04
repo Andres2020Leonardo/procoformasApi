@@ -256,3 +256,7 @@ fieldset legend span{
 .MuiOutlinedInput-root{
   padding: 5.05px !important ;
 }
+.coin-text {
+  font-weight: bold; 
+  text-decoration: underline; 
+}

@@ -73,8 +73,9 @@ const SolicitudCotizacion=()=> {
         const onSubmit = async (data) => {
             setLoadingIcon(true)
             try {
-                
-                const response = await ClientAxios.post(`/insertcotizacion`, data)
+                const arrayToString = JSON.stringify(valueCiudadAlls.map(item => item.id));
+                const newData = { ...data, ciudad_entrega: arrayToString };
+                const response = await ClientAxios.post(`/insertcotizacion`, newData)
                 
                 if(response.data!=="Creación fallida."){
                     setCotizacion(response.data)
@@ -648,11 +649,11 @@ const SolicitudCotizacion=()=> {
                             
                                 <div className="form-floating mx-auto p-1 col-3" style={{paddingRight:"2px"}}>
                                     <select className="form-select bg-secondary-subtle-r" id="troquel" {...register("troquel",{required:'campo requerido'})} aria-label="troquel">
-                                        <option value="Existe" >Existe</option>
-                                        <option value="Nuevo">Nuevo</option>
-                                        <option value="Ninguno">Ninguno</option>
-                                        <option value="Nuevo especial">Nuevo especial</option>
-
+                                        <option value="Circular" >Circular</option>
+                                        <option value="Especiales">Especiales</option>
+                                        <option value="Ovalados">Ovalados</option>
+                                        <option value="Plano">Plano</option>
+                                        <option value="Rectangular">Rectangular</option>
                                     </select>
                                     <label style={{color:"#000000"}} htmlFor="troquel">Troquel</label>
                                 </div>
@@ -874,9 +875,11 @@ const SolicitudCotizacion=()=> {
                                                     </div>
                                                     <div className="form-floating mx-auto p-1 col-3" >
                                                         <select className="form-select bg-secondary-subtle-r" id="core" {...register("core")} aria-label="core"  >
-                                                            <option value="N" >Ninguna</option>
-                                                            <option value="L" >Liner</option>
-                                                            <option value="A" >Adhesivo</option>
+                                                            <option value="1" >1 pulgada</option>
+                                                            <option value="1.5" >1.5 pulgada</option>
+                                                            <option value="2" >2 pulgada</option>
+                                                            
+                                                            <option value="3" >3 pulgada</option>
 
                                                         </select>
                                                         <label style={{color:"#000000"}} htmlFor="core">Core <b>∅</b></label>
@@ -990,7 +993,7 @@ const SolicitudCotizacion=()=> {
                             </div>
                             <br/>
                             <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row"}}>
-                                {!creada?<input className="btn btn-success mx-auto  my-auto" type="submit" value="Guardar Cotización" onClick={handleSubmit(onSubmit)}/>
+                                {true?<input className="btn btn-success mx-auto  my-auto" type="submit" value="Guardar Cotización" onClick={handleSubmit(onSubmit)}/>
                                  : 
                                             <input className="btn btn-success mx-auto  my-auto" type="button" value="Nueva Cotización" onClick={()=>reload}/>
                                 
