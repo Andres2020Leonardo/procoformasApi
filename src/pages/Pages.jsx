@@ -1,6 +1,5 @@
 import Cotizacion from "../cotizaciones/Cotizacion";
 import SolicitudCotizacion from "../cotizaciones/solicitudCotizacion";
-import CotizacionPdf from "../utils/CotizacionPdf";
 import Home from "./Home";
 
 function Pages({page}){
@@ -20,7 +19,7 @@ function Pages({page}){
                 
                 break;
             default:
-                return <CotizacionPdf/>
+                return <Home/>
         }
     }
     return(<>
