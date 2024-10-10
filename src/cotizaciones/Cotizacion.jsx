@@ -2,11 +2,12 @@ import { set, useForm } from "react-hook-form";
 import ClientAxios from "../config/ClientAxios";
 import Decrypt from "../config/Decrypt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleDown, faAngleUp, faArrowDown, faArrowsRotate, faArrowUp, faCheck, faX } from "@fortawesome/free-solid-svg-icons";
+import { faAngleDown, faAngleUp, faArrowDown, faArrowsRotate, faArrowUp, faCheck, faFilePdf, faX } from "@fortawesome/free-solid-svg-icons";
 import { useEffect, useRef, useState } from "react";
 import DataTable from 'react-data-table-component';
 import TabulatorTable from "../utils/TabulatorTable";
 import ImageOCR from "../utils/ImageOCR";
+import CotizacionPdf from "../utils/CotizacionPdf";
 
 const Cotizacion=()=> {
     const [loadingIcon,setLoadingIcon] = useState(false);
@@ -15,6 +16,10 @@ const Cotizacion=()=> {
     const [allDatas,setAllDatas] = useState({});
     const [mostrartabla,setMostrartabla]=useState(false);
     const [allCoti,setAllCoti]=useState([])
+    const [dataTableCotizacion,setDataTableCotizacion]=useState(null)
+    const [dataform,setDataform]=useState(null)
+    const [verPdf,setVerPdf]=useState(false);
+    
     const [valoresPorCiudad,setValoresPorCiudad]=useState([])
     const [proporcionTroquel,setProporcionTroquel]=useState(0);
     const [proporcionEtiqueta,setProporcionEtiqueta]=useState(0);
@@ -157,7 +162,6 @@ const Cotizacion=()=> {
       }
       function buscaCiudadPorId(id) {    
         let ciudad = allDatas.ciudades.find(ciudad => parseInt(ciudad.id) === parseInt(id));
-        console.log(ciudad)
         return ciudad;
       }
     async function searchSolicitud(value) {
@@ -233,8 +237,6 @@ const Cotizacion=()=> {
                     }
                     valorC.push(buscaCiudadPorId(element).valorCaja)
                  }
-                 console.log('ciudadSe',ciudadSe);
-                 console.log('valorC',valorC);
                  setValue("comi", response.data.comision) 
                  document.getElementById('ciudad').value=ciudadSe
                  setValoresPorCiudad(valorC)
@@ -494,10 +496,7 @@ const Cotizacion=()=> {
         let Valor_total_de_tinta=Consumo_tintaGramos*calcularCostoTintaM2();
         return Math.round(Valor_total_de_tinta);
     }
-    function calcularGramosPorEtiqueta() {
-        let grPE = 4 / calcularAreaEtiqueta()/10000;
-        return grPE
-    }
+   
     function numeroDePlanchas() {
         let texto_acabado=toggleButtonAcabado.current.querySelector('p').textContent;
         let planchas=parseFloat(watch('PlanchasTinta1'))+parseFloat(watch('PlanchasTinta2'))+parseFloat(watch('PlanchasTinta3'))+parseFloat(watch('PlanchasTinta4'))
@@ -507,20 +506,7 @@ const Cotizacion=()=> {
         return planchas
 
     }
-    function proporcionTroquelF(valor) {
-        if(watch('cantidad1')===0){
-            alert('Buscar solicitud')
-        }else{
-            setProporcionTroquel(parseFloat(valor)/parseFloat(watch('cantidad1')))
-        }        
-    }
-    function proporcionEtiquetas(valor) {
-        if(watch('cantidad1')===0){
-            alert('Buscar solicitud')
-        }else{
-            setProporcionEtiqueta(parseFloat(valor)/parseFloat(watch('cantidad1')))
-        }    
-    }
+    
     function calcularValorTroquel(cantidad,diferir) {
         if(watch('cantidad1')===0){
             alert('Buscar solicitud o agregar diferir costo troquel')
@@ -538,9 +524,8 @@ const Cotizacion=()=> {
         cantidad = parseFloat(cantidad)
         let cms2 = parseFloat(watch('anchoMaterialC'))  * parseFloat(watch('avanceReal'))
         let valorPlancaCms2 = cms2*100
-        let Valorplanchas=valorPlancaCms2*numeroDePlanchas()  
-        let valorfinalPlanchas=Valorplanchas/(parseFloat(diferir)/cantidad)
-  
+        let Valorplanchas=valorPlancaCms2*numeroDePlanchas()
+        let valorfinalPlanchas=parseFloat(Valorplanchas)/(parseFloat(diferir)/cantidad)
         return Math.round(valorfinalPlanchas)
         
         
@@ -560,7 +545,6 @@ const Cotizacion=()=> {
         }
     }
     function costoTroquel(cantidad,diferir) {
-        console.log("cantidades",cantidad,diferir )
         if (watch('troquel')==="plano") {
             return 100000;
         }
@@ -745,14 +729,21 @@ const Cotizacion=()=> {
             CintaZebraprecio = parseFloat(CintaZebra.options[CintaZebra.selectedIndex].getAttribute('attr-precio'));
         }
        
-        ///// transporteCiudad
-        var transporteCiudad = document.querySelector('input[name="transporteCiudad"]:checked');
-        let transporteCiudadprecio=0
-        if (transporteCiudad) {
-            transporteCiudadprecio = parseFloat(transporteCiudad.getAttribute('attr-precio'));
-        }else{
-            alert('Seleccionar destino')
-        } 
+        ///// transporteCiudad aburra 
+        var transporteCiudad = document.querySelector('select[id="ciudadEnvio"]');
+        let transporteCiudadprecio = 0;
+        // Verificar si se ha seleccionado una opción válida
+        if (transporteCiudad && transporteCiudad.value) {
+            // Obtener el precio del atributo 'attr-precio' de la opción seleccionada
+            transporteCiudadprecio = parseFloat(transporteCiudad.selectedOptions[0].getAttribute('att-precio'));
+            // Multiplicar por la cantidad de cajas (presupongo que la función 'watch' devuelve el valor de 'cajas')
+            transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas'));
+        } else {
+            alert("Por favor, selecciona una opción de ciudad.");
+        }
+           
+
+        ////
 
         var materialValor = toggleButtonMaterial.current.querySelector('p').textContent;
         let materialValorprecio=0
@@ -787,30 +778,31 @@ const Cotizacion=()=> {
 
 
 
-        let costo_total=parseFloat(avanceZebra)+parseFloat(RefDistintasZebra)+parseFloat(etiqAlAncho)+parseFloat(coldValorprecio)+parseFloat(materialValorprecio)+parseFloat(acabadoValorprecio)+parseFloat(Costo_total_maquina)+parseFloat(precioGraduacionPlanchas)+parseFloat(CambPlanchas)+parseFloat(GradPAR)+parseFloat(PrepTintas)+parseFloat(CambiosTintas)+parseFloat(costoPlanchasporEtiqueta(cantidad,fotoDife))+parseFloat(calcularValorTotalTintas(cantidad))+parseFloat(transporteCiudadprecio)+parseFloat(CintaZebraprecio)+costoTroquel(cantidad,troquelDif)+costoTerminacionEn(cantidad)+recargoTrnsporteF()+parseFloat(preciosherpa);
-        costo_total=costo_total+(costo_total*parseFloat(watch('utilidad'))/100)+(costo_total*parseFloat(watch('comision'))/100)
-        
+       
         var coti = (coti);
-        var cantidadtd = (Math.round(cantidad));
-        var materialValorpreciotd = (Math.round(materialValorprecio));
-        var acabadoValorpreciotd = (Math.round(acabadoValorprecio));
-        var coldValorpreciotd = (Math.round(coldValorprecio));
-        var Costo_total_maquinatd = (Math.round(Costo_total_maquina));
-        var horas_maquina = (horasMaquinaReales);
-        var precioGraduacionPlanchastd = (Math.round(precioGraduacionPlanchas));
-        var CambPlanchastd = (Math.round(CambPlanchas));
-        var GradPARtd = (GradPAR);
-        var CambiosTintastd = (Math.round(CambiosTintas));
-        var PrepTintastd = (Math.round(PrepTintas));
-        var costoPlanchasporEtiquetatd = (Math.round(costoPlanchasporEtiqueta(cantidad,fotoDife)));
-        var calcularValorTotalTintastd = (Math.round(calcularValorTotalTintas(cantidad)));
-        var transporteCiudadpreciotd = transporteCiudadprecio;
-        var costo_totaltd = (Math.round(costo_total));
-        var constoTerminacion=costoTerminacionEn(cantidad);
-        var costoTroqueltd=costoTroquel(cantidad,troquelDif);
-        var recargoTrnsporteFtd=recargoTrnsporteF();
-        var utilildadtd=(costo_total*parseFloat(watch('utilidad'))/100)
-        var comisiontd = (costo_total*parseFloat(watch('comision'))/100)
+        var cantidadtd =parseFloat((Math.round(cantidad)));
+        var materialValorpreciotd =parseFloat((Math.round(materialValorprecio)));
+        var acabadoValorpreciotd =parseFloat((Math.round(acabadoValorprecio)));
+        var coldValorpreciotd =parseFloat((Math.round(coldValorprecio)));
+        var Costo_total_maquinatd =parseFloat((Math.round(Costo_total_maquina)));
+        var horas_maquina =parseFloat((horasMaquinaReales));
+        var precioGraduacionPlanchastd =parseFloat((Math.round(precioGraduacionPlanchas)));
+        var CambPlanchastd =parseFloat((Math.round(CambPlanchas)));
+        var GradPARtd =parseFloat((GradPAR));
+        var CambiosTintastd =parseFloat((Math.round(CambiosTintas)));
+        var PrepTintastd =parseFloat((Math.round(PrepTintas)));
+        var costoPlanchasporEtiquetatd =parseFloat((Math.round(costoPlanchasporEtiqueta(cantidad,fotoDife))));
+        var calcularValorTotalTintastd =parseFloat((Math.round(calcularValorTotalTintas(cantidad))));
+        var transporteCiudadpreciotd =parseFloat(transporteCiudadprecio) 
+        var constoTerminacion =parseFloat(costoTerminacionEn(cantidad));
+        var costoTroqueltd =parseFloat(costoTroquel(cantidad,troquelDif));
+        var recargoTrnsporteFtd =parseFloat(recargoTrnsporteF());
+       
+        let costo_total = materialValorpreciotd+acabadoValorpreciotd+coldValorpreciotd+Costo_total_maquinatd+horas_maquina+precioGraduacionPlanchastd+CambPlanchastd+GradPARtd+CambiosTintastd+PrepTintastd+costoPlanchasporEtiquetatd+calcularValorTotalTintastd+transporteCiudadpreciotd+constoTerminacion+costoTroqueltd+recargoTrnsporteFtd;
+        var utilildadtd= parseFloat(costo_total*parseFloat(watch('utilidad'))/100)
+        var comisiontd = parseFloat(costo_total*parseFloat(watch('comision'))/100)
+        costo_total=costo_total+utilildadtd+comisiontd;
+        var costo_totaltd = parseFloat(Math.round(costo_total));
         let cotizando ={
             'coti':coti,
             'cantidadtd':cantidadtd,
@@ -839,7 +831,8 @@ const Cotizacion=()=> {
         return   cotizando;
     }
     
-    const constructionCotizacion=()=>{        
+    const constructionCotizacion=()=>{  
+        setAllCoti([])      
         for (let index = 1; index < 10; index++) {
             let cantidad_select="cantidad"+index;
             let cantidad_foto="difFotopolimero"+index;
@@ -856,7 +849,25 @@ const Cotizacion=()=> {
          let preciow = allDatas.maquinas.filter(maquina => maquina.nombre === nombreProducto);
          return preciow[0].precio
     };
-  
+    async function onSubmitForm(data) {
+        
+        try {
+            let newData = { ...data, valoresGlobales: allCoti };
+             newData = { ...newData, valoresGlobaleslength: allCoti.length };
+            console.log(newData)
+            const response = await ClientAxios.post(`/insertcotizacionReal`, newData)
+            
+            
+           
+            
+         
+        } catch (error) {
+          
+            console.log(error)
+        }
+    } 
+   
+
     return (
         
         <>  {loadingIcon && <div className="position-fixed rounded p-1 shadow-lg" style={{zIndex:200,top:10,right:20,height:"8vh",width:"5vw",background:"#498ac2"}}><FontAwesomeIcon className="fa-spin fa-beat-fade text-black" style={{height:"90%"}}   icon={faArrowsRotate}/></div>}
@@ -875,7 +886,7 @@ const Cotizacion=()=> {
                                 
                                 <div className="col-12  h-100 p-1 " style={{display: "flex", flexDirection: "column"}}>
                                     <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
-                                       
+                                        
                                         <div className="form-floating  mx-auto p-1 " >
                                             <input type="text" className="form-control shadow-lg" id="tipoCotizacion" {...register("tipoCotizacion")}/>
                                             <label style={{color:"#000000"}} htmlFor="tipoCotizacion">Tipo</label>
@@ -2068,11 +2079,12 @@ const Cotizacion=()=> {
                                             <div className="form-floating mx-auto p-1 col-4 " >
                                                 <select className="form-select bg-secondary-subtle-r " id="ciudadEnvio" {...register("ciudadEnvio",{required:'campo requerido'})} >
                                                     <option value={""} >Seleccionar</option>
-                                                    <option value={"Ciudad Principal"} >Ciudad Principal</option>
-                                                    <option value={"Ciudad Secundaria"} >Ciudad Secundaria</option>
-                                                    <option value={"Ciudad Terciara"} >Ciudad Terciara</option>
-                                                    <option value={"Ciudad especial 1"} >Ciudad especial 1</option>
-                                                    <option value={"Ciudad especial 2"} >Ciudad especial 2</option>
+                                                    <option value={"aburra"} att-precio="16627">Valle de aburra</option>
+                                                    <option value={"Ciudad Principal"} att-precio="22367">Ciudad Principal</option>
+                                                    <option value={"Ciudad Secundaria"} att-precio="21889">Ciudad Secundaria</option>
+                                                    <option value={"Ciudad Terciara"} att-precio="30464">Ciudad Terciara</option>
+                                                    <option value={"Ciudad especial 1"} att-precio="55535">Ciudad especial 1</option>
+                                                    <option value={"Ciudad especial 2"} att-precio="125146">Ciudad especial 2</option>
 
 
                                                 </select>
@@ -2124,7 +2136,7 @@ const Cotizacion=()=> {
                                         className=" my-auto mx-auto bg-body"
                                     
                                     /></button>
-                                    <div className="mt-4"></div>
+                                    <div className="mt-4 mb-4" style={{fontSize:"18px"}}>Resultados de la cotización</div>
                                     <TabulatorTable
                                         
                                         columns={[
@@ -2268,17 +2280,57 @@ const Cotizacion=()=> {
                                             symbolAfter:false,
                                             negativeSign:true,
                                             precision:2,
+                                        }},
+                                        {title: 'Acciones', field: 'acciones', formatter: function(cell, formatterParams, onRendered){
+                                            // Crear el botón
+                                            const button = document.createElement("button");
+                                            button.className = "btn btn-primary";
+                                            button.innerHTML = `
+                                                <svg aria-hidden="true" focusable="false" data-prefix="fas" data-icon="file-pdf" class="svg-inline--fa fa-file-pdf " role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" style="width:16px;height:16px;">
+                                                    <path fill="currentColor" d="M0 64C0 28.7 28.7 0 64 0L224 0l0 128c0 17.7 14.3 32 32 32l128 0 0 144-208 0c-35.3 0-64 28.7-64 64l0 144-48 0c-35.3 0-64-28.7-64-64L0 64zm384 64l-128 0L256 0 384 128zM176 352l32 0c30.9 0 56 25.1 56 56s-25.1 56-56 56l-16 0 0 32c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-48 0-80c0-8.8 7.2-16 16-16zm32 80c13.3 0 24-10.7 24-24s-10.7-24-24-24l-16 0 0 48 16 0zm96-80l32 0c26.5 0 48 21.5 48 48l0 64c0 26.5-21.5 48-48 48l-32 0c-8.8 0-16-7.2-16-16l0-128c0-8.8 7.2-16 16-16zm32 128c8.8 0 16-7.2 16-16l0-64c0-8.8-7.2-16-16-16l-16 0 0 96 16 0zm80-112c0-8.8 7.2-16 16-16l48 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-32 0 0 32 32 0c8.8 0 16 7.2 16 16s-7.2 16-16 16l-32 0 0 48c0 8.8-7.2 16-16 16s-16-7.2-16-16l0-64 0-64z"></path>
+                                                </svg>`;
+                                
+                                            // Agregar evento click al botón
+                                            button.addEventListener("click", function() {
+                                                const rowData = cell.getRow().getData(); // Obtener los datos de la fila actual
+                                                const currentData = watch();
+                                                setDataTableCotizacion(rowData);
+                                                setDataform(currentData);
+                                                setVerPdf(true)                                               
+                                                // Aquí puedes agregar más lógica, como abrir un modal o redirigir a otra página
+                                            });
+                                
+                                            // Devolver el botón con el SVG
+                                            return button;
                                         }}
                                     ]}
                                     action={handleRowSelectedCoti}
                                     data={allCoti}
                                     
                                     ></TabulatorTable>
+                                    <div className="mt-4"><button className="btn btn-success" onClick={()=>onSubmitForm(watch())} >Guardar cotizaciones</button></div>
                         </div>
                         
                     </div>
                     }
-               
+                {verPdf && 
+                    <div className="bg-success  top-50 start-50 translate-middle" style={{position:"fixed",width:"100vw",height:"100vh",zIndex:"400"}}>
+                        <div className="bg-body rounded top-50 start-50 translate-middle p-4" style={{position:"fixed",width:"85vw",height:"80vh",zIndex:"500"}}>
+                                    <button   onClick={()=>setVerPdf(false)} style={{position:"absolute",top:8,right:8,width:"30px",height:"30px",display:"flex",alignItems:"center",alignContent:"center"}}><FontAwesomeIcon
+                                        icon={faX}
+                                        
+                                        className=" my-auto mx-auto bg-body"
+                                    
+                                    /></button>
+                                    <div className="mt-4">
+                                        <CotizacionPdf dataTableCotizacion={dataTableCotizacion} dataform={dataform}></CotizacionPdf>
+
+                                    </div>
+                                  
+                        </div>
+                        
+                    </div>
+                    }
                                         
             </div>
             }
@@ -2286,5 +2338,3 @@ const Cotizacion=()=> {
         </>);
 }
 export default Cotizacion;
-
-

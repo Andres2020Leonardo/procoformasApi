@@ -46,7 +46,6 @@ const TabulatorTable = ({ data,columns,action=null }) => {
 
   useEffect(() => {
     if (tableRef.current) {
-      console.log(data)
       tabla=new Tabulator(tableRef.current, {
         data: data,
         columns: columns,
@@ -66,27 +65,8 @@ const TabulatorTable = ({ data,columns,action=null }) => {
     }
   }, []);
 
-   // Función para descargar la tabla como PDF
-   const downloadPDF = () => {
-    const doc = new jsPDF();
-    const rows = tabla.getData(); // Obtener los datos de la tabla
-
-    // Agregar un título al PDF
-    doc.text("Tabla de Datos", 10, 10);
-
-    // Agregar los encabezados de las columnas
-    const headers = columns.map(col => col.title);
-    doc.autoTable({
-      head: [headers],
-      body: rows.map(row => columns.map(col => row[col.field])),
-      startY: 20,
-    });
-
-    // Guarda el PDF
-    doc.save("tabla.pdf");
-  };
   return (
-    <><button onClick={downloadPDF}>Descargar PDF</button><div ref={tableRef}></div></>
+    <><div ref={tableRef}></div></>
     
   );
 };

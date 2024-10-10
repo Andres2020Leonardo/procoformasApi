@@ -130,7 +130,11 @@ const styles = StyleSheet.create({
   }
 });
 
-const CotizacionPdf = ({ cotizacion=0,planeacion=1,data={nombreCliente:"familia",producto:"ETQ. seguridad Armonia"} }) => {
+const CotizacionPdf = ({ cotizacion=0,planeacion=1,data={nombreCliente:"familia",producto:"ETQ. seguridad Armonia"},dataTableCotizacion,dataform }) => {
+  useEffect(() => {
+    console.log(dataTableCotizacion)
+    console.log(dataform)
+  }, [])
   
   const MyDocument = () => (
     <Document>
@@ -436,7 +440,7 @@ const CotizacionPdf = ({ cotizacion=0,planeacion=1,data={nombreCliente:"familia"
   return (
     <div>
        
-        <PDFViewer style={{ width: '90vw', height: '100vh' }}>
+        <PDFViewer style={{ width: '90%', height: '70vh' }}>
           <MyDocument />
         </PDFViewer>
      
