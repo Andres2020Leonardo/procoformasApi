@@ -135,16 +135,23 @@ const CotizacionPdf = ({ cotizacion=0,planeacion=1,data={nombreCliente:"familia"
     console.log(dataTableCotizacion)
     console.log(dataform)
   }, [])
+  const fechaTime=new Date();
+  const anio = fechaTime.getFullYear();
+  const mes = ("0" + (fechaTime.getMonth() + 1)).slice(-2); // Los meses comienzan desde 0
+  const dia = ("0" + fechaTime.getDate()).slice(-2);
   
+  const fechaFormateada = `${anio}-${mes}-${dia}`;
+  const diferido_foto="difFotopolimero"+dataTableCotizacion.coti;
+  const diferido_troquel="difTroquel"+dataTableCotizacion.coti;
   const MyDocument = () => (
     <Document>
       <Page size="A4" style={styles.page}>
         <View style={styles.header}>
           <View style={styles.headerRow}>
-            <Text style={styles.headerItem}>Anexo Solicitud Numero: {cotizacion}</Text>
-            <Text style={styles.headerItem}># Planeación: {planeacion}</Text>
-            <Text style={styles.headerItem}>Fecha cotizacion: {data?.fechaCotizacion}</Text>
-            <Text style={styles.headerItem}>Vigencia:  {data?.fechaVigencia}</Text>
+            <Text style={styles.headerItem}>Anexo Solicitud Numero: {dataform.id || 0}</Text>
+            <Text style={styles.headerItem}># Planeación: {dataTableCotizacion.coti}</Text>
+            <Text style={styles.headerItem}>Fecha cotizacion: {dataform?.fechaCotizacion || fechaFormateada}</Text>
+            <Text style={styles.headerItem}>Vigencia:  {dataform?.fechaVigencia || fechaFormateada}</Text>
           </View>
           <View style={styles.headerRow}>
             <div style={{fontSize: 10,fontWeight: 'bold',display:'flex',flexDirection:'column'}}>
@@ -152,9 +159,9 @@ const CotizacionPdf = ({ cotizacion=0,planeacion=1,data={nombreCliente:"familia"
                 <Text style={{marginTop:"4px",fontSize:"12px",fontWeight: 'bold'}}>{data?.nombreCliente}</Text>
             </div>
             <div style={{fontSize: 10,fontWeight: 'bold',display:'flex',flexDirection:'column'}}>
-              <Text style={styles.headerItem}>Producto: {data?.producto}</Text>
-              <Text style={{marginTop:"4px",fontSize:"8px"}}>(17.50 X 12.0) - (2 X 0 Tintas + 0 Cambios) (#Refs. 1)</Text>
-              <Text style={{marginTop:"4px",fontSize:"8px",fontWeight: 'bold'}}>(PBB-FR-G62) - (20.0) Unidad : 78 # Around: 2 # Across: 1</Text>
+              <Text style={styles.headerItem}>Producto: {dataform?.producto}</Text>
+              <Text style={{marginTop:"4px",fontSize:"8px"}}>({dataform.anchoEspe} X {dataform.avanceEspe}) - ({dataform.t1} X {dataform.t2} Tintas ) (#Refs. {dataTableCotizacion.coti})</Text>
+              <Text style={{marginTop:"4px",fontSize:"8px",fontWeight: 'bold'}}>({dataform.material}) - ({dataform.anchoMaterialC}) Unidad : {dataform.CUnidad} # Around: {dataform.around} # Across: {dataform.across}</Text>
             </div>
           
           </View>
@@ -178,49 +185,49 @@ const CotizacionPdf = ({ cotizacion=0,planeacion=1,data={nombreCliente:"familia"
           
           <View style={styles.comprasTable}>
             <Text style={styles.tableItem}>Sobrante</Text>
-            <Text style={styles.tableItem}>19.42%</Text>
-            <Text style={styles.tableItem}>Graduar</Text>
-            <Text style={styles.tableItem}>492 Etiq.</Text>
+            <Text style={styles.tableItem}>en revisión</Text>{/* valor sobrante */}
+            <Text style={styles.tableItem}>-</Text>
+            <Text style={styles.tableItem}>-</Text>
             <Text style={styles.tableItem}>-</Text>
           </View>
           <View style={styles.comprasTable2}>
             <Text style={styles.tableItem}>Costo materia prima</Text>
-            <Text style={styles.tableItem}>$40</Text>
+            <Text style={styles.tableItem}>${parseFloat(dataTableCotizacion.materialValorpreciotd)/parseFloat(dataTableCotizacion.cantidadtd)}</Text>{/* valor material sobre cantidad */}
             <Text style={styles.tableItem}>Area etiqueta</Text>
-            <Text style={styles.tableItem}>24.65 Cm²</Text>
-            <Text style={styles.tableItem}>$2.110.00 / M²</Text>
+            <Text style={styles.tableItem}>{parseFloat(dataform.anchoEspe)*parseFloat(dataform.avanceEspe)} Cm²</Text>{/* valor area etiqueta */}
+            <Text style={styles.tableItem}>${parseFloat(dataTableCotizacion.materialValorpreciotd)/parseFloat(dataform.metros)}</Text>{/* valor material sobre metros */}
           </View>
           <View style={styles.comprasTable}>
             <Text style={styles.tableItem}>Costo de la tinta</Text>
-            <Text style={styles.tableItem}>$40</Text>
+            <Text style={styles.tableItem}>${parseFloat(dataTableCotizacion.calcularValorTotalTintastd)/parseFloat(dataTableCotizacion.cantidadtd)}</Text>{/* valor tinta sobre cantidad */}
             <Text style={styles.tableItem}>Gramos de tinta</Text>
-            <Text style={styles.tableItem}>0.35489 Gr</Text>
-            <Text style={styles.tableItem}>$2.110.00 / Gr</Text>
+            <Text style={styles.tableItem}>{(4*(parseFloat(dataform.anchoEspe)*parseFloat(dataform.avanceEspe)))/100000} Gr</Text>
+            <Text style={styles.tableItem}>-</Text>
           </View>
           <View style={styles.comprasTable2}>
             <Text style={styles.tableItem}>Costo de barniz</Text>
-            <Text style={styles.tableItem}>$40</Text>
+            <Text style={styles.tableItem}>${parseFloat(dataTableCotizacion.acabadoValorpreciotd)/parseFloat(dataTableCotizacion.cantidadtd)}</Text>{/* valor tinta sobre cantidad */}
             <Text style={styles.tableItem}>Gramos de barniz</Text>
-            <Text style={styles.tableItem}>0.35489 Gr</Text>
-            <Text style={styles.tableItem}>$2.110.00 / Gr</Text>
+            <Text style={styles.tableItem}>{(4*(parseFloat(dataform.anchoEspe)*parseFloat(dataform.avanceEspe)))/100000} Gr</Text>
+            <Text style={styles.tableItem}>-</Text>
           </View> 
           <View style={styles.comprasTable}>
             <Text style={styles.tableItem}>Costo de laminación</Text>
-            <Text style={styles.tableItem}>$40</Text>
+            <Text style={styles.tableItem}>$40 (pendiente)</Text>
             <Text style={styles.tableItem}>-</Text>
             <Text style={styles.tableItem}>-</Text>
-            <Text style={styles.tableItem}>$2.110.00 / Gr</Text>
+            <Text style={styles.tableItem}>-</Text>
           </View> 
           <View style={styles.comprasTable2}>
             <Text style={styles.tableItem}>Costo de Cold Foild</Text>
-            <Text style={styles.tableItem}>$40</Text>
+            <Text style={styles.tableItem}>${parseFloat(dataTableCotizacion.coldValorpreciotd)/parseFloat(dataTableCotizacion.cantidadtd)}</Text>{/* valor tinta sobre cantidad */}
             <Text style={styles.tableItem}>-</Text>
             <Text style={styles.tableItem}>-</Text>
-            <Text style={styles.tableItem}>$2.110.00 / Gr</Text>
+            <Text style={styles.tableItem}>-</Text>
           </View> 
           <View style={styles.comprasTableTitle}>
             <Text style={styles.tableItem}>Subtotal MP e Insumos</Text>
-            <Text style={styles.tableItem}>$40</Text>
+            <Text style={styles.tableItem}>${(parseFloat(dataTableCotizacion.materialValorpreciotd)+parseFloat(dataTableCotizacion.calcularValorTotalTintastd)+parseFloat(dataTableCotizacion.acabadoValorpreciotd)+parseFloat(dataTableCotizacion.coldValorpreciotd))/parseFloat(dataTableCotizacion.cantidadtd)} </Text>
             <Text style={styles.tableItem}>-</Text>
             <Text style={styles.tableItem}>-</Text>
             <Text style={styles.tableItem}>-</Text>
@@ -239,44 +246,44 @@ const CotizacionPdf = ({ cotizacion=0,planeacion=1,data={nombreCliente:"familia"
           
           <View style={styles.comprasTable}>
             <Text style={styles.tableItem}>Costo fotopolimero</Text>
-            <Text style={styles.tableItem}>$49.53</Text>
+            <Text style={styles.tableItem}>${parseFloat(dataTableCotizacion.costoPlanchasporEtiquetatd)/parseFloat(dataTableCotizacion.cantidadtd)}</Text>
             <Text style={styles.tableItem}>Area fotopolimero</Text>
-            <Text style={styles.tableItem}>24.65 Cm²</Text>
-            <Text style={styles.tableItem}>$100 Cm²</Text>
+            <Text style={styles.tableItem}>{parseFloat(dataform.avanceReal)*parseFloat(dataform.anchoMaterialC)} Cm²</Text>
+            <Text style={styles.tableItem}>-</Text>
           </View>
           <View style={styles.comprasTable2}>
             <Text style={styles.tableItem}>-</Text>
             <Text style={styles.tableItem}>-</Text>
             <Text style={styles.tableItem}>-</Text>
             <Text style={styles.tableItem}>Diferir en</Text>
-            <Text style={styles.tableItem}>3000 Etiq.</Text>
+            <Text style={styles.tableItem}>{dataform[diferido_foto]} Etiq.</Text>
             
           </View>
           <View style={styles.comprasTable}>
           <Text style={styles.tableItem}>Troquel P.A.R.</Text>
-          <Text style={styles.tableItem}>$0.00</Text>
+          <Text style={styles.tableItem}>$ {dataform.unidadPar!==null ? parseFloat(dataTableCotizacion.costoTroqueltd)/parseFloat(dataTableCotizacion.cantidadtd) : 0}</Text>
             <Text style={styles.tableItem}>-</Text>
             <Text style={styles.tableItem}>-</Text>
             <Text style={styles.tableItem}>-</Text>
           </View>
           <View style={styles.comprasTable2}>
             <Text style={styles.tableItem}>Costo Troquel</Text>
-            <Text style={styles.tableItem}>$ 45.24</Text>
+            <Text style={styles.tableItem}>$ {dataform.unidadPar===null ? parseFloat(dataTableCotizacion.costoTroqueltd)/parseFloat(dataTableCotizacion.cantidadtd) : 0}</Text>
             <Text style={styles.tableItem}>Troquel</Text>
             <Text style={styles.tableItem}>Valor total Troquel</Text>
-            <Text style={styles.tableItem}>$814.360</Text>
+            <Text style={styles.tableItem}>$ {parseFloat(dataTableCotizacion.costoTroqueltd)}</Text>
             
           </View>
           <View style={styles.comprasTable}>
             <Text style={styles.tableItem}>-</Text>
             <Text style={styles.tableItem}>-</Text>
-            <Text style={styles.tableItem}><Text style={{fontWeight:"bold"}}>R-175</Text></Text>
+            <Text style={styles.tableItem}><Text style={{fontWeight:"bold"}}>{dataform.troquel_referencia}</Text></Text>
             <Text style={styles.tableItem}>Diferir en</Text>
-            <Text style={styles.tableItem}>$18.000</Text>
+            <Text style={styles.tableItem}>{dataform[diferido_troquel]} Etiq.</Text>
           </View> 
           <View style={styles.comprasTableTitle}>
             <Text style={styles.tableItem}>Subtotal Diferidos</Text>
-            <Text style={styles.tableItem}>$94.77</Text>
+            <Text style={styles.tableItem}>${(parseFloat(dataTableCotizacion.costoPlanchasporEtiquetatd)/parseFloat(dataTableCotizacion.cantidadtd))+( parseFloat(dataTableCotizacion.costoTroqueltd)/parseFloat(dataTableCotizacion.cantidadtd))}</Text>
             <Text style={styles.tableItem}>-</Text>
             <Text style={styles.tableItem}>-</Text>
             <Text style={styles.tableItem}>-</Text>
@@ -296,76 +303,69 @@ const CotizacionPdf = ({ cotizacion=0,planeacion=1,data={nombreCliente:"familia"
           
           <View style={styles.comprasTable}>
             <Text style={styles.tableItem}>Preparación Tintas</Text>
-            <Text style={styles.tableItem}>2</Text>
-            <Text style={styles.tableItem}>$16.000.00</Text>
+            <Text style={styles.tableItem}>{dataform.PrepTintas}</Text>
+            <Text style={styles.tableItem}>${parseFloat(dataform.PrepTintas)*8000}</Text>
             <Text style={styles.tableItem}>Grad. Mesa Shetter </Text>
-            <Text style={styles.tableItem}>0</Text>
-            <Text style={styles.tableItem}>0h 0m</Text>
+            <Text style={styles.tableItem}>{dataform.MesaShetter==="Si" ? '1' : '0'}</Text>
+            <Text style={styles.tableItem}>{dataform.MesaShetter==="Si" ? '0h 15m' : '0h 00m'}</Text>
           </View>
           <View style={styles.comprasTable2}>
             <Text style={styles.tableItem}>Graduación Unid. imp.</Text>
-            <Text style={styles.tableItem}>3</Text>
-            <Text style={styles.tableItem}>0h 30m</Text>
+            <Text style={styles.tableItem}>{dataform.GradPlanchas}</Text>
+            <Text style={styles.tableItem}>{dataform.GradPlanchas===0 ? '0h 00m' : `0h ${parseFloat(dataform.GradPlanchas)*10}m`} - ${dataTableCotizacion.precioGraduacionPlanchastd}</Text>
             <Text style={styles.tableItem}>Grad. Delam/Relam</Text>
-            <Text style={styles.tableItem}>0</Text>
+            <Text style={styles.tableItem}>0 (pendiente)</Text>
             <Text style={styles.tableItem}>0h 0m</Text>
           </View>
           <View style={styles.comprasTable}>
             <Text style={styles.tableItem}>Grad. Cambio plancha</Text>
-            <Text style={styles.tableItem}>0</Text>
-            <Text style={styles.tableItem}>0h 0m</Text>
+            <Text style={styles.tableItem}>{dataform.CambPlanchas}</Text>
+            <Text style={styles.tableItem}>{dataform.CambPlanchas===0 ? '0h 00m' : `0h ${parseFloat(dataform.CambPlanchas)*10}m`} -{dataTableCotizacion.CambPlanchastd} </Text>
             <Text style={styles.tableItem}>Recargo Imp X Adhes.</Text>
-            <Text style={styles.tableItem}>-</Text>
-            <Text style={styles.tableItem}>$0</Text>
+            <Text style={styles.tableItem}>{dataform.IRAdhesivo==="Si"?1:0}</Text>
+            <Text style={styles.tableItem}>$ {dataform.IRAdhesivo==="Si"?12000:0}</Text>
           </View>
           <View style={styles.comprasTable2}>
             <Text style={styles.tableItem}>Valor cambios tintas</Text>
-            <Text style={styles.tableItem}>0</Text>
-            <Text style={styles.tableItem}>$0</Text>
+            <Text style={styles.tableItem}>{dataform.CambiosTintas}</Text>
+            <Text style={styles.tableItem}>${parseFloat(dataform.CambiosTintas)*5000}</Text>
             <Text style={styles.tableItem}>Grad. Volteo</Text>
-            <Text style={styles.tableItem}>0</Text>
+            <Text style={styles.tableItem}>0 (pendiente)</Text>
             <Text style={styles.tableItem}>0h 0m</Text>
           </View> 
           <View style={styles.comprasTable}>
             <Text style={styles.tableItem}>Grad. Troquel</Text>
-            <Text style={styles.tableItem}>1</Text>
-            <Text style={styles.tableItem}>0h 10m</Text>
+            <Text style={styles.tableItem}>{dataform.TroquelGraduacion==="Si"?1:0}</Text>
+            <Text style={styles.tableItem}> {dataform.TroquelGraduacion==="Si"?'0h 10m':'0h 00m'}</Text>
             <Text style={styles.tableItem}>Grad. Shok Air</Text>
-            <Text style={styles.tableItem}>0</Text>
-            <Text style={styles.tableItem}>0h 0m</Text>
+            <Text style={styles.tableItem}>{dataform.ShokAir==="Si"?1:0}</Text>
+            <Text style={styles.tableItem}> {dataform.ShokAir==="Si"?'0h 10m':'0h 00m'}</Text>
           </View> 
           <View style={styles.comprasTable2}>
             <Text style={styles.tableItem}>Grad. P.A.R.</Text>
-            <Text style={styles.tableItem}>0</Text>
-            <Text style={styles.tableItem}>0h 0m</Text>
+            <Text style={styles.tableItem}>{dataform.GradPAR}</Text>
+            <Text style={styles.tableItem}>0h 10m - $ {parseFloat(dataform.GradPAR)*20000}</Text>
             <Text style={styles.tableItem}>Grad. Ponchado</Text>
-            <Text style={styles.tableItem}>0</Text>
-            <Text style={styles.tableItem}>0h 0m</Text>
+            <Text style={styles.tableItem}>{dataform.ponchadoFc==="Si"?1:0}</Text>
+            <Text style={styles.tableItem}>{dataform.ponchadoFc==="Si"?'0h 15m':'0h 00m'}</Text>
           </View> 
           <View style={styles.comprasTableTitle}>
-            <Text style={styles.tableItem}>Tiempo Graduaciones</Text>
             <Text style={styles.tableItem}>-</Text>
-            <Text style={styles.tableItem}>0h 40m</Text>
-            <Text style={styles.tableItem}>MAquina</Text>
+            <Text style={styles.tableItem}>-</Text>
+            <Text style={styles.tableItem}>-</Text>
+            <Text style={styles.tableItem}>Maquina: {dataform.maquina}</Text>
             <Text style={styles.tableItem}>Velocidad:</Text>
-            <Text style={styles.tableItem}>750</Text>
+            <Text style={styles.tableItem}>{dataform.velocidadImp}</Text>
           </View> 
           <View style={styles.comprasTableTitle}>
             <Text style={styles.tableItem}>Costo Impresión</Text>
             <Text style={styles.tableItem}>-</Text>
             <Text style={styles.tableItem}>$41.404</Text>
-            <Text style={styles.tableItem}>Impresión de </Text>
+            <Text style={styles.tableItem}>Impresión de {dataform.metros}</Text>
             <Text style={styles.tableItem}>Tiempo</Text>
-            <Text style={styles.tableItem}>0h 35m</Text>
+            <Text style={styles.tableItem}>{dataTableCotizacion.horas_maquina}</Text>
           </View> 
-          <View style={styles.comprasTableTitle}>
-            <Text style={styles.tableItem}>Total Graduaciones e Impresion</Text>
-            <Text style={styles.tableItem}>$104.404</Text>
-            <Text style={styles.tableItem}>-</Text>
-            <Text style={styles.tableItem}>-</Text>
-            <Text style={styles.tableItem}>-</Text>
-            <Text style={styles.tableItem}>-</Text>
-          </View> 
+          
         </View>
         <View style={styles.body}>
           <Text style={styles.bodyTitle}>OTROS PROCESOS</Text>
@@ -379,49 +379,44 @@ const CotizacionPdf = ({ cotizacion=0,planeacion=1,data={nombreCliente:"familia"
           
           <View style={styles.comprasTable}>
             <Text style={styles.tableItem}>Costo imp. variable tipo cinta</Text>
-            <Text style={styles.tableItem}>$0</Text>
+            <Text style={styles.tableItem}>$0 (pendiente)</Text>
             <Text style={styles.tableItem}>Recargo corte manual</Text>
-            <Text style={styles.tableItem}>$0</Text>
+            <Text style={styles.tableItem}>$ {parseFloat(dataform.recargoTrnsporteCMCosto)/parseFloat(dataTableCotizacion.cantidadtd)|| 0}</Text>
           </View>
           <View style={styles.comprasTable2}>
             <Text style={styles.tableItem}>Doblado F.C.</Text>
-            <Text style={styles.tableItem}>$0</Text>
+            <Text style={styles.tableItem}>$ (pendiente)</Text>
             <Text style={styles.tableItem}>Recargo doblado manual</Text>
-            <Text style={styles.tableItem}>$0</Text>
+            <Text style={styles.tableItem}>$ {parseFloat(dataform.recargoTrnsporteDMCosto)/parseFloat(dataTableCotizacion.cantidadtd)|| 0}</Text>
             
           </View>
           <View style={styles.comprasTable}>
             <Text style={styles.tableItem}>Rebobinado y Empaque</Text>
-            <Text style={styles.tableItem}>$16.66</Text>
+            <Text style={styles.tableItem}>$ {parseFloat(dataform.constoTerminacion)/parseFloat(dataTableCotizacion.cantidadtd)|| 0}</Text>
             <Text style={styles.tableItem}>Recargo reproc. corte y rebobinado</Text>
-            <Text style={styles.tableItem}>$0</Text>
+            <Text style={styles.tableItem}>$ {parseFloat(dataform.recargoTrnsporteCRCosto)/parseFloat(dataTableCotizacion.cantidadtd)|| 0}</Text>
           </View>
           <View style={styles.comprasTable2}>
             <Text style={styles.tableItem}>Transporte</Text>
-            <Text style={styles.tableItem}>$0</Text>
+            <Text style={styles.tableItem}>$ {parseFloat(dataform.transporteCiudadpreciotd)/parseFloat(dataTableCotizacion.cantidadtd) || 0}</Text>
             <Text style={styles.tableItem}>Otro recargo</Text>
-            <Text style={styles.tableItem}>$0</Text>
+            <Text style={styles.tableItem}>$ {parseFloat(dataform.recargoTrnsporteCRCosto)/parseFloat(dataTableCotizacion.cantidadtd) || 0}</Text>
             
           </View>
          
-          <View style={styles.comprasTableTitle}>
-            <Text style={styles.tableItem}>Subtotal otros</Text>
-            <Text style={styles.tableItem}>$16.66</Text>
-            <Text style={styles.tableItem}>-</Text>
-            <Text style={styles.tableItem}>-</Text>
-          </View> 
+         
         </View>
         <View style={styles.body}>
   
         
          
           <View style={styles.comprasTableTitle2}>
-            <Text style={styles.tableItem}>Comisiones M. de I.</Text>
-            <Text style={styles.tableItem}>3.0%</Text>
-            <Text style={styles.tableItem}>Comisión Asesor</Text>
-            <Text style={styles.tableItem}>3.0%</Text>
-            <Text style={styles.tableItem}>Cotizado por:</Text>
-            <Text style={styles.tableItem}>Cotizado por</Text>
+            <Text style={styles.tableItem}>Comisión</Text>
+            <Text style={styles.tableItem}>{dataform.comision} % - $ {dataTableCotizacion.comisiontd}</Text>
+            <Text style={styles.tableItem}>Utilidad</Text>
+            <Text style={styles.tableItem}>{dataform.utilidad} % - $ {dataTableCotizacion.utilildadtd}</Text>
+            <Text style={styles.tableItem}></Text>
+            <Text style={styles.tableItem}></Text>
           </View> 
           
         </View>
@@ -430,7 +425,7 @@ const CotizacionPdf = ({ cotizacion=0,planeacion=1,data={nombreCliente:"familia"
         
          
         <View  style={styles.comprasTableTitle3}>
-          <Text  style={styles.tableItem2}>Precio para: 3000 Etiq. es de $315.00 por Etiqueta</Text>
+          <Text  style={styles.tableItem2}>Precio para: {dataTableCotizacion.cantidadtd} Etiq. es de $ {parseFloat(dataTableCotizacion.costo_totaltd)/parseFloat(dataTableCotizacion.cantidadtd)} por Etiqueta</Text>
         </View> 
         
       </View>

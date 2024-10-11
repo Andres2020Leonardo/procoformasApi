@@ -54,6 +54,9 @@ const Cotizacion=()=> {
         cantidad4:0,
         cantidad5:0,
         cantidad6:0,
+        unidadPar:null,
+        troquel_referencia:'',
+        troquel_id:null,
         cantidad7:0,
         cantidad8:0,
         entrega1:0,
@@ -86,7 +89,6 @@ const Cotizacion=()=> {
         comi:0,
         costoTroquelTipo:0,
         costoTroquelTipoOtro:0,
-        UnidadPAR:0,
         CUnidad:0,
         around:0,
         across:0,
@@ -123,12 +125,12 @@ const Cotizacion=()=> {
         PrepTintas:0,
         precioHotStamping:0,
         CambiosTintas:0,
-        IRAdhesivo:0,
-        IRLiner:0,
-        TroquelGraduacion:0,
-        ShokAir:0,
-        ponchadoFc:0,
-        MesaShetter:0,
+        IRAdhesivo:'No',
+        IRLiner:'No',
+        TroquelGraduacion:'No',
+        ShokAir:'No',
+        ponchadoFc:'No',
+        MesaShetter:'No',
         velocidadImp:0,
         velocidadImpvalor:300,
         maquina:0,
@@ -320,6 +322,8 @@ const Cotizacion=()=> {
             setValue('CUnidad',dato.unidadTroquel);
             setValue('around',dato.around);
             setValue('across',dato.across);
+            setValue('troquel_referencia',dato.referencia);
+            setValue('troquel_id',dato.id);            
             if (toggleButtonTroquel.current) {
                 toggleButtonTroquel.current.querySelector('p').textContent = 'Ref. Troquel: '+dato.referencia;
                 toggleButtonTroquel.current.classList.add('checkbutonTables')
@@ -330,6 +334,8 @@ const Cotizacion=()=> {
             setValue('CUnidad','');
             setValue('around','');
             setValue('across','');
+            setValue('troquel_referencia','');
+            setValue('troquel_id',null); 
             if (toggleButtonTroquel.current) {
                 toggleButtonTroquel.current.querySelector('p').textContent  =`Ref. Troquel` ;
                 toggleButtonTroquel.current.classList.remove('checkbutonTables')
@@ -398,6 +404,7 @@ const Cotizacion=()=> {
                 setValue('CUnidad',dato.unidad);
                 setValue('around',dato.cortes);
                 setValue('across',0);
+                setValue('unidadPar',dato.id);
                 if (toggleButtonPar.current) {
                     toggleButtonPar.current.querySelector('p').textContent = 'Unidad P.A.R.: '+dato.unidad +"-"+dato.valor +"-"+dato.cortes ;
                     toggleButtonPar.current.classList.add('checkbutonTables')
@@ -408,6 +415,7 @@ const Cotizacion=()=> {
                 setValue('CUnidad','');
                 setValue('around','');
                 setValue('across','');
+                setValue('unidadPar',null);
                 if (toggleButtonPar.current) {
                     toggleButtonPar.current.querySelector('p').textContent  =`Unidad P.A.R.` ;
                     toggleButtonPar.current.classList.remove('checkbutonTables')
@@ -624,7 +632,7 @@ const Cotizacion=()=> {
             precio_adicional_maquina=precio_adicional_maquina+PrepTintas;
         }
         if (CambPlanchas>0){
-            // tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat(watch('GradPlanchas'))*10)
+            tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat(watch('GradPlanchas'))*10)
             precio_adicional_maquina=precio_adicional_maquina+CambPlanchas;
         }
         if (GradPAR>0){
@@ -768,12 +776,20 @@ const Cotizacion=()=> {
         }
 
 
-        const horasMaquina = trabajohoras+tiempo_adicional_maquina;
-        const wholeHours = Math.floor(horasMaquina);
-        const fractionalHours = horasMaquina - wholeHours;
-        const fractionalMinutes = fractionalHours * 60;
-        const formattedMinutes = fractionalMinutes.toFixed(0).padStart(2, '0');
-        const horasMaquinaReales = `${wholeHours}:${formattedMinutes}`;
+        const horasMaquina = trabajohoras + tiempo_adicional_maquina;
+        let wholeHours = Math.floor(horasMaquina);
+        let fractionalHours = horasMaquina - wholeHours;
+        let fractionalMinutes = Math.round(fractionalHours * 60);
+        
+        // Ajustar las horas si los minutos son 60
+        if (fractionalMinutes === 60) {
+            fractionalMinutes = 0;
+            wholeHours += 1;
+        }
+        
+        const formattedMinutes = fractionalMinutes.toString().padStart(2, '0');
+        
+        const horasMaquinaReales = `${wholeHours} h ${formattedMinutes}m`;
 
 
 
@@ -785,7 +801,7 @@ const Cotizacion=()=> {
         var acabadoValorpreciotd =parseFloat((Math.round(acabadoValorprecio)));
         var coldValorpreciotd =parseFloat((Math.round(coldValorprecio)));
         var Costo_total_maquinatd =parseFloat((Math.round(Costo_total_maquina)));
-        var horas_maquina =parseFloat((horasMaquinaReales));
+        var horas_maquina =(horasMaquinaReales);
         var precioGraduacionPlanchastd =parseFloat((Math.round(precioGraduacionPlanchas)));
         var CambPlanchastd =parseFloat((Math.round(CambPlanchas)));
         var GradPARtd =parseFloat((GradPAR));
@@ -798,10 +814,11 @@ const Cotizacion=()=> {
         var costoTroqueltd =parseFloat(costoTroquel(cantidad,troquelDif));
         var recargoTrnsporteFtd =parseFloat(recargoTrnsporteF());
        
-        let costo_total = materialValorpreciotd+acabadoValorpreciotd+coldValorpreciotd+Costo_total_maquinatd+horas_maquina+precioGraduacionPlanchastd+CambPlanchastd+GradPARtd+CambiosTintastd+PrepTintastd+costoPlanchasporEtiquetatd+calcularValorTotalTintastd+transporteCiudadpreciotd+constoTerminacion+costoTroqueltd+recargoTrnsporteFtd;
-        var utilildadtd= parseFloat(costo_total*parseFloat(watch('utilidad'))/100)
-        var comisiontd = parseFloat(costo_total*parseFloat(watch('comision'))/100)
-        costo_total=costo_total+utilildadtd+comisiontd;
+        let costo_total = materialValorpreciotd+acabadoValorpreciotd+coldValorpreciotd+Costo_total_maquinatd+precioGraduacionPlanchastd+CambPlanchastd+GradPARtd+CambiosTintastd+PrepTintastd+costoPlanchasporEtiquetatd+calcularValorTotalTintastd+transporteCiudadpreciotd+constoTerminacion+costoTroqueltd+recargoTrnsporteFtd;
+        let subtotal=parseFloat(costo_total);
+        var utilildadtd= parseFloat(subtotal*parseFloat(watch('utilidad'))/100)
+        var comisiontd = parseFloat(subtotal*parseFloat(watch('comision'))/100)
+        costo_total=parseFloat(subtotal)+parseFloat(utilildadtd)+parseFloat(comisiontd);
         var costo_totaltd = parseFloat(Math.round(costo_total));
         let cotizando ={
             'coti':coti,
@@ -825,7 +842,8 @@ const Cotizacion=()=> {
             'recargoTrnsporteFtd':recargoTrnsporteFtd,
             'utilildadtd':utilildadtd,
             'comisiontd':comisiontd,
-            'preciosherpa':parseFloat(preciosherpa)
+            'preciosherpa':parseFloat(preciosherpa),
+            'subtotal':subtotal,
             }
         
         return   cotizando;
@@ -1588,7 +1606,7 @@ const Cotizacion=()=> {
                                         <select className="form-select" id="tipoTinta1" {...register("tipoTinta1")} onChange={(e)=>setValue('grTinta1',parseFloat(e.target.selectedOptions[0].getAttribute('attr-precio'))*parseFloat(e.target.selectedOptions[0].getAttribute('attr-gramosM2')))} aria-label="tipoTinta1">
                                             <option  >Ninguno</option>
                                             {allDatas.tintas.map(tinta => (
-                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.precioGramo}  attr-gramosM2={tinta.gramosM2}>
+                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.precioGramo}  attr-gramosM2={tinta.gramosM2 || 0}>
                                                     {tinta.tinta}
                                                 </option>
                                             ))}
@@ -1734,7 +1752,7 @@ const Cotizacion=()=> {
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
-                                                    <input className="form-check-input" type="radio" {...register("IRAdhesivo")} id="opnoG1" value="No"  attr-precio="0" checked/>
+                                                    <input className="form-check-input" type="radio" {...register("IRAdhesivo")} id="opnoG1" value="No"  attr-precio="0" />
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="opnoG1">
                                                         No
                                                     </label>
@@ -1754,7 +1772,7 @@ const Cotizacion=()=> {
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
-                                                    <input className="form-check-input" type="radio" {...register("IRLiner")} id="opnoG2" value="No" attr-precio="0" checked/>
+                                                    <input className="form-check-input" type="radio" {...register("IRLiner")} id="opnoG2" value="No" attr-precio="0" />
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="opnoG2">
                                                         No
                                                     </label>
@@ -1774,7 +1792,7 @@ const Cotizacion=()=> {
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
-                                                    <input className="form-check-input" type="radio" {...register("TroquelGraduacion")} id="opnoG3" value="No" attr-precio="0" checked/>
+                                                    <input className="form-check-input" type="radio" {...register("TroquelGraduacion")} id="opnoG3" value="No" attr-precio="0"/>
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="opnoG3">
                                                         No
                                                     </label>
@@ -1796,7 +1814,7 @@ const Cotizacion=()=> {
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
-                                                    <input className="form-check-input" type="radio" {...register("ShokAir")} id="opnoG4" value="No" attr-precio="0" checked/>
+                                                    <input className="form-check-input" type="radio" {...register("ShokAir")} id="opnoG4" value="No" attr-precio="0" />
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="opnoG4">
                                                         No
                                                     </label>
@@ -1816,7 +1834,7 @@ const Cotizacion=()=> {
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
-                                                    <input className="form-check-input" type="radio" {...register("ponchadoFc")} id="opnoG5" value="No" attr-precio="0" checked/>
+                                                    <input className="form-check-input" type="radio" {...register("ponchadoFc")} id="opnoG5" value="No" attr-precio="0" />
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="opnoG5">
                                                         No
                                                     </label>
@@ -1836,7 +1854,7 @@ const Cotizacion=()=> {
                                                     </label>
                                                 </div>
                                                 <div className="form-check col-4">
-                                                    <input className="form-check-input" type="radio" {...register("MesaShetter")} id="opnoG6" value="No" attr-precio="0" checked/>
+                                                    <input className="form-check-input" type="radio" {...register("MesaShetter")} id="opnoG6" value="No" attr-precio="0" />
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="opnoG6">
                                                         No
                                                     </label>
@@ -2271,7 +2289,30 @@ const Cotizacion=()=> {
                                             negativeSign:true,
                                             precision:2,
                                         }},
-                                        
+                                        {title:'Subtotal',field:'subtotal',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:2,
+                                        }},
+                                        {title:'Utilidad',field:'utilildadtd',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:2,
+                                        }},
+                                        {title:'Comisión',field:'comisiontd',formatter:"money", formatterParams:{
+                                            decimal:",",
+                                            thousand:".",
+                                            symbol:"$",
+                                            symbolAfter:false,
+                                            negativeSign:true,
+                                            precision:2,
+                                        }},
                                         
                                         {title:'Costo Total',field:'costo_totaltd',formatter:"money", formatterParams:{
                                             decimal:",",
