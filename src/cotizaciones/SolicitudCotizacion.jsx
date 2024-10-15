@@ -352,7 +352,7 @@ const SolicitudCotizacion=()=> {
                                         onChange={(event, newValue) => {if(newValue!==null){setValueProducto(newValue);setValue("producto",newValue.id);setValue("descripcion_producto",newValue.nombre)}else{
                                             setValueProducto(null);setValue("producto",null);setValue("descripcion_producto","")
                                         }}}
-                                        options={allDatas?.productos}
+                                        options={[{codigo:'Nuevo'},...allDatas?.productos]}
                                         getOptionLabel={(option) => `${option.codigo}`}
                                         renderInput={(params) => <TextField {...params} required label="Seleccionar producto" />}
                                         isOptionEqualToValue={(option, value) => option.id === value?.id}
@@ -661,7 +661,7 @@ const SolicitudCotizacion=()=> {
                             
                             <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row", height: "65px"}}>
                             
-                                <div className="form-floating mx-auto p-1 col-4 mt-2" >
+                                <div className="form-floating mx-auto p-1 col-3 mt-2" >
                                 {allDatas?.materials?
                                 <Autocomplete
                                     className='shearchinputs'
@@ -676,7 +676,7 @@ const SolicitudCotizacion=()=> {
                                 </div>
 
                             
-                                <div className="form-floating mx-auto p-1 col-4 mt-2" >
+                                <div className="form-floating mx-auto p-1 col-3 mt-2" >
                                 {allDatas?.acabados?
                                 <Autocomplete
                                     className='shearchinputs'
@@ -690,7 +690,7 @@ const SolicitudCotizacion=()=> {
                                 
                                 </div>
                         
-                                <div className="form-floating mx-auto p-1 col-4 mt-2" >
+                                <div className="form-floating mx-auto p-1 col-3 mt-2" >
                                     {allDatas?.coldFoilds?
                                 <Autocomplete
                                     className='shearchinputs'
@@ -702,6 +702,19 @@ const SolicitudCotizacion=()=> {
                                     isOptionEqualToValue={(option, value) => option.id === value?.id}
                                     />:""}
                                 
+                                </div>
+                                <div className="form-floating mx-auto p-1 col-3 mt-2" >
+                                {allDatas?.materials?
+                                <Autocomplete
+                                    className='shearchinputs'
+                                    value={valueMaterial}
+                                    onChange={(event, newValue) => {if(newValue!==null){setValueMaterial(newValue);setValue("hot_stamping",newValue.id)}else{setValueMaterial(null);setValue("hot_stamping",null)}}}
+                                    options={allDatas?.hotStampings}
+                                    getOptionLabel={(option) => option.host_stamping}
+                                    renderInput={(params) => <TextField {...params} required label="Seleccionar hot stamping" />}
+                                    isOptionEqualToValue={(option, value) => option.id === value?.id}
+                                    />:""}
+                                    
                                 </div>
 
                             </div>

@@ -41,6 +41,7 @@
     "recharts": "^2.12.7",
     "tabulator-tables": "^6.2.5",
     "tesseract.js": "^5.1.1",
+    "tippy.js": "^6.3.7",
     "xlsx": "^0.18.5"
   },
   "devDependencies": {

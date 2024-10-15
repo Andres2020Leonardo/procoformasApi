@@ -87,12 +87,12 @@ const Cotizacion=()=> {
         puntos_enttrega:0,
         Vendedor:0,
         comi:0,
-        costoTroquelTipo:0,
+        costoTroquelTipo:'Nuevo',
         costoTroquelTipoOtro:0,
         CUnidad:0,
         around:0,
         across:0,
-        sustratoTipo:0,
+        sustratoTipo:'Básico',
         espacioexteriores:0.7,
         espacioentreetiquetas:0,
         precioMaterial:0,
@@ -150,6 +150,7 @@ const Cotizacion=()=> {
         otras_ciudades_transporte:0,
         utilidad:30,
         comision:3,
+        sherpa:2,
       }});
 
       function buscarClientePorId(id) {
@@ -166,184 +167,21 @@ const Cotizacion=()=> {
         let ciudad = allDatas.ciudades.find(ciudad => parseInt(ciudad.id) === parseInt(id));
         return ciudad;
       }
-    async function searchSolicitud(value) {
-        setLoadingIcon(true)
-        try {
-            const response = await ClientAxios.post(`/buscarCotizacion`, {
-                solicitud: value,                
-              }, {
-                headers: {
-                  'User': Decrypt(localStorage.getItem("SesionToken")), 
-                }
-              })        
-            
-            if(response.data.id){
-                 setLoadingIcon(false)
-                 setCheckStatus(true)
-                 setCheckStatusView(false)                 
-                 setValue("tipoCotizacion", response.data.tipoCotizacion) 
-                 setValue("cliente", buscarClientePorId(response.data.cliente)?.razonSocial || response.data.cliente) 
-                 setValue("producto", buscaProductoPorId(response.data.producto)?.nombre || response.data.producto) 
-                 setValue("gradoDificultad", response.data.gradoDificultad) 
-                 setValue("unidad", response.data.unidadUna) 
-                 setValue("unidadRefDistintas", response.data.unidadRefDistintas) 
-                 setValue("anchoEspe", response.data.anchoEspe) 
-                 setValue("avanceEspe", response.data.avanceEspe) 
-                 setValue("unidadPlanchas", response.data.unidadPlanchas) 
-                 setValue("unidadTintas", response.data.unidadTintas) 
-                 setValue("cantidad1", response.data.cantidad1) 
-                 setValue("diferirEtiqueta", response.data.cantidad1) 
-                 setValue("cantidad2", response.data.cantidad2) 
-                 setValue("cantidad3", response.data.cantidad3) 
-                 setValue("cantidad4", response.data.cantidad4) 
-                 setValue("cantidad5", response.data.cantidad5) 
-                 setValue("cantidad6", response.data.cantidad6) 
-                 setValue("cantidad7", response.data.cantidad7) 
-                 setValue("cantidad8", response.data.cantidad8) 
-                 setValue("entrega1", response.data.entrega1) 
-                 setValue("entrega2", response.data.entrega2) 
-                 setValue("entrega3", response.data.entrega3) 
-                 setValue("entrega4", response.data.entrega4) 
-                 setValue("entrega5", response.data.entrega5) 
-                 setValue("entrega6", response.data.entrega6) 
-                 setValue("entrega7", response.data.entrega7) 
-                 setValue("entrega8", response.data.entrega8) 
-                 setValue("troquel", response.data.troquel) 
-                 setValue("material", response.data.material || "") 
-                 setValue("Cubrimiento", response.data.cubrimiento) 
-                 setValue("t1", response.data.t1) 
-                 setValue("t2", response.data.t2) 
-                 setValue("acabado", response.data.acabado || "") 
-                 setValue("rollos_por", response.data.rollosPor) 
-                 setValue("EtiqAncho", response.data.etiqAncho) 
-                 setValue("Core", response.data.core) 
-                 setValue("posi", response.data.posicionPresentacion) 
-                 setValue("EtiqHoja", response.data.etiquetasHoja) 
-                 setValue("HojasPaq", response.data.hojasPaquete) 
-                 setValue("ciudades", response.data.ciudadesEntrega) 
-                 setValue("puntos_enttrega", response.data.puntosEntrega) 
-                 setValue("Vendedor", response.data.asesor) 
-                 setValue("comi", response.data.comision) 
-                 if((response.data.tinta1+response.data.tinta1)===0){
-                    setValue('comision',1.5)
-                 }
-                 const arrayCiudades = JSON.parse(response.data.ciudadEntrega);
-                 let ciudadSe=""
-                 let valorC=[]
-                 for (let index = 0; index < arrayCiudades.length; index++) {
-                    const element = arrayCiudades[index];
-                    if (index===0) {
-                        ciudadSe=ciudadSe+buscaCiudadPorId(element).nombre                        
-                    }else{
-                        ciudadSe=ciudadSe+" - "+buscaCiudadPorId(element).nombre                       
-                    }
-                    valorC.push(buscaCiudadPorId(element).valorCaja)
-                 }
-                 setValue("comi", response.data.comision) 
-                 document.getElementById('ciudad').value=ciudadSe
-                 setValoresPorCiudad(valorC)
-                 setTimeout(() => {
-                    setCheckStatusView(true)
-                }, 3000);
-            }else{
-                setLoadingIcon(false)
-                setCheckStatus(false)
-                setCheckStatusView(false)
-                setTimeout(() => {
-                    setCheckStatusView(true)
-                }, 3000);
-            }
-          
-           
-          } catch (error) {
-            
-            console.error('Error fetching data:', error);
-            setLoadingIcon(false)
-            setCheckStatus(false)
-            setCheckStatusView(false)
-            setTimeout(() => {
-                setCheckStatusView(true)
-            }, 3000);
-          } 
-        
-    }
-    useEffect(() => {
-        async function fetchData() {
-          try {
-            const response = await ClientAxios.post(
-              `/allDatasSoli`,   {}, 
-              {
-                headers: {
-                  'User': Decrypt(localStorage.getItem("SesionToken")), 
-                }
-              }
-              
-            );
-            setAllDatas(response.data)
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          } finally {
-          }
-        }
-      
-        fetchData();   
-      }, []);
-       /// calculos avance avanceEspe
-      function calcularAvance(){
-            let calculoAvance=(parseFloat(watch('CUnidad'))*0.3175)
-            setValue('avanceReal',parseFloat(calculoAvance.toFixed(1)) || 0)
+      function buscaMaterialPorId(id) {    
+        let material = allDatas.materials.find(material => parseInt(material.id) === parseInt(id));
+        return material;
       }
-      /// calculos avance anchoEspe
-    function calcularAncho(){
-        if(watch('anchoEspe')==""){
-            alert("Falta Ancho Esperado")
-        }else{
-            let calculoAncho=parseFloat(watch('anchoEspe'))*parseFloat(watch('across'))+((parseFloat(watch('across'))-1)*parseFloat(watch('espacioentreetiquetas')))+((2*parseFloat(watch('espacioexteriores'))))
-            setValue('anchoMaterialC', parseFloat(calculoAncho.toFixed(1)) || 0);
-            setValue('anchoLaminacionC', parseFloat(calculoAncho.toFixed(1)) || 0);
-            setValue('anchoColdC', parseFloat(calculoAncho.toFixed(1)) || 0);
-            setValue('anchoHotStamping', parseFloat(calculoAncho.toFixed(1)) || 0);
-        }
-       
-
-    }
-    const handleRowSelectedCoti=(datos)=>{       
-       
+      function buscaAcabadoPorId(id) {    
+        let acabado = allDatas.acabados.find(acabado => parseInt(acabado.id) === parseInt(id));
+        return acabado;
       }
-      /// tabla troquel
-      const toggleButtonTroquel =useRef(null);
-      const [toggleButtonTroquelIsopen,setToggleButtonTroquelIsopen]=useState(false);
-      const handleRowSelectedTroquel=(datos)=>{
-        if(watch('anchoEspe')==""){
-            alert("Falta Ancho Esperado")
-        }else{
-        if(datos.length==1){
-            let dato =datos[0];
-            setValue('CUnidad',dato.unidadTroquel);
-            setValue('around',dato.around);
-            setValue('across',dato.across);
-            setValue('troquel_referencia',dato.referencia);
-            setValue('troquel_id',dato.id);            
-            if (toggleButtonTroquel.current) {
-                toggleButtonTroquel.current.querySelector('p').textContent = 'Ref. Troquel: '+dato.referencia;
-                toggleButtonTroquel.current.classList.add('checkbutonTables')
-              }
-              calcularAvance()
-              calcularAncho()
-        }else{
-            setValue('CUnidad','');
-            setValue('around','');
-            setValue('across','');
-            setValue('troquel_referencia','');
-            setValue('troquel_id',null); 
-            if (toggleButtonTroquel.current) {
-                toggleButtonTroquel.current.querySelector('p').textContent  =`Ref. Troquel` ;
-                toggleButtonTroquel.current.classList.remove('checkbutonTables')
-              }
-              calcularAvance()
-              calcularAncho()
-        }}
-       
+      function buscaColdPorId(id) {    
+        let coldFoild = allDatas.coldFoilds.find(coldFoild => parseInt(coldFoild.id) === parseInt(id));
+        return coldFoild;
+      }
+      function buscaHotStampingPorId(id) {    
+        let hotStamping = allDatas.hotStampings.find(hotStamping => parseInt(hotStamping.id) === parseInt(id));
+        return hotStamping;
       }
     /// tabla material
     const toggleButtonMaterial =useRef(null);
@@ -353,7 +191,6 @@ const Cotizacion=()=> {
         if(datos.length==1){
             let dato =datos[0];
             setValue('precioMaterial',dato.precio);
-            setValue('metros',calcularMetros(watch('cantidad1')))
             setValue('materialS',dato.id);
             if (toggleButtonMaterial.current) {
                 toggleButtonMaterial.current.querySelector('p').textContent = 'Material: '+dato.material;
@@ -411,10 +248,11 @@ const Cotizacion=()=> {
                   }
                   calcularAvance()
                   calcularAncho()
+                  calcularCajas();
             }else{
-                setValue('CUnidad','');
-                setValue('around','');
-                setValue('across','');
+                setValue('CUnidad',0);
+                setValue('around',0);
+                setValue('across',0);
                 setValue('unidadPar',null);
                 if (toggleButtonPar.current) {
                     toggleButtonPar.current.querySelector('p').textContent  =`Unidad P.A.R.` ;
@@ -422,6 +260,7 @@ const Cotizacion=()=> {
                   }
                   calcularAvance()
                   calcularAncho()
+                  calcularCajas();
             }}
         
          
@@ -459,19 +298,304 @@ const Cotizacion=()=> {
               setValue('precioHotStamping',dato.precio);
               setValue('HotStamping',dato.id);
               if (toggleButtonHotStamping.current) {
-                    toggleButtonHotStamping.current.querySelector('p').textContent = 'Cold Foild: '+dato.coldFoild;
+                    toggleButtonHotStamping.current.querySelector('p').textContent = 'Host stamping: '+dato.host_stamping;
                     toggleButtonHotStamping.current.classList.add('checkbutonTables')
                 }
           }else{
               setValue('precioHotStamping','');
               setValue('HotStamping','');
               if (toggleButtonHotStamping.current) {
-                    toggleButtonHotStamping.current.querySelector('p').textContent  =`Cold Foild` ;
+                    toggleButtonHotStamping.current.querySelector('p').textContent  =`Host stamping` ;
                     toggleButtonHotStamping.current.classList.remove('checkbutonTables')
                 }
           }
          
         }
+    function grdPla() {
+        let planchas = parseFloat(watch('PlanchasTinta1'))+parseFloat(watch('PlanchasTinta2'))+parseFloat(watch('PlanchasTinta3'))+parseFloat(watch('PlanchasTinta4'));
+        let texto = buscaAcabadoPorId(watch('acabadoS')).acabado
+        if(texto.includes("PARCIAL")){
+            planchas=planchas+1
+        }
+        return planchas;
+    }
+    async function searchSolicitud(value) {
+        setLoadingIcon(true)
+        try {
+            const response = await ClientAxios.post(`/buscarCotizacion`, {
+                solicitud: value,                
+              }, {
+                headers: {
+                  'User': Decrypt(localStorage.getItem("SesionToken")), 
+                }
+              })        
+            
+            if(response.data.id){
+                console.log(response.data)
+                 setLoadingIcon(false)
+                 setCheckStatus(true)
+                 setCheckStatusView(false)                 
+                 setValue("tipoCotizacion", response.data.tipoCotizacion) 
+                 setValue("cliente", buscarClientePorId(response.data.cliente)?.razonSocial || response.data.cliente) 
+                 setValue("producto", buscaProductoPorId(response.data.producto)?.nombre || response.data.producto) 
+                 setValue("gradoDificultad", response.data.gradoDificultad) 
+                 setValue("unidad", response.data.unidadUna) 
+                 setValue("unidadRefDistintas", response.data.unidadRefDistintas) 
+                 setValue("anchoEspe", response.data.anchoEspe) 
+                 setValue("avanceEspe", response.data.avanceEspe) 
+                 setValue("unidadPlanchas", response.data.unidadPlanchas) 
+                 setValue("unidadTintas", response.data.unidadTintas) 
+                 setValue("cantidad1", response.data.cantidad1) 
+                 setValue("diferirEtiqueta", response.data.cantidad1) 
+                 setValue("cantidad2", response.data.cantidad2) 
+                 setValue("cantidad3", response.data.cantidad3) 
+                 setValue("cantidad4", response.data.cantidad4) 
+                 setValue("cantidad5", response.data.cantidad5) 
+                 setValue("cantidad6", response.data.cantidad6) 
+                 setValue("cantidad7", response.data.cantidad7) 
+                 setValue("cantidad8", response.data.cantidad8) 
+                 
+                 setValue("difTroquel1", response.data.cantidad1*6) 
+                 setValue("difTroquel2", response.data.cantidad2*6) 
+                 setValue("difTroquel3", response.data.cantidad3*6) 
+                 setValue("difTroquel4", response.data.cantidad4*6) 
+                 setValue("difTroquel5", response.data.cantidad5*6) 
+                 setValue("difTroquel6", response.data.cantidad6*6) 
+                 setValue("difTroquel7", response.data.cantidad7*6) 
+                 setValue("difTroquel8", response.data.cantidad8*6)
+                 
+                 setValue("difFotopolimero1", response.data.cantidad1) 
+                 setValue("difFotopolimero2", response.data.cantidad2) 
+                 setValue("difFotopolimero3", response.data.cantidad3) 
+                 setValue("difFotopolimero4", response.data.cantidad4) 
+                 setValue("difFotopolimero5", response.data.cantidad5) 
+                 setValue("difFotopolimero6", response.data.cantidad6) 
+                 setValue("difFotopolimero7", response.data.cantidad7) 
+                 setValue("difFotopolimero8", response.data.cantidad8)
+
+                 setValue("entrega1", response.data.entrega1) 
+                 setValue("entrega2", response.data.entrega2) 
+                 setValue("entrega3", response.data.entrega3) 
+                 setValue("entrega4", response.data.entrega4) 
+                 setValue("entrega5", response.data.entrega5) 
+                 setValue("entrega6", response.data.entrega6) 
+                 setValue("entrega7", response.data.entrega7) 
+                 setValue("entrega8", response.data.entrega8) 
+                 setValue("troquel", response.data.troquel) 
+                 setValue("material", response.data.material || "") 
+                 setValue("Cubrimiento", response.data.cubrimiento) 
+                 setValue("t1", response.data.t1) 
+                 setValue("t2", response.data.t2) 
+                 setValue("acabado", response.data.acabado || "") 
+                 setValue("rollos_por", response.data.rollosPor) 
+                 setValue("EtiqAncho", response.data.etiqAncho) 
+                 setValue("Core", response.data.core) 
+                 setValue("posi", response.data.posicionPresentacion) 
+                 setValue("EtiqHoja", response.data.etiquetasHoja) 
+                 setValue("HojasPaq", response.data.hojasPaquete) 
+                 setValue("ciudades", response.data.ciudadesEntrega) 
+                 setValue("puntos_enttrega", response.data.puntosEntrega) 
+                 setValue("Vendedor", response.data.asesor) 
+                 setValue("comi", response.data.comision) 
+                 setValue("PlanchasTinta1",parseFloat(response.data.t1)+parseFloat(response.data.t2))
+                 if((response.data.tinta1+response.data.tinta1)===0){
+                    setValue('comision',1.5)
+                 }
+                 const arrayCiudades = JSON.parse(response.data.ciudadEntrega);
+                 let ciudadSe=""
+                 let valorC=[]
+                 for (let index = 0; index < arrayCiudades.length; index++) {
+                    const element = arrayCiudades[index];
+                    if (index===0) {
+                        ciudadSe=ciudadSe+buscaCiudadPorId(element).nombre                        
+                    }else{
+                        ciudadSe=ciudadSe+" - "+buscaCiudadPorId(element).nombre                       
+                    }
+                    valorC.push(buscaCiudadPorId(element).valorCaja)
+                 }
+                 setValue("comi", response.data.comision) 
+                 document.getElementById('ciudad').value=ciudadSe
+                 setValoresPorCiudad(valorC)
+                 if(response.data.material===null || response.data.material===0){}else{
+                    setValue('precioMaterial',buscaMaterialPorId(response.data.material).precio);
+                    setValue('materialS',buscaMaterialPorId(response.data.material).id);
+                    if (toggleButtonMaterial.current) {
+                        toggleButtonMaterial.current.querySelector('p').textContent = 'Material: '+buscaMaterialPorId(response.data.material).material;
+                        toggleButtonMaterial.current.classList.add('checkbutonTables')
+                      }
+                }
+                if(response.data.acabado===null || response.data.acabado===0){}else{
+                    setValue('precioAcabado',buscaAcabadoPorId(response.data.acabado).precio);
+                    setValue('acabadoS',buscaAcabadoPorId(response.data.acabado).id);
+                    if (toggleButtonAcabado.current) {
+                        toggleButtonAcabado.current.querySelector('p').textContent = 'Acabado: '+buscaAcabadoPorId(response.data.acabado).acabado;
+                        toggleButtonAcabado.current.classList.add('checkbutonTables')
+                      }
+                }
+                
+                if(response.data.coldFoild===null || response.data.coldFoild===0 ){}else{
+                    setValue('precioCold',buscaColdPorId(response.data.coldFoild).precio);
+                    setValue('coldfoildS',buscaColdPorId(response.data.coldFoild).id);
+                    if (toggleButtonCold.current) {
+                        toggleButtonCold.current.querySelector('p').textContent = 'Cold Foild: '+buscaColdPorId(response.data.coldFoild).coldFoild;
+                        toggleButtonCold.current.classList.add('checkbutonTables')
+                    }
+                }
+                if(response.data.hotStamping===null || response.data.hotStamping===0 ){}else{
+                    setValue('precioHotStamping',buscaHotStampingPorId(response.data.hotStamping).precio);
+                    setValue('HotStamping',buscaHotStampingPorId(response.data.hotStamping).id);
+                    if (toggleButtonHotStamping.current) {
+                          toggleButtonHotStamping.current.querySelector('p').textContent = 'Cold Foild: '+buscaHotStampingPorId(response.data.hotStamping).host_stamping;
+                          toggleButtonHotStamping.current.classList.add('checkbutonTables')
+                      }
+                }
+                setValue('GradPlanchas', grdPla())
+               
+                 setTimeout(() => {
+                    setCheckStatusView(true)
+                }, 3000);
+            }else{
+                setLoadingIcon(false)
+                setCheckStatus(false)
+                setCheckStatusView(false)
+                setTimeout(() => {
+                    setCheckStatusView(true)
+                }, 3000);
+            }
+          
+           
+          } catch (error) {
+            
+            console.error('Error fetching data:', error);
+            setLoadingIcon(false)
+            setCheckStatus(false)
+            setCheckStatusView(false)
+            setTimeout(() => {
+                setCheckStatusView(true)
+            }, 3000);
+          } 
+        
+    }
+    useEffect(() => {
+        async function fetchData() {
+          try {
+            const response = await ClientAxios.post(
+              `/allDatasSoli`,   {}, 
+              {
+                headers: {
+                  'User': Decrypt(localStorage.getItem("SesionToken")), 
+                }
+              }
+              
+            );
+            setAllDatas(response.data)
+          } catch (error) {
+            console.error('Error fetching data:', error);
+          } finally {
+          }
+        }
+      
+        fetchData();   
+      }, []);
+       /// calculos avance avanceEspe
+      function calcularAvance(){
+            let calculoAvance=(parseFloat(watch('CUnidad'))*0.3175)
+            setValue('avanceReal',parseFloat(calculoAvance.toFixed(1)) || 0)
+      }
+
+    function calcularMetrosPorRollo() {
+            let etiquetas=parseFloat(watch('rollos_por'));
+            console.log(etiquetas)
+            if(parseInt(watch('posi'))===1 || parseInt(watch('posi'))===2 || parseInt(watch('posi'))===5 || parseInt(watch('posi'))===6){
+               return parseFloat(watch('avanceReal'))/parseFloat(watch('around'))*etiquetas;
+            }else{
+               return parseFloat(watch('anchoMaterialC'))/parseFloat(watch('across'))*etiquetas;
+            }
+    }
+
+    function calcularCajasPorRollos() {
+        let metrosporrollo = parseFloat(calcularMetrosPorRollo());
+        let core_d=parseFloat(watch('Core'))*parseFloat(watch('Core'));
+        let diametro=parseFloat(((core_d)+((4*(metrosporrollo/0.0254)*(152*0.0394*0.001))/3.1416)))
+        let largo_caja=29.5
+        let ancho_caja=29.5
+        let alto_caja=34
+        let ancho_etiqueta=parseInt(watch('posi'))===1 || parseInt(watch('posi'))===2 || parseInt(watch('posi'))===5 || parseInt(watch('posi'))===6 ? parseFloat(watch('anchoMaterialC')): parseFloat(watch('avanceReal'));
+        let capacidad_largo= Math.ceil(largo_caja/diametro)
+        let capacidad_ancho= Math.ceil(ancho_caja/diametro)
+        let capacidad_alto= Math.ceil(alto_caja/ancho_etiqueta)
+        let total_capacidad=capacidad_largo*capacidad_ancho*capacidad_alto;
+        return total_capacidad;
+    }
+    function calcularCajas() {
+      
+        setValue('cajas_cantidad1',Math.ceil(parseFloat(parseFloat(watch('cantidad1')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
+        setValue('cajas_cantidad2',Math.ceil(parseFloat(parseFloat(watch('cantidad2')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
+        setValue('cajas_cantidad3',Math.ceil(parseFloat(parseFloat(watch('cantidad3')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
+        setValue('cajas_cantidad4',Math.ceil(parseFloat(parseFloat(watch('cantidad4')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
+        setValue('cajas_cantidad5',Math.ceil(parseFloat(parseFloat(watch('cantidad5')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
+        setValue('cajas_cantidad6',Math.ceil(parseFloat(parseFloat(watch('cantidad6')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
+        setValue('cajas_cantidad7',Math.ceil(parseFloat(parseFloat(watch('cantidad7')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
+        setValue('cajas_cantidad8',Math.ceil(parseFloat(parseFloat(watch('cantidad8')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
+        
+    }
+      /// calculos avance anchoEspe
+    function calcularAncho(){
+        if(watch('anchoEspe')==""){
+            alert("Falta Ancho Esperado")
+        }else{
+            let calculoAncho=parseFloat(watch('anchoEspe'))*parseFloat(watch('across'))+((parseFloat(watch('across'))-1)*parseFloat(watch('espacioentreetiquetas')))+((2*parseFloat(watch('espacioexteriores'))))
+            setValue('anchoMaterialC', parseFloat(calculoAncho.toFixed(1)) || 0);
+            setValue('anchoLaminacionC', parseFloat(calculoAncho.toFixed(1)) || 0);
+            setValue('anchoColdC', parseFloat(calculoAncho.toFixed(1)) || 0);
+            setValue('anchoHotStamping', parseFloat(calculoAncho.toFixed(1)) || 0);
+        }
+       
+
+    }
+    const handleRowSelectedCoti=(datos)=>{       
+       
+      }
+      /// tabla troquel
+      const toggleButtonTroquel =useRef(null);
+      const [toggleButtonTroquelIsopen,setToggleButtonTroquelIsopen]=useState(false);
+      const handleRowSelectedTroquel=(datos)=>{
+        if(watch('anchoEspe')==""){
+            alert("Falta Ancho Esperado")
+        }else{
+        if(datos.length==1){
+            let dato =datos[0];
+            setValue('CUnidad',dato.unidadTroquel);
+            setValue('around',dato.around);
+            setValue('across',dato.across);          
+            
+            setValue('troquel_referencia',dato.referencia);
+            setValue('troquel_id',dato.id);            
+            if (toggleButtonTroquel.current) {
+                toggleButtonTroquel.current.querySelector('p').textContent = 'Ref. Troquel: '+dato.referencia;
+                toggleButtonTroquel.current.classList.add('checkbutonTables')
+              }
+              setValue('metros',calcularMetros(watch('cantidad1')))
+              calcularAvance()
+              calcularAncho()
+              calcularCajas();
+        }else{
+            setValue('CUnidad',0);
+            setValue('around',0);
+            setValue('across',0);
+            setValue('troquel_referencia',0);
+            setValue('troquel_id',null); 
+            if (toggleButtonTroquel.current) {
+                toggleButtonTroquel.current.querySelector('p').textContent  =`Ref. Troquel` ;
+                toggleButtonTroquel.current.classList.remove('checkbutonTables')
+              }
+              setValue('metros',0)
+              calcularAvance()
+              calcularAncho()
+        }}
+       
+      }
+    
     
     function calcularAreaEtiqueta(){
         return  parseFloat(watch('anchoEspe'))*parseFloat(watch('avanceEspe'));
@@ -479,8 +603,10 @@ const Cotizacion=()=> {
     //
     ///Etiq para graduar
     function calcularMetros(cantidad){
+        cantidad=parseFloat(cantidad)
         let factor=0.3175;
         let constante=60;
+        console.log(cantidad)
         let REGISTRO_COLORES=(parseFloat(watch('t1'))+parseFloat(watch('t2')))*15;
         let MATERIAL_SIN_DESPERDICIO=((((parseFloat(watch('CUnidad'))*factor)/parseFloat(watch('around')))*cantidad)/parseFloat(watch('across')))/100;
         let REGISTRO_DE_TROQUEL=10;
@@ -906,14 +1032,18 @@ const Cotizacion=()=> {
                                     <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                         
                                         <div className="form-floating  mx-auto p-1 " >
-                                            <input type="text" className="form-control shadow-lg" id="tipoCotizacion" {...register("tipoCotizacion")}/>
-                                            <label style={{color:"#000000"}} htmlFor="tipoCotizacion">Tipo</label>
+                                            <select className="form-select" id="tipoCotizacion" {...register("tipoCotizacion")} onChange={(e)=>setValue('tipoCotizacion',e.target.value)} >
+                                                <option  value={"Nuevo"}>Nuevo</option>
+                                                <option  value={"Repetición"}>Repetición</option>
+                                                
+                                            </select>
+                                            <label style={{color:"red"}} htmlFor="tipoCotizacion">Tipo</label>
                                         </div>
 
 
                                         <div className="form-floating  mx-auto p-1 " >
                                             <input type="number" className="form-control" id="solicitud" {...register("solicitud")} onBlur={(e)=>searchSolicitud(e.target.value)}/>
-                                            <label style={{color:"#000000"}} htmlFor="solicitud">Solicitud</label>
+                                            <label style={{color:"red"}} htmlFor="solicitud">Solicitud</label>
                                         </div>
 
                                         <div className="form-floating  mx-auto p-1 col-2 ">
@@ -1358,7 +1488,7 @@ const Cotizacion=()=> {
                                         <label style={{color:"#000000"}} htmlFor="sustratotipodiv">Sustrato</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="espacioexteriores" {...register("espacioexteriores")}  />
+                                        <input type="text" className="form-control" id="espacioexteriores" {...register("espacioexteriores")} onChange={()=>calcularAncho()} />
                                         <label style={{color:"#000000"}} htmlFor="espacioexteriores">Espacio en exterior</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
@@ -1427,7 +1557,7 @@ const Cotizacion=()=> {
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
 
-                                    <div className="accordion mx-auto p-1" id="accordionAcabado" style={{width: "50% "}}>
+                                    <div className="accordion mx-auto p-1" id="accordionAcabado" style={{width: "75% "}}>
                                         <div className="accordion-item">
                                                 <button ref={toggleButtonAcabado} onClick={()=>setToggleButtonAcabadoIsopen(!toggleButtonAcabadoIsopen)} className="button  bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
                                                     <p className="my-auto">Acabado</p>
@@ -1450,14 +1580,14 @@ const Cotizacion=()=> {
                                                     {
                                                         title: 'Id lista',
                                                         field:'idLista',
-                                                        headerFilter:"input"
-                                                        
+                                                        headerFilter:"input",
+                                                        visible:false
                                                     },
                                                     {
                                                         title: 'Lista',
                                                         field:'lista',
-                                                        headerFilter:"input"
-                                                        
+                                                        headerFilter:"input",
+                                                        visible:false
                                                     },
                                                     {
                                                         title: 'Precio',
@@ -1478,14 +1608,11 @@ const Cotizacion=()=> {
                                         <input type="text" className="form-control" id="precioAcabado" {...register("precioAcabado")} />
                                         <label style={{color:"#000000"}} htmlFor="precioAcabado">Precio</label>
                                     </div>
-                                    <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="anchoLaminacionC" {...register("anchoLaminacionC")} />
-                                        <label style={{color:"#000000"}} htmlFor="anchoLaminacionC">Ancho Laminacion</label>
-                                    </div>
+                                 
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
 
-                                    <div className="accordion mx-auto p-1" id="accordionCold" style={{width: "50% "}}>
+                                    <div className="accordion mx-auto p-1" id="accordionCold" style={{width: "75% "}}>
                                         <div className="accordion-item">
                                         <button ref={toggleButtonCold} onClick={()=>setToggleButtonColdIsopen(!toggleButtonColdIsopen)} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
                                                     <p className="my-auto">Cold Foild</p>
@@ -1508,13 +1635,15 @@ const Cotizacion=()=> {
                                                     {
                                                         title: 'Id lista',
                                                         field:'idLista',
-                                                        headerFilter:"input"
+                                                        headerFilter:"input",
+                                                        visible:false
                                                         
                                                     },
                                                     {
                                                         title: 'Lista',
                                                         field:'lista',
-                                                        headerFilter:"input"
+                                                        headerFilter:"input",
+                                                        visible:false
                                                         
                                                     },
                                                     {
@@ -1535,14 +1664,11 @@ const Cotizacion=()=> {
                                         <input type="text" className="form-control" id="precioCold" {...register("precioCold")} />
                                         <label style={{color:"#000000"}} htmlFor="precioCold">Precio</label>
                                     </div>
-                                    <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="anchoColdC" {...register("anchoColdC")} />
-                                        <label style={{color:"#000000"}} htmlFor="anchoColdC">Ancho Cold Foild</label>
-                                    </div>
+                                    
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
 
-                                    <div className="accordion mx-auto p-1" id="accordionCold" style={{width: "50% "}}>
+                                    <div className="accordion mx-auto p-1" id="accordionCold" style={{width: "75% "}}>
                                         <div className="accordion-item">
                                         <button ref={toggleButtonCold} onClick={()=>setToggleButtonHotStampingIsopen(!toggleButtonHotStampingIsopen)} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
                                                     <p className="my-auto">Hot stamping</p>
@@ -1565,13 +1691,15 @@ const Cotizacion=()=> {
                                                     {
                                                         title: 'Id lista',
                                                         field:'idLista',
-                                                        headerFilter:"input"
+                                                        headerFilter:"input",
+                                                        visible:false
                                                         
                                                     },
                                                     {
                                                         title: 'Lista',
                                                         field:'lista',
-                                                        headerFilter:"input"
+                                                        headerFilter:"input",
+                                                        visible:false
                                                         
                                                     },
                                                     {
@@ -1592,10 +1720,7 @@ const Cotizacion=()=> {
                                         <input type="text" className="form-control" id="precioHotStamping" {...register("precioHotStamping")} />
                                         <label style={{color:"#000000"}} htmlFor="precioHotStamping">Precio</label>
                                     </div>
-                                    <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="anchoHotStamping" {...register("anchoHotStamping")} />
-                                        <label style={{color:"#000000"}} htmlFor="anchoHotStamping">Ancho Cold Foild</label>
-                                    </div>
+                                   
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-3" >
@@ -1603,10 +1728,10 @@ const Cotizacion=()=> {
                                         <label style={{color:"#000000"}} htmlFor="CubrimientoCoti1">Cubrimiento (%)</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 col-3">
-                                        <select className="form-select" id="tipoTinta1" {...register("tipoTinta1")} onChange={(e)=>setValue('grTinta1',parseFloat(e.target.selectedOptions[0].getAttribute('attr-precio'))*parseFloat(e.target.selectedOptions[0].getAttribute('attr-gramosM2')))} aria-label="tipoTinta1">
+                                        <select className="form-select" id="tipoTinta1" {...register("tipoTinta1")} onChange={(e)=>setValue('grTinta1',parseFloat(e.target.selectedOptions[0].getAttribute('attr-precio'))*parseFloat(e.target.selectedOptions[0].getAttribute('attr-gramosm')))} aria-label="tipoTinta1">
                                             <option  >Ninguno</option>
                                             {allDatas.tintas.map(tinta => (
-                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.precioGramo}  attr-gramosM2={tinta.gramosM2 || 0}>
+                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.precioGramo}  attr-gramosm={tinta.gramosM2 || 0}>
                                                     {tinta.tinta}
                                                 </option>
                                             ))}
@@ -1618,7 +1743,7 @@ const Cotizacion=()=> {
                                         <label style={{color:"#000000"}} htmlFor="grTinta1">$Gr. tinta (m²)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="PlanchasTinta1" {...register("PlanchasTinta1")} />
+                                        <input type="text" className="form-control" id="PlanchasTinta1" {...register("PlanchasTinta1")} onChange={()=>grdPla()}/>
                                         <label style={{color:"#000000"}} htmlFor="PlanchasTinta1">Planchas</label>
                                     </div>
                                 </div>
@@ -1628,10 +1753,10 @@ const Cotizacion=()=> {
                                         <label style={{color:"#000000"}} htmlFor="CubrimientoCoti2">Cubrimiento (%)</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 col-3">
-                                        <select className="form-select" id="tipoTinta2" {...register("tipoTinta2")} onChange={(e)=>setValue('grTinta2',parseFloat(e.target.selectedOptions[0].getAttribute('attr-precio'))*parseFloat(e.target.selectedOptions[0].getAttribute('attr-gramosM2')))} aria-label="tipoTinta2">
+                                        <select className="form-select" id="tipoTinta2" {...register("tipoTinta2")} onChange={(e)=>setValue('grTinta2',parseFloat(e.target.selectedOptions[0].getAttribute('attr-precio'))*parseFloat(e.target.selectedOptions[0].getAttribute('attr-gramosm')))} aria-label="tipoTinta2">
                                             <option  >Ninguno</option>
                                             {allDatas.tintas.map(tinta => (
-                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.precioGramo}  attr-gramosM2={tinta.gramosM2}>
+                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.precioGramo}  attr-gramosm={tinta.gramosM2}>
                                                     {tinta.tinta}
                                                 </option>
                                             ))}
@@ -1643,7 +1768,7 @@ const Cotizacion=()=> {
                                         <label style={{color:"#000000"}} htmlFor="grTinta2">$Gr. tinta (m²)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="PlanchasTinta2" {...register("PlanchasTinta2")} />
+                                        <input type="text" className="form-control" id="PlanchasTinta2" {...register("PlanchasTinta2")} onChange={()=>grdPla()} />
                                         <label style={{color:"#000000"}} htmlFor="PlanchasTinta2">Planchas</label>
                                     </div>
 
@@ -1654,10 +1779,10 @@ const Cotizacion=()=> {
                                         <label style={{color:"#000000"}} htmlFor="CubrimientoCoti3">Cubrimiento (%)</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 col-3">
-                                        <select className="form-select" id="tipoTinta3" {...register("tipoTinta3")} onChange={(e)=>setValue('grTinta3',parseFloat(e.target.selectedOptions[0].getAttribute('attr-precio'))*parseFloat(e.target.selectedOptions[0].getAttribute('attr-gramosM2')))} aria-label="tipoTinta3">
+                                        <select className="form-select" id="tipoTinta3" {...register("tipoTinta3")} onChange={(e)=>setValue('grTinta3',parseFloat(e.target.selectedOptions[0].getAttribute('attr-precio'))*parseFloat(e.target.selectedOptions[0].getAttribute('attr-gramosm')))} aria-label="tipoTinta3">
                                             <option  >Ninguno</option>
                                             {allDatas.tintas.map(tinta => (
-                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.precioGramo}  attr-gramosM2={tinta.gramosM2}>
+                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.precioGramo}  attr-gramosm={tinta.gramosM2}>
                                                     {tinta.tinta}
                                                 </option>
                                             ))}
@@ -1670,7 +1795,7 @@ const Cotizacion=()=> {
                                         <label style={{color:"#000000"}} htmlFor="grTinta3">$Gr. tinta (m²)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="PlanchasTinta3" {...register("PlanchasTinta3")}  />
+                                        <input type="text" className="form-control" id="PlanchasTinta3" {...register("PlanchasTinta3")} onChange={()=>grdPla()} />
                                         <label style={{color:"#000000"}} htmlFor="PlanchasTinta3">Planchas</label>
                                     </div>
 
@@ -1681,10 +1806,10 @@ const Cotizacion=()=> {
                                         <label style={{color:"#000000"}} htmlFor="CubrimientoCoti4">Cubrimiento (%)</label>
                                     </div>
                                     <div className="form-floating mx-auto p-1 col-3">
-                                        <select className="form-select" id="tipoTinta4"  {...register("tipoTinta4")}  onChange={(e)=>setValue('grTinta4',parseFloat(e.target.selectedOptions[0].getAttribute('attr-precio'))*parseFloat(e.target.selectedOptions[0].getAttribute('attr-gramosM2')))} aria-label="tipoTinta4">
+                                        <select className="form-select" id="tipoTinta4"  {...register("tipoTinta4")}  onChange={(e)=>setValue('grTinta4',parseFloat(e.target.selectedOptions[0].getAttribute('attr-precio'))*parseFloat(e.target.selectedOptions[0].getAttribute('attr-gramosm')))} aria-label="tipoTinta4">
                                             <option  >Ninguno</option>
                                            {allDatas.tintas.map(tinta => (
-                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.precioGramo}  attr-gramosM2={tinta.gramosM2}>
+                                                <option key={tinta.id} value={tinta.id} attr-precio={tinta.precioGramo}  attr-gramosm={tinta.gramosM2}>
                                                     {tinta.tinta}
                                                 </option>
                                             ))}
@@ -1696,7 +1821,7 @@ const Cotizacion=()=> {
                                         <label style={{color:"#000000"}} htmlFor="grTinta4">$Gr. tinta (m²)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="PlanchasTinta4" {...register("PlanchasTinta4")} />
+                                        <input type="text" className="form-control" id="PlanchasTinta4" {...register("PlanchasTinta4")} onChange={()=>grdPla()} />
                                         <label style={{color:"#000000"}} htmlFor="PlanchasTinta4">Planchas</label>
                                     </div>
 
@@ -2040,7 +2165,7 @@ const Cotizacion=()=> {
                                 <hr style={{marginTop:" -1px", border: "#000000 2px solid"}}/>
                                 <div className="col-12 zoom90 " style={{ flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-12 ">
-                                        <div className="form-control" id="" style={{display: "flex", flexDirection: "column", height: "330px"}}>
+                                        <div className="form-control" id="" style={{display: "flex", flexDirection: "column", height: "430px"}}>
                                             <div style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-check col-3">
                                                     <input className="form-check-input" type="radio" {...register("recargoTrnsporte")} id="recargoTrnsporteCM" value="Corte Manual" />
@@ -2107,10 +2232,41 @@ const Cotizacion=()=> {
 
                                                 </select>
                                                 <label style={{color:"#000000"}} htmlFor="ciudadEnvio">Ciudad de envio</label>
+                                                </div>
+                                               
                                             </div>
-                                            <div className="form-floating  mx-auto p-1 " style={{width: "25% "}}>
-                                                    <input type="text" className="form-control" id="cajas" {...register("cajas")} />
-                                                    <label style={{color:"#000000"}} htmlFor="cajas">Cajas</label>
+                                            <div className="col-12 zoom90 mt-4" style={{display: "flex", flexDirection:"row"}}>
+                                                <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                                    <input type="text" className="form-control" id="cajas_cantidad1" {...register("cajas_cantidad1")} readOnly={true}  />
+                                                    <label style={{color:"#000000"}} htmlFor="cajas_cantidad1">Cajas cantidad 1</label>
+                                                </div>
+                                                <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                                    <input type="text" className="form-control" id="cajas_cantidad2" {...register("cajas_cantidad2")} readOnly={true}  />
+                                                    <label style={{color:"#000000"}} htmlFor="cajas_cantidad2">Cajas cantidad 2</label>
+                                                </div>
+                                                <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                                    <input type="text" className="form-control" id="cajas_cantidad3" {...register("cajas_cantidad3")} readOnly={true} />
+                                                    <label style={{color:"#000000"}} htmlFor="cajas_cantidad3">Cajas cantidad 3</label>
+                                                </div>
+                                                <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                                    <input type="text" className="form-control" id="cajas_cantidad4" {...register("cajas_cantidad4")} readOnly={true}  />
+                                                    <label style={{color:"#000000"}} htmlFor="cajas_cantidad4">Cajas cantidad 4</label>
+                                                </div>
+                                                <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                                    <input type="text" className="form-control" id="cajas_cantidad5" {...register("cajas_cantidad5")} readOnly={true}  />
+                                                    <label style={{color:"#000000"}} htmlFor="cajas_cantidad5">Cajas cantidad 5</label>
+                                                </div>
+                                                <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                                    <input type="text" className="form-control" id="cajas_cantidad6" {...register("cajas_cantidad6")} readOnly={true}  />
+                                                    <label style={{color:"#000000"}} htmlFor="cajas_cantidad6">Cajas cantidad 6</label>
+                                                </div>
+                                                <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                                    <input type="text" className="form-control" id="cajas_cantidad7" {...register("cajas_cantidad7")} readOnly={true}  />
+                                                    <label style={{color:"#000000"}} htmlFor="cajas_cantidad7">Cajas cantidad 7</label>
+                                                </div>
+                                                <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
+                                                    <input type="text" className="form-control" id="cajas_cantidad8" {...register("cajas_cantidad8")} readOnly={true}  />
+                                                    <label style={{color:"#000000"}} htmlFor="cajas_cantidad8">Cajas cantidad 8</label>
                                                 </div>
                                             </div>
                                         </div>
