@@ -4,7 +4,7 @@ import React, { useEffect, useState,useRef } from "react";
 import {TabulatorFull as Tabulator} from "tabulator-tables"; //import Tabulator library
 import "tabulator-tables/dist/css/tabulator.min.css";
 import "jspdf-autotable"; 
-const TabulatorTable = ({ data,columns,action=null }) => {
+const TabulatorTable = ({ data,columns,action=null,rowSelected=1 }) => {
   const tableRef = useRef(null);
   let tabla;
   const localeConfig = {
@@ -53,7 +53,7 @@ const TabulatorTable = ({ data,columns,action=null }) => {
         pagination: 'local',
         paginationSize: 10,
         paginationSizeSelector: [5, 10, 20, 50,100],
-        selectableRows: 1,       
+        selectableRows: rowSelected,       
        
       });
    

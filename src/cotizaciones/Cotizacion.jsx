@@ -127,6 +127,7 @@ const Cotizacion=()=> {
         CambiosTintas:0,
         IRAdhesivo:'No',
         IRLiner:'No',
+        acabadoS:[],
         TroquelGraduacion:'No',
         ShokAir:'No',
         ponchadoFc:'No',
@@ -211,17 +212,32 @@ const Cotizacion=()=> {
       const [toggleButtonAcabadoIsopen,setToggleButtonAcabadoIsopen]=useState(false);
       const handleRowSelectedAcabado=(datos)=>{
         
-        if(datos.length==1){
-            let dato =datos[0];
-            setValue('precioAcabado',dato.precio);
-            setValue('acabadoS',dato.id);
+        if(datos.length>=1){
+            let acabadosSelect=""
+            let precio=0;
+            console.log('datos',datos)
+            for (let index = 0; index < datos.length; index++) {
+                if (index===0) {
+                    acabadosSelect = datos[index].acabado
+                    precio=datos[index].precio
+                    setValue('acabadoS',[datos[index].id]);
+                }else{
+                    acabadosSelect = acabadosSelect+" , "+datos[index].acabado
+                    precio=precio+datos[index].precio
+                    setValue('acabadoS',[datos[index].id,...watch('acabadoS')]);
+                }
+                
+                
+            }
+            setValue('precioAcabado',precio);
+            
             if (toggleButtonAcabado.current) {
-                toggleButtonAcabado.current.querySelector('p').textContent = 'Acabado: '+dato.acabado;
+                toggleButtonAcabado.current.querySelector('p').textContent = 'Acabado: '+acabadosSelect;
                 toggleButtonAcabado.current.classList.add('checkbutonTables')
               }
         }else{
-            setValue('precioAcabado','');
-            setValue('acabadoS','');
+            setValue('precioAcabado',0);
+            setValue('acabadoS',[]);
             if (toggleButtonAcabado.current) {
                 toggleButtonAcabado.current.querySelector('p').textContent  =`Acabado` ;
                 toggleButtonAcabado.current.classList.remove('checkbutonTables')
@@ -372,7 +388,7 @@ const Cotizacion=()=> {
                  setValue("difFotopolimero6", response.data.cantidad6) 
                  setValue("difFotopolimero7", response.data.cantidad7) 
                  setValue("difFotopolimero8", response.data.cantidad8)
-
+               
                  setValue("entrega1", response.data.entrega1) 
                  setValue("entrega2", response.data.entrega2) 
                  setValue("entrega3", response.data.entrega3) 
@@ -397,7 +413,7 @@ const Cotizacion=()=> {
                  setValue("puntos_enttrega", response.data.puntosEntrega) 
                  setValue("Vendedor", response.data.asesor) 
                  setValue("comi", response.data.comision) 
-                 setValue("PlanchasTinta1",parseFloat(response.data.t1)+parseFloat(response.data.t2))
+                 setValue("PlanchasTinta1",response.data.unidadTintas>=parseFloat(response.data.t1)+parseFloat(response.data.t2)? response.data.unidadTintas : parseFloat(response.data.t1)+parseFloat(response.data.t2))
                  if((response.data.tinta1+response.data.tinta1)===0){
                     setValue('comision',1.5)
                  }
@@ -426,7 +442,7 @@ const Cotizacion=()=> {
                 }
                 if(response.data.acabado===null || response.data.acabado===0){}else{
                     setValue('precioAcabado',buscaAcabadoPorId(response.data.acabado).precio);
-                    setValue('acabadoS',buscaAcabadoPorId(response.data.acabado).id);
+                    setValue('acabadoS',[buscaAcabadoPorId(response.data.acabado).id]);
                     if (toggleButtonAcabado.current) {
                         toggleButtonAcabado.current.querySelector('p').textContent = 'Acabado: '+buscaAcabadoPorId(response.data.acabado).acabado;
                         toggleButtonAcabado.current.classList.add('checkbutonTables')
@@ -871,7 +887,37 @@ const Cotizacion=()=> {
             // Obtener el precio del atributo 'attr-precio' de la opción seleccionada
             transporteCiudadprecio = parseFloat(transporteCiudad.selectedOptions[0].getAttribute('att-precio'));
             // Multiplicar por la cantidad de cajas (presupongo que la función 'watch' devuelve el valor de 'cajas')
-            transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas'));
+            switch (coti) {
+                case 1:
+                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad1'));
+                break;
+                case 2:
+                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad2'));
+                break;
+                case 3:
+                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad3'));
+                break;
+                case 4:
+                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad4'));
+                break;
+                case 5:
+                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad5'));
+                break;
+                case 6:
+                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad6'));
+                break;
+                case 7:
+                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad7'));
+                break;
+                case 8:
+                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad8'));
+                break;
+                
+                default:
+                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad1'));
+                    break;
+            }
+            
         } else {
             alert("Por favor, selecciona una opción de ciudad.");
         }
@@ -1449,15 +1495,15 @@ const Cotizacion=()=> {
 
                                     
                                     <div className="form-floating  mx-auto p-1 " style={{width: "15% "}}>
-                                        <input type="text" className="form-control" id="CUnidad" {...register("CUnidad")} />
+                                        <input type="text" className="form-control" id="CUnidad" {...register("CUnidad")} onChange={()=>calcularAncho()} />
                                         <label style={{color:"#000000"}} htmlFor="CUnidad">Unidad</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 " style={{width: "15% "}}>
-                                        <input type="text" className="form-control" id="around" {...register("around")} />
+                                        <input type="text" className="form-control" id="around" {...register("around")} onChange={()=>calcularAncho()}/>
                                         <label style={{color:"#000000"}} htmlFor="around">Around</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 " style={{width: "15% "}}>
-                                        <input type="text" className="form-control" id="across" {...register("across")}  />
+                                        <input type="text" className="form-control" id="across" {...register("across")} onChange={()=>calcularAncho()} />
                                         <label style={{color:"#000000"}} htmlFor="across">Across</label>
                                     </div>
 
@@ -1597,6 +1643,7 @@ const Cotizacion=()=> {
                                                     }
                                                    ]}
                                                     data={allDatas.acabados}
+                                                    rowSelected={2}
                                                     action={handleRowSelectedAcabado}
                                                     />
                                                 </div>
@@ -1744,7 +1791,7 @@ const Cotizacion=()=> {
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="PlanchasTinta1" {...register("PlanchasTinta1")} onChange={()=>grdPla()}/>
-                                        <label style={{color:"#000000"}} htmlFor="PlanchasTinta1">Planchas</label>
+                                        <label style={{color:"#000000"}} htmlFor="PlanchasTinta1">Total Planchas por tipo de tinta</label>
                                     </div>
                                 </div>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
@@ -1769,7 +1816,7 @@ const Cotizacion=()=> {
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="PlanchasTinta2" {...register("PlanchasTinta2")} onChange={()=>grdPla()} />
-                                        <label style={{color:"#000000"}} htmlFor="PlanchasTinta2">Planchas</label>
+                                        <label style={{color:"#000000"}} htmlFor="PlanchasTinta2">Total Planchas por tipo de tinta</label>
                                     </div>
 
                                 </div>
@@ -1796,7 +1843,7 @@ const Cotizacion=()=> {
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="PlanchasTinta3" {...register("PlanchasTinta3")} onChange={()=>grdPla()} />
-                                        <label style={{color:"#000000"}} htmlFor="PlanchasTinta3">Planchas</label>
+                                        <label style={{color:"#000000"}} htmlFor="PlanchasTinta3">Total Planchas por tipo de tinta</label>
                                     </div>
 
                                 </div>
@@ -1822,7 +1869,7 @@ const Cotizacion=()=> {
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
                                         <input type="text" className="form-control" id="PlanchasTinta4" {...register("PlanchasTinta4")} onChange={()=>grdPla()} />
-                                        <label style={{color:"#000000"}} htmlFor="PlanchasTinta4">Planchas</label>
+                                        <label style={{color:"#000000"}} htmlFor="PlanchasTinta4">Total Planchas por tipo de tinta</label>
                                     </div>
 
                                 </div>
