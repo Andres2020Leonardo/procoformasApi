@@ -260,3 +260,6 @@ fieldset legend span{
   font-weight: bold; 
   text-decoration: underline; 
 }
+input[type="search"]{
+  background: #ffffff !important;
+}

@@ -623,7 +623,7 @@ const Cotizacion=()=> {
         let factor=0.3175;
         let constante=60;
         console.log(cantidad)
-        let REGISTRO_COLORES=(parseFloat(watch('t1'))+parseFloat(watch('t2')))*15;
+        let REGISTRO_COLORES=(parseFloat(watch('PlanchasTinta1'))+parseFloat(watch('PlanchasTinta2'))+parseFloat(watch('PlanchasTinta3'))+parseFloat(watch('PlanchasTinta4')))*15;
         let MATERIAL_SIN_DESPERDICIO=((((parseFloat(watch('CUnidad'))*factor)/parseFloat(watch('around')))*cantidad)/parseFloat(watch('across')))/100;
         let REGISTRO_DE_TROQUEL=10;
         let CAMBIO_DE_ROLLO =(MATERIAL_SIN_DESPERDICIO/1000)>1 ? (MATERIAL_SIN_DESPERDICIO/999)*40 : 0;
@@ -1408,7 +1408,7 @@ const Cotizacion=()=> {
                                     <div className="accordion mx-auto p-1  " id="accordionRefTroquel" style={{width: "40% "}}>
                                         <div className="accordion-item">
                                                 <button ref={toggleButtonTroquel} onClick={()=>setToggleButtonTroquelIsopen(!toggleButtonTroquelIsopen)} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
-                                                    <p className="my-auto">Ref. Troquel</p>
+                                                    <p className="my-auto text-dark">Ref. Troquel</p>
                                                     {toggleButtonTroquelIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
                                            
@@ -1456,7 +1456,7 @@ const Cotizacion=()=> {
                                     <div className="accordion mx-auto p-1" id="accordionPar" style={{width: "50% "}}>
                                         <div className="accordion-item">
                                         <button ref={toggleButtonPar} onClick={()=>setToggleButtonParIsopen(!toggleButtonParIsopen)} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
-                                                    <p className="my-auto">Unidad P.A.R.</p>
+                                                    <p className="my-auto text-dark">Unidad P.A.R.</p>
                                                     {toggleButtonParIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
                                             <div id="collaPar"   className={`accordion-collapse collapse ${toggleButtonParIsopen && "show"} `}>
@@ -1547,7 +1547,7 @@ const Cotizacion=()=> {
                                     <div className="accordion mx-auto p-1 " id="accordionMaterial" style={{width: "50% "}} >
                                         <div className="accordion-item">
                                         <button ref={toggleButtonMaterial} onClick={()=>setToggleButtonMaterialIsopen(!toggleButtonMaterialIsopen)} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
-                                                    <p className="my-auto">Material</p>
+                                                    <p className="my-auto text-dark">Material</p>
                                                     {toggleButtonMaterialIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
                                             <div id="collaMaterial"   className={`accordion-collapse collapse ${toggleButtonMaterialIsopen && "show"} `}>
@@ -1606,7 +1606,7 @@ const Cotizacion=()=> {
                                     <div className="accordion mx-auto p-1" id="accordionAcabado" style={{width: "75% "}}>
                                         <div className="accordion-item">
                                                 <button ref={toggleButtonAcabado} onClick={()=>setToggleButtonAcabadoIsopen(!toggleButtonAcabadoIsopen)} className="button  bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
-                                                    <p className="my-auto">Acabado</p>
+                                                    <p className="my-auto text-dark">Acabado</p>
                                                     {toggleButtonAcabadoIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
                                             <div id="collaacabado"   className={`accordion-collapse collapse ${toggleButtonAcabadoIsopen && "show"} `}>
@@ -1662,7 +1662,7 @@ const Cotizacion=()=> {
                                     <div className="accordion mx-auto p-1" id="accordionCold" style={{width: "75% "}}>
                                         <div className="accordion-item">
                                         <button ref={toggleButtonCold} onClick={()=>setToggleButtonColdIsopen(!toggleButtonColdIsopen)} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
-                                                    <p className="my-auto">Cold Foild</p>
+                                                    <p className="my-auto text-dark">Cold Foild</p>
                                                     {toggleButtonColdIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
                                             <div id="collaCold"   className={`accordion-collapse collapse ${toggleButtonColdIsopen && "show"} `}>
@@ -1718,7 +1718,7 @@ const Cotizacion=()=> {
                                     <div className="accordion mx-auto p-1" id="accordionCold" style={{width: "75% "}}>
                                         <div className="accordion-item">
                                         <button ref={toggleButtonCold} onClick={()=>setToggleButtonHotStampingIsopen(!toggleButtonHotStampingIsopen)} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
-                                                    <p className="my-auto">Hot stamping</p>
+                                                    <p className="my-auto text-dark">Hot stamping</p>
                                                     {toggleButtonColdIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
                                             <div id="collaCold"   className={`accordion-collapse collapse ${toggleButtonHotStampingIsopen && "show"} `}>
@@ -1877,7 +1877,7 @@ const Cotizacion=()=> {
                             <hr style={{marginTop:" -1px", border: "#000000 2px solid"}}/>
                                 <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                     <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="CambPlanchas" {...register("CambPlanchas")}  attr-precio="0"  />
+                                        <input type="text" className="form-control" id="CambPlanchas" {...register("CambPlanchas")}  attr-precio="0" onChange={(e)=>{setValue('CambPlanchas',e.target.value);setValue('metros',calcularMetros(watch('cantidad1')))}} />
                                         <label style={{color:"#000000"}} htmlFor="CambPlanchas">Camb. planchas</label>
                                     </div>
                                   
