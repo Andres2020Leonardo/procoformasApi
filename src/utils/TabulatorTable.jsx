@@ -56,10 +56,12 @@ const TabulatorTable = ({ data,columns,action=null,rowSelected=1 }) => {
         selectableRows: rowSelected,       
        
       });
-   
-        tabla.on("rowSelectionChanged", function(data){
-          action(data)
-        });
+        if (action) {
+          tabla.on("rowSelectionChanged", function(data){
+            action(data)
+          });
+        }
+        
       
       
     }

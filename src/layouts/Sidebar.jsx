@@ -67,7 +67,7 @@ const Sidebar = ({rol,addPage}) => {
                 >
                 
                   <p className="text-api-s  hidden overflow-hidden my-auto mx-auto" style={{fontSize:"12px"}}>
-                    Solicitud de cotización
+                    Solicitud
                   </p>
                   
                 </button>
@@ -81,7 +81,26 @@ const Sidebar = ({rol,addPage}) => {
                   </p>
                   
                 </button>
-          
+                <button
+                  onClick={()=>addPage("listSolicitudes")}
+                  className={` mt-2 mb-2 d-flex flex-row align-middle mx-auto hoverLink p-1 w-100 h-5vh btn-group`}
+                >
+                
+                  <p className="text-api-s  hidden overflow-hidden my-auto mx-auto" style={{fontSize:"12px"}}>
+                    Lista de solicitudes
+                  </p>
+                  
+                </button>
+                <button
+                  onClick={()=>addPage("listCotizaciones")}
+                  className={` mt-2 mb-2 d-flex flex-row align-middle mx-auto hoverLink p-1 w-100 h-5vh btn-group`}
+                >
+                
+                  <p className="text-api-s  hidden overflow-hidden my-auto mx-auto" style={{fontSize:"12px"}}>
+                    Lista de cotizaciones
+                  </p>
+                  
+                </button>
             </div></>}
             {["1"].includes(rol) && <><Link
             

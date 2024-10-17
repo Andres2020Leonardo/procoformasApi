@@ -8,7 +8,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate, faX } from '@fortawesome/free-solid-svg-icons';
 import CotizacionPDFViewer from '../utils/CotizacionPDFViewer';
 const logo = "./img/cdpLogo2.png";
-const SolicitudCotizacion=()=> {
+const SolicitudCotizacion=({elemented})=> {
         const [loadingIcon,setLoadingIcon] = useState(false);
         const [selectedUnidad, setSelectedUnidad] = useState('1');
         const [selectedUnidadGlobal, setSelectedUnidadGlobal] = useState('1');
@@ -18,6 +18,7 @@ const SolicitudCotizacion=()=> {
         const [allDatas,setAllDatas] =useState({})
         const [valueCold, setValueCold] = useState(null);
         const [valueMaterial, setValueMaterial] = useState(null);
+        const [valueHotStamping, setValueHotStamping] = useState(null);
         const [valueAcabado, setValueAcabado] = useState(null);
         const [valueProducto, setValueProducto] = useState(null);
         const [valueCiudad, setValueCiudad] = useState(null);
@@ -74,21 +75,30 @@ const SolicitudCotizacion=()=> {
             setLoadingIcon(true)
             try {
                 const arrayToString = JSON.stringify(valueCiudadAlls.map(item => item.id));
-                const newData = { ...data, ciudad_entrega: arrayToString };
-                const response = await ClientAxios.post(`/insertcotizacion`, newData)
+                let newData = { ...data, ciudad_entrega: arrayToString };
+                let response=null
+                if(elemented?.id){
+                    newData = { ...data, id: elemented.id };
+                    console.log(newData)
+                     response = await ClientAxios.post(`/editCotizacion`, newData)
+                }else{
+                     response = await ClientAxios.post(`/insertcotizacion`, newData)
+                }
+                
                 
                 if(response.data!=="Creación fallida."){
                     setCotizacion(response.data)
-                    setMostrarPdf(true)
+                    // setMostrarPdf(true)
                 }
                 setAlert({
-                    msg: "Creación exitosa",
+                    msg: "Creación o actualización exitosa con #: "+response.data,
                     error: false,
                   });
-                
+                setTimeout(() => {
+                    document.location.reload();
+                }, 8000);
                 setLoadingIcon(false)
                 setCreada(true)
-                console.log("Response Data:", response.data);
             } catch (error) {
                 setAlert({
                     msg: error.data || "Error",
@@ -113,6 +123,7 @@ const SolicitudCotizacion=()=> {
         }
         useEffect(() => {
             async function fetchData() {
+                
               try {
                 const response = await ClientAxios.post(
                   `/allDatasSoli`,   {}, 
@@ -124,10 +135,10 @@ const SolicitudCotizacion=()=> {
                   
                 );
                 setAllDatas(response.data)
-                
                 console.log(response.data)
                 const emailToken =Decrypt(localStorage.getItem("SesionToken"));                
                 setValue('digitado',emailToken)
+                
               } catch (error) {
                 console.error('Error fetching data:', error);
               } finally {
@@ -153,6 +164,133 @@ const SolicitudCotizacion=()=> {
             }
             fetchData();
         }, [valueCiudadId])
+          function buscaClientePorId(id) {    
+            let cliente1 = allDatas.clientes.find(cliente2 => parseInt(cliente2.id) === parseInt(id));
+            return cliente1;
+          }
+          function buscaMaterialPorId(id) {    
+            let material = allDatas.materials.find(material => parseInt(material.id) === parseInt(id));
+            return material;
+          }
+          function buscaAcabadoPorId(id) {    
+            let acabado = allDatas.acabados.find(acabado => parseInt(acabado.id) === parseInt(id));
+            return acabado;
+          }
+          function buscaColdPorId(id) {    
+            let coldFoild = allDatas.coldFoilds.find(coldFoild => parseInt(coldFoild.id) === parseInt(id));
+            return coldFoild;
+          }
+          function buscaHotStampingPorId(id) {    
+            let hotStamping = allDatas.hotStampings.find(hotStamping => parseInt(hotStamping.id) === parseInt(id));
+            return hotStamping;
+          }
+          function buscaProductosPorId(id) {    
+            let producto1 = allDatas.productos.find(producto => parseInt(producto.id) === parseInt(id));
+            return producto1;
+          }
+          function buscaAsesorID(id) {    
+            let user = allDatas.users.find(user => parseInt(user.id) === parseInt(id));
+            return user;
+          }
+        useEffect(() => {
+          function elementFunt() {
+            if (allDatas?.clientes && elemented?.cliente) {
+                console.log(elemented)
+                setValue('tipo_cotizacion',elemented.tipoCotizacion)
+                setValue('cliente',elemented.cliente)
+                
+                setValueCliente(buscaClientePorId(elemented.cliente));
+                setValueClienteId(buscaClientePorId(elemented.cliente)?.id);
+                setValue("cliente",buscaClientePorId(elemented.cliente)?.id);
+                setValue("nombre_cliente",buscaClientePorId(elemented.cliente)?.razonSocial);
+                setValue("nit_cliente",buscaClientePorId(elemented.cliente)?.id);
+                setValue("ciudad_cliente",buscaClientePorId(elemented.cliente)?.ciudad);
+                if(buscaClientePorId(elemented.cliente)?.ciudad){setValueCiudadId(buscaClientePorId(elemented.cliente)?.ciudad);}else{setValueCiudadId(null);}                                                                                
+                setValue("telefono1",buscaClientePorId(elemented.cliente)?.telefono);
+                setValue("telefono2",buscaClientePorId(elemented.cliente)?.telefono2);
+                setValue("email",buscaClientePorId(elemented.cliente)?.email);
+                setValue("contacto",buscaClientePorId(elemented.cliente)?.nombreContacto);
+                setValue("direccion",buscaClientePorId(elemented.cliente)?.direccion);
+
+                setValue('producto',elemented.producto)
+                setValueProducto(buscaProductosPorId(elemented.producto));
+                setValue('descripcion_producto',elemented.descripcionProducto||'')
+                setValue('Existencia_producto',elemented.ExistenciaProducto||'')
+                setValue('unidad_seleccion',elemented.unidadSeleccion||'')
+                setValue('unidad_seleccion_juego2x2',elemented.unidadSeleccionJuego2x2||'')
+                setValue('unidad_seleccion_mangas',elemented.unidadSeleccionMangas||'')
+                setValue('unidad_seleccion_otro',elemented.unidadSeleccionOtro||'')
+                setValue('grado_dificultad',elemented.gradoDificultad||'')
+                setValue('unidad_ref_distintas',elemented.unidadRefDistintas||'')
+                setValue('unidad_planchas',elemented.unidadPlanchas||'')
+                setValue('unidad_tintas',elemented.unidadTintas||'')
+                setValue('cantidades_ref_son',elemented.cantidadesRefSon||'')
+                setValue('cantidad1',elemented.cantidad1||'')
+                setValue('cantidad2',elemented.cantidad2||'')
+                setValue('cantidad3',elemented.cantidad3||'')
+                setValue('cantidad4',elemented.cantidad4||'')
+                setValue('cantidad5',elemented.cantidad5||'')
+                setValue('cantidad6',elemented.cantidad6||'')
+                setValue('cantidad7',elemented.cantidad7||'')
+                setValue('cantidad8',elemented.cantidad8||'')
+                setValue('entrega1',elemented.entrega1||'')
+                setValue('entrega2',elemented.entrega2||'')
+                setValue('entrega3',elemented.entrega3||'')
+                setValue('entrega4',elemented.entrega4||'')
+                setValue('entrega5',elemented.entrega5||'')
+                setValue('entrega6',elemented.entrega6||'')
+                setValue('entrega7',elemented.entrega7||'')
+                setValue('entrega8',elemented.entrega8||'')
+                setValue('fecuencia_dias1',elemented.fecuenciaDias1||'')
+                setValue('fecuencia_dias2',elemented.fecuenciaDias2||'')
+                setValue('fecuencia_dias3',elemented.fecuenciaDias3||'')
+                setValue('fecuencia_dias4',elemented.fecuenciaDias4||'')
+                setValue('fecuencia_dias5',elemented.fecuenciaDias5||'')
+                setValue('fecuencia_dias6',elemented.fecuenciaDias6||'')
+                setValue('fecuencia_dias7',elemented.fecuenciaDias7||'')
+                setValue('fecuencia_dias8',elemented.fecuenciaDias8||'')
+                setValue('observaciones',elemented.observaciones||'')
+                setValue('aplicacion_especificaciones',elemented.aplicacionEspecificaciones||'')
+                setValue('ancho_espe',elemented.anchoEspe||'')
+                setValue('avance_espe',elemented.avanceEspe||'')
+                setValue('troquel',elemented.troquel||'')
+                setValue('material',elemented.material||'')
+                setValueMaterial(buscaMaterialPorId(elemented.material));
+                setValue('acabado',elemented.acabado||'')
+                setValueAcabado(buscaAcabadoPorId(elemented.acabado));
+                setValue('hot_stamping',elemented.hotStamping||'')
+                setValueHotStamping(buscaHotStampingPorId(elemented.hotStamping));
+                setValue('cold_foild',elemented.coldFoild||'')
+                setValueAcabado(buscaColdPorId(elemented.coldFoild));
+                setValue('T1',elemented.t1||'')
+                setValue('T2',elemented.t2||'')
+                setValue('base_agua_tipo_tinta',elemented.baseAguaTipoTinta||'')
+                setValue('metalizada_tipo_tinta',elemented.metalizadaTipoTinta||'')
+                setValue('uv_tipo_tinta',elemented.uvTipoTinta||'')
+                setValue('fluorescentes_tipo_tinta',elemented.fluorescentesTipoTinta||'')
+                setValue('cubrimiento',elemented.cubrimiento||'')
+                setValue('tintas_respaldo',elemented.tintasRespaldo||'')
+                setValue('cinta',elemented.cinta||'')
+                setValue('tipo_cinta',elemented.tipoCinta||'')
+                setValue('presentacion',elemented.presentacion||'')
+                setValue('rollos_por',elemented.rollosPor||'')
+                setValue('etiq_ancho',elemented.etiqAncho||'')
+                setValue('core',elemented.core||'')
+                setValue('posicion_presentacion',elemented.posicionPresentacion||'')
+                setValue('etiquetas_hoja',elemented.etiquetasHoja||'')
+                setValue('hojas_paquete',elemented.hojasPaquete||'')
+                setValue('ciudades_entrega',elemented.ciudadesEntrega||'')
+                setValue('asesor',elemented.asesor||'')
+                setValueAsesorId(buscaAsesorID(elemented.asesor))
+                setValue('comision',elemented.comision||'')
+                setValue('tipo_asesor',elemented.tipoAsesor||'')
+                setValue('presentacion_rollos',elemented.presentacionRollos||'')
+            }
+          
+          }
+          elementFunt();
+        }, [elemented,allDatas])
+        
         const { msg } = alert;
 
         const fechaTime=new Date();
@@ -186,7 +324,7 @@ const SolicitudCotizacion=()=> {
             <div className="carousel-item active mx-auto"  style={{padding: "1%", zoom: "90% "}}>
                 <div className="card scroll-divs-card mx-auto"  style={{pmarginBottom: "20px"}}>
                     <div className="card-body "  style={{zoom: "100% "}}>
-                        <h3 className="col-12 " style={{textAlign: "center"}}>Solicitud de cotización</h3>
+                        <h3 className="col-12 " style={{textAlign: "center"}}>Solicitud de cotización {elemented?.id && `en modificación # ${elemented.id}`}</h3>
                         
                 
                         <div className="col-12  h-100 p-1 " style={{display: "flex", flexDirection: "column"}}>
@@ -515,13 +653,13 @@ const SolicitudCotizacion=()=> {
                                 <div className="form-floating  mx-auto p-1 col-3 " >
                                     <div className="form-control" id="divcheckratio2" style={{display: "flex", flexDirection: "row", height: "100px ",background: "#a5afb6",}} >
                                         <div className="form-check col-4">
-                                            <input className="form-check-input" type="radio" {...register("canidades_ref_son")} id="canidades_ref_son_iguales" defaultChecked value="iguales"/>
+                                            <input className="form-check-input" type="radio" {...register("cantidades_ref_son")} id="canidades_ref_son_iguales" defaultChecked value="iguales"/>
                                             <label style={{color:"#000000"}} className="form-check-label" htmlFor="canidades_ref_son_iguales">
                                                 Iguales
                                             </label>
                                         </div>
                                         <div className="form-check col-4">
-                                            <input className="form-check-input" type="radio" {...register("canidades_ref_son")} id="canidades_ref_son_dif"  value="diferentes"/>
+                                            <input className="form-check-input" type="radio" {...register("cantidades_ref_son")} id="canidades_ref_son_dif"  value="diferentes"/>
                                             <label style={{color:"#000000"}} className="form-check-label" htmlFor="canidades_ref_son_dif">
                                                 Diferentes
                                             </label>
@@ -704,14 +842,14 @@ const SolicitudCotizacion=()=> {
                                 
                                 </div>
                                 <div className="form-floating mx-auto p-1 col-3 mt-2" >
-                                {allDatas?.materials?
+                                {allDatas?.hotStampings?
                                 <Autocomplete
                                     className='shearchinputs'
-                                    value={valueMaterial}
-                                    onChange={(event, newValue) => {if(newValue!==null){setValueMaterial(newValue);setValue("hot_stamping",newValue.id)}else{setValueMaterial(null);setValue("hot_stamping",null)}}}
+                                    value={valueHotStamping}
+                                    onChange={(event, newValue) => {if(newValue!==null){valueHotStamping(newValue);setValue("hot_stamping",newValue.id)}else{valueHotStamping(null);setValue("hot_stamping",null)}}}
                                     options={allDatas?.hotStampings}
                                     getOptionLabel={(option) => option.host_stamping}
-                                    renderInput={(params) => <TextField {...params} required label="Seleccionar hot stamping" />}
+                                    renderInput={(params) => <TextField {...params}  label="Seleccionar hot stamping" />}
                                     isOptionEqualToValue={(option, value) => option.id === value?.id}
                                     />:""}
                                     
@@ -844,7 +982,7 @@ const SolicitudCotizacion=()=> {
                                             </div>
                                             <div className="form-check col-6">
                                                 <input className="form-check-input" type="radio" {...register("tipo_cinta")} id="cinta_variable" value="Varibles"/>
-                                                <label style={{color:"#000000"}} className="form-check-label" htmlFor="canidades_ref_son_dif">
+                                                <label style={{color:"#000000"}} className="form-check-label" htmlFor="">
                                                     Variable
                                                 </label>
                                             </div>
@@ -951,7 +1089,7 @@ const SolicitudCotizacion=()=> {
                                     <Autocomplete
                                         className='shearchinputs'
                                         value={valueCiudadAlls}
-                                        onChange={(event, newValue) => {setValueCiudadAlls(newValue);setValue("ciudad_entrega",valueCiudadAlls.map(item => item.id))}}
+                                        onChange={(event, newValue) => {setValueCiudadAlls(newValue);setValue("ciudad_entrega",valueCiudadAlls.map(item => item.id).join(','))}}
                                         options={allDatas?.ciudades}
                                         getOptionLabel={(option) => option.nombre}
                                         renderInput={(params) => <TextField {...params}  label="Seleccionar puntos de entrega" />}

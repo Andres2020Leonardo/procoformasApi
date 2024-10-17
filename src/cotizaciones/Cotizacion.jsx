@@ -9,7 +9,7 @@ import TabulatorTable from "../utils/TabulatorTable";
 import ImageOCR from "../utils/ImageOCR";
 import CotizacionPdf from "../utils/CotizacionPdf";
 
-const Cotizacion=()=> {
+const Cotizacion=({elemented})=> {
     const [loadingIcon,setLoadingIcon] = useState(false);
     const [checkStatus,setCheckStatus] = useState(false);
     const [checkStatusView,setCheckStatusView] = useState(true);
@@ -184,6 +184,10 @@ const Cotizacion=()=> {
         let hotStamping = allDatas.hotStampings.find(hotStamping => parseInt(hotStamping.id) === parseInt(id));
         return hotStamping;
       }
+      function buscaTroquelPorId(id) {    
+        let troquel = allDatas.referenciasTroquels.find(troquel => parseInt(troquel.id) === parseInt(id));
+        return troquel;
+      }
     /// tabla material
     const toggleButtonMaterial =useRef(null);
       const [toggleButtonMaterialIsopen,setToggleButtonMaterialIsopen]=useState(false);
@@ -304,6 +308,46 @@ const Cotizacion=()=> {
         }
        
       }
+      /// tabla troquel
+      const toggleButtonTroquel =useRef(null);
+      const [toggleButtonTroquelIsopen,setToggleButtonTroquelIsopen]=useState(false);
+      const handleRowSelectedTroquel=(datos)=>{
+        if(watch('anchoEspe')==""){
+            alert("Falta Ancho Esperado")
+        }else{
+        if(datos.length==1){
+            let dato =datos[0];
+            console.log('dato',dato.id)
+            setValue('CUnidad',dato.unidadTroquel);
+            setValue('around',dato.around);
+            setValue('across',dato.across);          
+            
+            setValue('troquel_referencia',dato.referencia);
+            setValue('troquel_id',dato.id);            
+            if (toggleButtonTroquel.current) {
+                toggleButtonTroquel.current.querySelector('p').textContent = 'Ref. Troquel: '+dato.referencia;
+                toggleButtonTroquel.current.classList.add('checkbutonTables')
+              }
+              setValue('metros',calcularMetros(watch('cantidad1')))
+              calcularAvance()
+              calcularAncho()
+              calcularCajas();
+        }else{
+            setValue('CUnidad',0);
+            setValue('around',0);
+            setValue('across',0);
+            setValue('troquel_referencia',0);
+            setValue('troquel_id',null); 
+            if (toggleButtonTroquel.current) {
+                toggleButtonTroquel.current.querySelector('p').textContent  =`Ref. Troquel` ;
+                toggleButtonTroquel.current.classList.remove('checkbutonTables')
+              }
+              setValue('metros',0)
+              calcularAvance()
+              calcularAncho()
+        }}
+       
+      }
         /// tabla Cold
         const toggleButtonHotStamping =useRef(null);
         const [toggleButtonHotStampingIsopen,setToggleButtonHotStampingIsopen]=useState(false);
@@ -335,6 +379,7 @@ const Cotizacion=()=> {
         }
         return planchas;
     }
+    
     async function searchSolicitud(value) {
         setLoadingIcon(true)
         try {
@@ -493,6 +538,44 @@ const Cotizacion=()=> {
         
     }
     useEffect(() => {
+      function apisolicitud() {
+        console.log(elemented)
+        if (elemented?.solicitud && allDatas?.clientes) {
+            
+            searchSolicitud(elemented.solicitud)
+            setLoadingIcon(true)
+            setTimeout(() => {
+                setValue('CUnidad',elemented.cunidad);
+                setValue('around',elemented.around);
+                setValue('across',elemented.across);          
+                
+                setValue('troquel_referencia',buscaTroquelPorId(elemented.troquelId).referencia);
+                setValue('troquel_id',elemented.troquelId);            
+                if (toggleButtonTroquel.current) {
+                    toggleButtonTroquel.current.querySelector('p').textContent = 'Ref. Troquel: '+buscaTroquelPorId(elemented.troquelId).referencia;
+                    toggleButtonTroquel.current.classList.add('checkbutonTables')
+                }
+                setValue('metros',calcularMetros(watch('cantidad1')))
+                calcularAvance()
+                calcularAncho()
+                calcularCajas();
+                setLoadingIcon(false)
+            }, 2000);
+            setValue('PlanchasTinta1',elemented.planchasTinta1)
+            setValue('PlanchasTinta2',elemented.planchasTinta2)
+            setValue('PlanchasTinta3',elemented.planchasTinta3)
+            setValue('PlanchasTinta4',elemented.planchasTinta4)
+            setValue('tipoTinta1',elemented.tipoTinta1)
+            setValue('tipoTinta2',elemented.tipoTinta2)
+            setValue('tipoTinta3',elemented.tipoTinta3)
+            setValue('tipoTinta4',elemented.tipoTinta4)
+        }
+      }
+      apisolicitud();
+      
+    }, [allDatas])
+    
+    useEffect(() => {
         async function fetchData() {
           try {
             const response = await ClientAxios.post(
@@ -504,6 +587,7 @@ const Cotizacion=()=> {
               }
               
             );
+            console.log(response.data)
             setAllDatas(response.data)
           } catch (error) {
             console.error('Error fetching data:', error);
@@ -572,45 +656,7 @@ const Cotizacion=()=> {
     const handleRowSelectedCoti=(datos)=>{       
        
       }
-      /// tabla troquel
-      const toggleButtonTroquel =useRef(null);
-      const [toggleButtonTroquelIsopen,setToggleButtonTroquelIsopen]=useState(false);
-      const handleRowSelectedTroquel=(datos)=>{
-        if(watch('anchoEspe')==""){
-            alert("Falta Ancho Esperado")
-        }else{
-        if(datos.length==1){
-            let dato =datos[0];
-            setValue('CUnidad',dato.unidadTroquel);
-            setValue('around',dato.around);
-            setValue('across',dato.across);          
-            
-            setValue('troquel_referencia',dato.referencia);
-            setValue('troquel_id',dato.id);            
-            if (toggleButtonTroquel.current) {
-                toggleButtonTroquel.current.querySelector('p').textContent = 'Ref. Troquel: '+dato.referencia;
-                toggleButtonTroquel.current.classList.add('checkbutonTables')
-              }
-              setValue('metros',calcularMetros(watch('cantidad1')))
-              calcularAvance()
-              calcularAncho()
-              calcularCajas();
-        }else{
-            setValue('CUnidad',0);
-            setValue('around',0);
-            setValue('across',0);
-            setValue('troquel_referencia',0);
-            setValue('troquel_id',null); 
-            if (toggleButtonTroquel.current) {
-                toggleButtonTroquel.current.querySelector('p').textContent  =`Ref. Troquel` ;
-                toggleButtonTroquel.current.classList.remove('checkbutonTables')
-              }
-              setValue('metros',0)
-              calcularAvance()
-              calcularAncho()
-        }}
-       
-      }
+      
     
     
     function calcularAreaEtiqueta(){
@@ -882,6 +928,7 @@ const Cotizacion=()=> {
         ///// transporteCiudad aburra 
         var transporteCiudad = document.querySelector('select[id="ciudadEnvio"]');
         let transporteCiudadprecio = 0;
+        let cantidadCajas=0;
         // Verificar si se ha seleccionado una opción válida
         if (transporteCiudad && transporteCiudad.value) {
             // Obtener el precio del atributo 'attr-precio' de la opción seleccionada
@@ -890,31 +937,40 @@ const Cotizacion=()=> {
             switch (coti) {
                 case 1:
                     transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad1'));
+                    cantidadCajas=parseInt(watch('cajas_cantidad1'));
                 break;
                 case 2:
                     transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad2'));
+                    cantidadCajas=parseInt(watch('cajas_cantidad2'));
                 break;
                 case 3:
                     transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad3'));
+                    cantidadCajas=parseInt(watch('cajas_cantidad3'));
                 break;
                 case 4:
                     transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad4'));
+                    cantidadCajas=parseInt(watch('cajas_cantidad4'));
                 break;
                 case 5:
                     transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad5'));
+                    cantidadCajas=parseInt(watch('cajas_cantidad5'));
                 break;
                 case 6:
                     transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad6'));
+                    cantidadCajas=parseInt(watch('cajas_cantidad6'));
                 break;
                 case 7:
                     transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad7'));
+                    cantidadCajas=parseInt(watch('cajas_cantidad7'));
                 break;
                 case 8:
                     transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad8'));
+                    cantidadCajas=parseInt(watch('cajas_cantidad8'));
                 break;
                 
                 default:
                     transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad1'));
+                    cantidadCajas=parseInt(watch('cajas_cantidad1'));
                     break;
             }
             
@@ -1016,6 +1072,7 @@ const Cotizacion=()=> {
             'comisiontd':comisiontd,
             'preciosherpa':parseFloat(preciosherpa),
             'subtotal':subtotal,
+            'cajas':cantidadCajas
             }
         
         return   cotizando;
@@ -1043,6 +1100,8 @@ const Cotizacion=()=> {
         
         try {
             let newData = { ...data, valoresGlobales: allCoti };
+            const arrayToString = JSON.stringify(watch('acabadoS').map(item => item));
+             newData = { ...newData, acabadoSAll: arrayToString };
              newData = { ...newData, valoresGlobaleslength: allCoti.length };
             console.log(newData)
             const response = await ClientAxios.post(`/insertcotizacionReal`, newData)
@@ -2468,7 +2527,9 @@ const Cotizacion=()=> {
                                             negativeSign:true,
                                             precision:2,
                                         }},
-                                        {title:'Costo Transporte',field:'transporteCiudadpreciotd',formatter:"money", formatterParams:{
+                                        
+                                        {title:'Cajas',field:'cajas',}
+                                        ,{title:'Costo Transporte',field:'transporteCiudadpreciotd',formatter:"money", formatterParams:{
                                             decimal:",",
                                             thousand:".",
                                             symbol:"$",
