@@ -7,13 +7,22 @@ import Alert from '../utils/Alert';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faArrowsRotate, faX } from '@fortawesome/free-solid-svg-icons';
 import CotizacionPDFViewer from '../utils/CotizacionPDFViewer';
+import FileUploadForm from '../utils/FileUploadForm';
+const logoP1 = "./img/posiciones/1.png";
+const logoP2 = "./img/posiciones/2.png";
+const logoP3 = "./img/posiciones/3.png";
+const logoP4 = "./img/posiciones/4.png";
+const logoP5 = "./img/posiciones/5.png";
+const logoP6 = "./img/posiciones/6.png";
+const logoP7 = "./img/posiciones/7.png";
+const logoP8 = "./img/posiciones/8.png";
+const logoP9 = "./img/posiciones/9.png";
 const logo = "./img/cdpLogo2.png";
 const SolicitudCotizacion=({elemented})=> {
         const [loadingIcon,setLoadingIcon] = useState(false);
         const [selectedUnidad, setSelectedUnidad] = useState('1');
         const [selectedUnidadGlobal, setSelectedUnidadGlobal] = useState('1');
         const [creada, setCreada] = useState(false);
-        const [dateTimeExpired, setDateTimeExpired] = useState("");
         const [alert, setAlert] = useState({});
         const [allDatas,setAllDatas] =useState({})
         const [valueCold, setValueCold] = useState(null);
@@ -29,6 +38,11 @@ const SolicitudCotizacion=({elemented})=> {
         const [valueAsesorId, setValueAsesorId] = useState(null);
         const [valueCliente, setValueCliente] = useState(null);
         const [valueClienteId, setValueClienteId] = useState(null);
+        const [unidadSeleccion,setUnidadSeleccion] = useState("")
+        const [zoom, setZoom] = useState('');
+
+        function handleMouseEnter(p) {setZoom(p)}
+        const handleMouseLeave = () => {setZoom('');}
         const {
             register,
             reset,
@@ -39,9 +53,12 @@ const SolicitudCotizacion=({elemented})=> {
             formState: { errors },
           } = useForm({
             mode: "all",
-           
+            file:''
             
           });
+        function setFilName(name) {
+            setValue('file',name)
+        }
         const handleUnidadChange = (event) => {
             switch (event.target.value) {
                 case "unidad_uinercaladas":
@@ -73,6 +90,8 @@ const SolicitudCotizacion=({elemented})=> {
         
         const onSubmit = async (data) => {
             setLoadingIcon(true)
+            fileValidate=watch('imagen')==="Si" && watch('file')!==""?true:watch('imagen')==="No"?true:false
+            if(fileValidate){
             try {
                 const arrayToString = JSON.stringify(valueCiudadAlls.map(item => item.id));
                 let newData = { ...data, ciudad_entrega: arrayToString };
@@ -80,9 +99,9 @@ const SolicitudCotizacion=({elemented})=> {
                 if(elemented?.id){
                     newData = { ...data, id: elemented.id };
                     console.log(newData)
-                     response = await ClientAxios.post(`/editCotizacion`, newData)
+                    //  response = await ClientAxios.post(`/editCotizacion`, newData)
                 }else{
-                     response = await ClientAxios.post(`/insertcotizacion`, newData)
+                    //  response = await ClientAxios.post(`/insertcotizacion`, newData)
                 }
                 
                 
@@ -106,6 +125,12 @@ const SolicitudCotizacion=({elemented})=> {
                   });
                 console.log(error)
                 setLoadingIcon(false)
+            }}else{
+                setAlert({
+                    msg: "Subir archivo de imagen",
+                    error: true,
+                  });
+                  setLoadingIcon(false)
             }
           };
         
@@ -379,7 +404,7 @@ const SolicitudCotizacion=({elemented})=> {
                                                                                 setValue("contacto",newValue?.nombreContacto);
                                                                                 setValue("direccion",newValue?.direccion);}}
                                                 options={allDatas?.clientes}
-                                                getOptionLabel={(option) => option.razonSocial}
+                                                getOptionLabel={(option) => option.razonSocial +" - "+option.id }
                                                 renderInput={(params) => <TextField {...params} required label="Seleccionar Cliente" />}
                                                 isOptionEqualToValue={(option, value) => option.id === value?.id}
                                                 />:""}
@@ -518,31 +543,31 @@ const SolicitudCotizacion=({elemented})=> {
                             
                                 <div className="form-floating mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
                                     <div className="form-check col-2 mx-auto ">
-                                        <input className="form-check-input" type="radio"   {...register("unidad_seleccion",{required:'campo requerido'})} checked={selectedUnidadGlobal=="unidad_una"?true:false} id="unidad_una" value="unidad_una" onChange={()=>setSelectedUnidadGlobal("unidad_una")} />
+                                        <input className="form-check-input" type="radio"   {...register("unidad_seleccion",{required:'campo requerido'})} checked={selectedUnidadGlobal=="unidad_una"?true:false} id="unidad_una" value="unidad_una" onChange={()=>{setSelectedUnidadGlobal("unidad_una");setSelectedUnidad('')}} />
                                         <label style={{color:"#000000"}} className="form-check-label" htmlFor="unidad_una">
-                                            Una
+                                            Etiqueta
                                         </label>
                                     </div>
                                     <div className="form-check col-2 mx-auto">
-                                        <input className="form-check-input" type="radio" {...register("unidad_seleccion")}  checked={selectedUnidadGlobal=="unidad_rollos"?true:false} id="unidad_rollos" value="unidad_rollos" onChange={()=>setSelectedUnidadGlobal("unidad_rollos")}/>
+                                        <input className="form-check-input" type="radio" {...register("unidad_seleccion")}  checked={selectedUnidadGlobal=="unidad_rollos"?true:false} id="unidad_rollos" value="unidad_rollos" onChange={()=>{setSelectedUnidadGlobal("unidad_rollos");setSelectedUnidad('')}}/>
                                         <label style={{color:"#000000"}} className="form-check-label" htmlFor="unidad_rollos">
                                             Rollos
                                         </label>
                                     </div>
                                     <div className="form-check col-2 mx-auto">
-                                        <input className="form-check-input" type="radio"  {...register("unidad_seleccion")} checked={selectedUnidadGlobal=="unidad_juegox2"?true:false} id="unidad_juegox2" value="unidad_juegox2" onChange={()=>setSelectedUnidadGlobal("unidad_juegox2")}/>
+                                        <input className="form-check-input" type="radio"  {...register("unidad_seleccion")} checked={selectedUnidadGlobal=="unidad_juegox2"?true:false} id="unidad_juegox2" value="unidad_juegox2" onChange={()=>{setSelectedUnidadGlobal("unidad_juegox2");setSelectedUnidad('')}}/>
                                         <label style={{color:"#000000"}} className="form-check-label" htmlFor="unidad_juegox2">
                                             Juego x 2
                                         </label>
                                     </div>
                                     <div className="form-check col-2 mx-auto">
-                                        <input className="form-check-input" type="radio"  {...register("unidad_seleccion")} checked={selectedUnidadGlobal=="unidad_mangas"?true:false} id="unidad_mangas" value="unidad_mangas" onChange={()=>setSelectedUnidadGlobal("unidad_mangas")}/>
+                                        <input className="form-check-input" type="radio"  {...register("unidad_seleccion")} checked={selectedUnidadGlobal=="unidad_mangas"?true:false} id="unidad_mangas" value="unidad_mangas" onChange={()=>{setSelectedUnidadGlobal("unidad_mangas");setSelectedUnidad('')}}/>
                                         <label style={{color:"#000000"}} className="form-check-label" htmlFor="unidad_mangas">
-                                            Mangas
+                                            Termo encogible
                                         </label>
                                     </div>
                                     <div className="form-check col-2 mx-auto">
-                                        <input className="form-check-input" type="radio"  {...register("unidad_seleccion")} checked={selectedUnidadGlobal=="unidad_otra"?true:false} id="unidad_otra" value="unidad_otra"onChange={()=>setSelectedUnidadGlobal("unidad_otra")} />
+                                        <input className="form-check-input" type="radio"  {...register("unidad_seleccion")} checked={selectedUnidadGlobal=="unidad_otra"?true:false} id="unidad_otra" value="unidad_otra"onChange={()=>{setSelectedUnidadGlobal("unidad_otra");setSelectedUnidad('')}} />
                                         <label style={{color:"#000000"}} className="form-check-label" htmlFor="unidad_otra" >
                                             Hojas
                                         </label>
@@ -606,7 +631,7 @@ const SolicitudCotizacion=({elemented})=> {
                             </div>
                         
                             <div className="col-12 zoom90 "style={{display: "flex", flexDirection: "row",height:"100px"}}>
-                                <div className="form-floating  mx-auto p-1 col-3 " >
+                                <div className="form-floating  mx-auto p-1 col-3 " style={{display:"none"}}>
                                     <div className="form-control" id="divcheckratio" style={{display: "flex", flexDirection: "row", height: "100px",background: "#a5afb6",}}>
                                         <div className="form-check col-4">
                                             <input className="form-check-input" type="radio" {...register("grado_dificultad")} id="dificultadBaja" value="baja"/>
@@ -775,13 +800,13 @@ const SolicitudCotizacion=({elemented})=> {
 
                             
                                 <div className="form-floating  mx-auto p-1 col-3" >
-                                    <input type="number" className="form-control" id="ancho_espe" {...register("ancho_espe",{required:'campo requerido'})}/>
+                                    <input type="number" className="form-control" id="ancho_espe" required {...register("ancho_espe",{required:'campo requerido'})}/>
                                     <label style={{color:"#000000"}} htmlFor="ancho_espe">Ancho (cms)</label>
                                 </div>
 
                             
                                 <div className="form-floating  mx-auto p-1 col-3" >
-                                    <input type="number" className="form-control" id="avance_espe" {...register("avance_espe",{required:'campo requerido'})}/>
+                                    <input type="number" className="form-control" id="avance_espe" required {...register("avance_espe",{required:'campo requerido'})}/>
                                     <label style={{color:"#000000"}} htmlFor="avance_espe">Avance (cms)</label>
                                 </div>
                             
@@ -822,7 +847,7 @@ const SolicitudCotizacion=({elemented})=> {
                                     onChange={(event, newValue) => {if(newValue!==null){setValueAcabado(newValue);setValue("acabado",newValue.id)}else{setValueAcabado(null);setValue("acabado",null)}}}
                                     options={allDatas?.acabados}
                                     getOptionLabel={(option) => option.acabado}
-                                    renderInput={(params) => <TextField {...params} label="Seleccionar acabado" />}
+                                    renderInput={(params) => <TextField {...params} required label="Seleccionar acabado" />}
                                     isOptionEqualToValue={(option, value) => option.id === value?.id}
                                     />:""}
                                 
@@ -836,7 +861,7 @@ const SolicitudCotizacion=({elemented})=> {
                                     onChange={(event, newValue) => {if(newValue!==null){setValueCold(newValue);setValue("cold_foild",newValue.id)}else{setValueAcabado(null);setValue("cold_foild",null)}}}
                                     options={allDatas?.coldFoilds}
                                     getOptionLabel={(option) => option.coldFoild}
-                                    renderInput={(params) => <TextField {...params} label="Seleccionar Cold Foild" />}
+                                    renderInput={(params) => <TextField {...params} required label="Seleccionar Cold Foild" />}
                                     isOptionEqualToValue={(option, value) => option.id === value?.id}
                                     />:""}
                                 
@@ -848,8 +873,8 @@ const SolicitudCotizacion=({elemented})=> {
                                     value={valueHotStamping}
                                     onChange={(event, newValue) => {if(newValue!==null){valueHotStamping(newValue);setValue("hot_stamping",newValue.id)}else{valueHotStamping(null);setValue("hot_stamping",null)}}}
                                     options={allDatas?.hotStampings}
-                                    getOptionLabel={(option) => option.host_stamping}
-                                    renderInput={(params) => <TextField {...params}  label="Seleccionar hot stamping" />}
+                                    getOptionLabel={(option) => option.hostStamping}
+                                    renderInput={(params) => <TextField {...params}  required label="Seleccionar hot stamping" />}
                                     isOptionEqualToValue={(option, value) => option.id === value?.id}
                                     />:""}
                                     
@@ -919,7 +944,7 @@ const SolicitudCotizacion=({elemented})=> {
 
 
                             
-                                <div className="form-floating  mx-auto p-1 col-2">
+                                <div className="form-floating  mx-auto p-1 col-2" style={{display:"none"}}>
                                     <input type="text" className="form-control" id="cubrimiento" {...register("cubrimiento")} value="100" style={{height: "100px "}} />
                                     <label style={{color:"#000000"}} htmlFor="cubrimiento">cubrimiento (%)</label>
                                 </div>
@@ -1009,7 +1034,7 @@ const SolicitudCotizacion=({elemented})=> {
                                         <div className="form-control" id="divcheckratio3" style={{display: "flex", flexDirection: "row", background: "#a5afb6"}}>
                                             <div className="form-control p-1 m-1" style={{background: "transparent ", border: "none"}}>
                                                 <div className="form-check col-6">
-                                                    <input className="form-check-input" type="radio" {...register("presentacion_rollos")} id="presentacion_rollos" value="rollos"/>
+                                                    <input className="form-check-input"  type="radio" {...register("presentacion")} disabled={watch('unidad_seleccion')==="unidad_rollos"?false:true}  checked={watch('unidad_seleccion')==="unidad_rollos"?true:false} id="presentacion_rollos" value="rollos"/>
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="presentacion_rollos">
                                                         En rollos
                                                     </label>
@@ -1017,15 +1042,15 @@ const SolicitudCotizacion=({elemented})=> {
                                                 </div>
                                                 <div className="form-control m-1" style={{display: "flex", flexDirection: "row"}}>
                                                     <div className="form-floating  mx-auto p-1 col-3">
-                                                        <input type="number" className="form-control" id="rollos_por" {...register("rollos_por")}/>
+                                                        <input type="number" className="form-control" disabled={watch('unidad_seleccion')==="unidad_rollos"?false:true}  checked={watch('unidad_seleccion')==="unidad_rollos"?true:false} id="rollos_por" {...register("rollos_por")}/>
                                                         <label style={{color:"#000000"}} htmlFor="rollos_por">Rollos por (Etiqs.)</label>
                                                     </div>
                                                     <div className="form-floating  mx-auto p-1 col-3">
-                                                        <input type="number" className="form-control" id="etiq_ancho" {...register("etiq_ancho")}/>
+                                                        <input type="number" className="form-control" disabled={watch('unidad_seleccion')==="unidad_rollos"?false:true}  checked={watch('unidad_seleccion')==="unidad_rollos"?true:false} id="etiq_ancho" {...register("etiq_ancho")}/>
                                                         <label style={{color:"#000000"}} htmlFor="etiq_ancho">Etiq. Ancho</label>
                                                     </div>
                                                     <div className="form-floating mx-auto p-1 col-3" >
-                                                        <select className="form-select bg-secondary-subtle-r" id="core" {...register("core")} aria-label="core"  >
+                                                        <select className="form-select bg-secondary-subtle-r" disabled={watch('unidad_seleccion')==="unidad_rollos"?false:true}  checked={watch('unidad_seleccion')==="unidad_rollos"?true:false} id="core" {...register("core")} aria-label="core"  >
                                                             <option value="1" >1 pulgada</option>
                                                             <option value="1.5" >1.5 pulgada</option>
                                                             <option value="2" >2 pulgada</option>
@@ -1035,16 +1060,16 @@ const SolicitudCotizacion=({elemented})=> {
                                                         </select>
                                                         <label style={{color:"#000000"}} htmlFor="core">Core <b>∅</b></label>
                                                     </div>
-                                                    <div className="form-floating  mx-auto p-1 col-3">
+                                                    {/* <div className="form-floating  mx-auto p-1 col-3">
                                                         <input type="number" className="form-control" id="posicion_presentacion" {...register("posicion_presentacion")}/>
                                                         <label style={{color:"#000000"}} htmlFor="posicion_presentacion">Posición</label>
-                                                    </div>
+                                                    </div> */}
                                                 </div>
                                             </div>
 
                                             <div className="form-control p-1 m-1" style={{background: "transparent ", border: "none"}}>
                                                 <div className="form-check col-6">
-                                                    <input className="form-check-input" type="radio" {...register("presentacion")} id="presentacion_hojas" value="hojas"/>
+                                                    <input className="form-check-input" disabled={watch('unidad_seleccion')==="unidad_otra"?false:true}  checked={watch('unidad_seleccion')==="unidad_otra"?true:false} type="radio" {...register("presentacion")} id="presentacion_hojas" value="hojas"/>
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="presentacion_hojas">
                                                         En hojas
                                                     </label>
@@ -1052,17 +1077,17 @@ const SolicitudCotizacion=({elemented})=> {
                                                 </div>
                                                 <div className="form-control m-1" style={{display: "flex", flexDirection: "row"}}>
                                                     <div className="form-floating  mx-auto p-1 col-5">
-                                                        <input type="number" className="form-control" id="etiquetas_hoja" {...register("etiquetas_hoja")}/>
+                                                        <input type="number" disabled={watch('unidad_seleccion')==="unidad_otra"?false:true}  checked={watch('unidad_seleccion')==="unidad_otra"?true:false} className="form-control" id="etiquetas_hoja" {...register("etiquetas_hoja")}/>
                                                         <label style={{color:"#000000"}} htmlFor="etiquetas_hoja">Etiquetas por Hoja</label>
                                                     </div>
                                                     <div className="form-floating  mx-auto p-1 col-5">
-                                                        <input type="number" className="form-control" id="hojas_paquete" {...register("hojas_paquete")}/>
+                                                        <input type="number" disabled={watch('unidad_seleccion')==="unidad_otra"?false:true}  checked={watch('unidad_seleccion')==="unidad_otra"?true:false} className="form-control" id="hojas_paquete" {...register("hojas_paquete")}/>
                                                         <label style={{color:"#000000"}} htmlFor="hojas_paquete">Hojas por paquete</label>
                                                     </div>
                                                 </div>
 
                                             </div>
-
+                                            
                                         </div>
 
                                     </div>
@@ -1071,6 +1096,75 @@ const SolicitudCotizacion=({elemented})=> {
 
                                 </div>
 
+                            </div>
+                            <div className="col-12 " style={{display: "flex", flexDirection: "row",marginTop:"10px",marginBottom:"-00px"}}>
+                            
+                                <div className="form-floating  mx-auto p-1 col">
+                                        <input className="form-check-input bg-warning" type="radio" style={{width:"20px",height:"20px"}} {...register("posicion_presentacion")} id="posicion1" value="1"/>
+                                        
+                                </div>
+                                <div className="form-floating  mx-auto p-1 col">
+                                        <input className="form-check-input bg-warning" type="radio" style={{width:"20px",height:"20px"}} {...register("posicion_presentacion")} id="posicion1" value="2"/>
+                                        
+                                </div>
+                                <div className="form-floating  mx-auto p-1 col">
+                                        <input className="form-check-input bg-warning" type="radio" style={{width:"20px",height:"20px"}} {...register("posicion_presentacion")} id="posicion1" value="3"/>
+                                        
+                                </div>
+                                <div className="form-floating  mx-auto p-1 col">
+                                        <input className="form-check-input bg-warning" type="radio" style={{width:"20px",height:"20px"}} {...register("posicion_presentacion")} id="posicion1" value="4"/>
+                                        
+                                </div>
+                                <div className="form-floating  mx-auto p-1 col">
+                                        <input className="form-check-input bg-warning" type="radio" style={{width:"20px",height:"20px"}} {...register("posicion_presentacion")} id="posicion1" value="5"/>
+                                        
+                                </div>
+                                <div className="form-floating  mx-auto p-1 col">
+                                        <input className="form-check-input bg-warning" type="radio" style={{width:"20px",height:"20px"}} {...register("posicion_presentacion")} id="posicion1" value="6"/>
+                                        
+                                </div>
+                                <div className="form-floating  mx-auto p-1 col">
+                                        <input className="form-check-input bg-warning" type="radio" style={{width:"20px",height:"20px"}} {...register("posicion_presentacion")} id="posicion1" value="7"/>
+                                        
+                                </div>
+                                <div className="form-floating  mx-auto p-1 col">
+                                        <input className="form-check-input bg-warning" type="radio" style={{width:"20px",height:"20px"}} {...register("posicion_presentacion")} id="posicion1" value="8"/>
+                                       
+                                </div>
+                                <div className="form-floating  mx-auto p-1 col" >
+                                        <input className="form-check-input bg-warning" type="radio" style={{width:"20px",height:"20px"}} {...register("posicion_presentacion")} id="posicion1" value="9"/>
+                                        
+                                </div>
+                            </div>
+                            <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row",height:"190px"}}>
+                            
+                                <div className="form-floating  mx-auto p-1 col " onMouseEnter={()=>handleMouseEnter("p1")} onMouseLeave={handleMouseLeave}>
+                                        <div style={{color:"#000000",marginTop:"15px"}} className='form-check-label mx-auto' htmlFor="posicion1"><img className={zoom==="p1" ? 'zoom mx-auto ' : 'nozoom mx-auto'}  src={logoP1} ></img></div>
+                                </div>
+                                <div className="form-floating  mx-auto p-1 col" onMouseEnter={()=>handleMouseEnter("p2")} onMouseLeave={handleMouseLeave}>
+                                         <div style={{color:"#000000",marginTop:"15px"}} className='form-check-label mx-auto' htmlFor="posicion1"><img className={zoom==="p2" ? 'zoom mx-auto ' : 'nozoom mx-auto'}  src={logoP2} ></img></div>
+                                </div>
+                                <div className="form-floating  mx-auto p-1 col" onMouseEnter={()=>handleMouseEnter("p3")} onMouseLeave={handleMouseLeave}>
+                                        <div style={{color:"#000000",marginTop:"15px"}} className='form-check-label mx-auto' htmlFor="posicion1"><img className={zoom==="p3" ? 'zoom mx-auto ' : 'nozoom mx-auto'}  src={logoP3} ></img></div>
+                                </div>
+                                <div className="form-floating  mx-auto p-1 col" onMouseEnter={()=>handleMouseEnter("p4")} onMouseLeave={handleMouseLeave}>
+                                        <div style={{color:"#000000",marginTop:"15px"}} className='form-check-label mx-auto' htmlFor="posicion1"><img className={zoom==="p4" ? 'zoom mx-auto ' : 'nozoom mx-auto'}  src={logoP4} ></img></div>
+                                </div>
+                                <div className="form-floating  mx-auto p-1 col" onMouseEnter={()=>handleMouseEnter("p5")} onMouseLeave={handleMouseLeave}>
+                                        <div style={{color:"#000000",marginTop:"15px"}} className='form-check-label mx-auto' htmlFor="posicion1"><img className={zoom==="p5" ? 'zoom mx-auto ' : 'nozoom mx-auto'}  src={logoP5} ></img></div>
+                                </div>
+                                <div className="form-floating  mx-auto p-1 col" onMouseEnter={()=>handleMouseEnter("p6")} onMouseLeave={handleMouseLeave}>
+                                        <div style={{color:"#000000",marginTop:"15px"}} className='form-check-label mx-auto' htmlFor="posicion1"><img className={zoom==="p6" ? 'zoom mx-auto ' : 'nozoom mx-auto'}  src={logoP6} ></img></div>
+                                </div>
+                                <div className="form-floating  mx-auto p-1 col" onMouseEnter={()=>handleMouseEnter("p7")} onMouseLeave={handleMouseLeave}>
+                                        <div style={{color:"#000000",marginTop:"15px"}} className='form-check-label mx-auto' htmlFor="posicion1"><img className={zoom==="p7" ? 'zoom mx-auto ' : 'nozoom mx-auto'}  src={logoP7} ></img></div>
+                                </div>
+                                <div className="form-floating  mx-auto p-1 col" onMouseEnter={()=>handleMouseEnter("p8")} onMouseLeave={handleMouseLeave}>
+                                        <div style={{color:"#000000",marginTop:"15px"}} className='form-check-label mx-auto' htmlFor="posicion1"><img className={zoom==="p8" ? 'zoom mx-auto ' : 'nozoom mx-auto'}  src={logoP8} ></img></div>
+                                </div>
+                                <div className="form-floating  mx-auto p-1 col" onMouseEnter={()=>handleMouseEnter("p9")} onMouseLeave={handleMouseLeave}>
+                                        <div style={{color:"#000000",marginTop:"15px"}} className='form-check-label mx-auto' htmlFor="posicion1"><img className={zoom==="p9" ? 'zoom mx-auto ' : 'nozoom mx-auto'} src={logoP9} ></img></div>
+                                </div>
                             </div>
                             <h6 className="col-12 zoom90 mt-2" style={{textAlign: "center", textDecoration: "none"}}>Entregas en</h6>
                             <hr style={{marginTop: "-1px", border: "#ffffff 2px solid"}}/>
@@ -1092,7 +1186,7 @@ const SolicitudCotizacion=({elemented})=> {
                                         onChange={(event, newValue) => {setValueCiudadAlls(newValue);setValue("ciudad_entrega",valueCiudadAlls.map(item => item.id).join(','))}}
                                         options={allDatas?.ciudades}
                                         getOptionLabel={(option) => option.nombre}
-                                        renderInput={(params) => <TextField {...params}  label="Seleccionar puntos de entrega" />}
+                                        renderInput={(params) => <TextField {...params} required label="Seleccionar puntos de entrega" />}
                                         isOptionEqualToValue={(option, value) => option.id === value?.id}
                                         multiple
                                     />
@@ -1104,7 +1198,7 @@ const SolicitudCotizacion=({elemented})=> {
                         
                             <div className="col-12 zoom90" style={{display: "flex", flexDirection: "row"}}>
                         
-                                <div className="form-floating  mx-auto p-1 col-5">
+                                <div className="form-floating  mx-auto p-1 col-3">
                                 {allDatas?.users?
                                 <Autocomplete
                                         className='shearchinputs'
@@ -1120,24 +1214,27 @@ const SolicitudCotizacion=({elemented})=> {
                                         :""}
                        
                                 </div>
-                                <div className="form-floating  mx-auto p-1 col-2">
+                                <div className="form-floating  mx-auto p-1 col-2 hidden">
                                     <input type="text" className="form-control" id="comision" {...register("comision")} value="3"/>
                                     <label style={{color:"#000000"}} htmlFor="comision">Comisión (%)</label>
                                 </div>
                             
-                                <div className="form-floating mx-auto p-1 col-2" style={{paddingRight:"2px"}}>
-                                    <select className="form-select bg-secondary-subtle-r" id="tipo_asesor" {...register("tipo_asesor")} aria-label="tipo_asesor">
-                                        <option value="" ></option>
-                                        <option value="Nuevo">Propio</option>
-                                        <option value="Ninguno">Externo</option>
+                                <div className="form-floating mx-auto p-1 col-2 " style={{paddingRight:"2px"}}>
+                                    <select className="form-select bg-secondary-subtle-r" defaultValue={"No"} id="imagen" {...register("imagen")} aria-label="imagen">
+                                        <option value="No">No</option>
+                                        <option value="Si">Si</option>
 
                                     </select>
-                                    <label style={{color:"#000000"}} htmlFor="">Tipo</label>
+                                    <label style={{color:"#000000"}} htmlFor="imagen">Imagen?</label>
                                 </div>
-                                <div className="form-floating  mx-auto p-1 col-3">
+                                <div className="form-floating  mx-auto p-1 col-3 hidden">
                                     <input type="text" readOnly className="form-control hidden" id="digitado" {...register("digitado")} />
                                     <input type="text" readOnly className="form-control"  value={Decrypt(localStorage.getItem("NameToken"))} />
                                    
+                                </div>
+                                <div className="form-floating  mx-auto p-1 col-7 ">
+                                    {watch('imagen')==="Si" &&  <FileUploadForm setFilName={setFilName}></FileUploadForm>}
+                                  
                                 </div>
                             
 

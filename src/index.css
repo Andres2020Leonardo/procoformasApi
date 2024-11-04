@@ -134,3 +134,15 @@ button:focus-visible {
 .modalcoti{
   z-index: 500 !important;
 }
+img.zoom {
+  transform: scale(1.1); 
+  cursor: zoom-in;
+  width: 200px !important;
+  height: 200px !important;
+  z-index: 2000 !important;
+}
+img.nozoom{
+  width: 100% !important;
+  height: 100% !important;
+  z-index: 100 !important;
+}
