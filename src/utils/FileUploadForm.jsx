@@ -40,7 +40,7 @@ const FileUploadForm = ({setFilName}) => {
 
     return (
         <div>
-            <form onSubmit={handleSubmit(onsubmit)} className='col-12' style={{display:"flex",width:"100%"}}>
+            <form className='col-12' style={{display:"flex",width:"100%"}}>
                 <div className="btn-group" role="group" aria-label="Basic example">
                     <input className="form-control " name='files' style={{height:"100%"}} type="file" id="formFile" ccept=".pdf, .jpg" onChange={handleFileChange} />
                     

@@ -20,9 +20,7 @@ const Cotizacion=({elemented})=> {
     const [dataform,setDataform]=useState(null)
     const [verPdf,setVerPdf]=useState(false);
     
-    const [valoresPorCiudad,setValoresPorCiudad]=useState([])
-    const [proporcionTroquel,setProporcionTroquel]=useState(0);
-    const [proporcionEtiqueta,setProporcionEtiqueta]=useState(0);
+    const [valoresPorCiudad,setValoresPorCiudad]=useState([]);
     const logo = "./img/cdpLogo2.png";
     const optionsTables = {
         paginationSize: 5, 

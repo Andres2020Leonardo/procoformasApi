@@ -90,7 +90,7 @@ const SolicitudCotizacion=({elemented})=> {
         
         const onSubmit = async (data) => {
             setLoadingIcon(true)
-            fileValidate=watch('imagen')==="Si" && watch('file')!==""?true:watch('imagen')==="No"?true:false
+            let fileValidate=watch('imagen')==="Si" && watch('file')!==""?true:watch('imagen')==="No"?true:false
             if(fileValidate){
             try {
                 const arrayToString = JSON.stringify(valueCiudadAlls.map(item => item.id));
@@ -99,9 +99,10 @@ const SolicitudCotizacion=({elemented})=> {
                 if(elemented?.id){
                     newData = { ...data, id: elemented.id };
                     console.log(newData)
-                    //  response = await ClientAxios.post(`/editCotizacion`, newData)
+                     response = await ClientAxios.post(`/editCotizacion`, newData)
                 }else{
-                    //  response = await ClientAxios.post(`/insertcotizacion`, newData)
+                     response = await ClientAxios.post(`/insertcotizacion`, newData)
+                    console.log(newData)
                 }
                 
                 
@@ -812,6 +813,7 @@ const SolicitudCotizacion=({elemented})=> {
                             
                                 <div className="form-floating mx-auto p-1 col-3" style={{paddingRight:"2px"}}>
                                     <select className="form-select bg-secondary-subtle-r" id="troquel" {...register("troquel",{required:'campo requerido'})} aria-label="troquel">
+                                        <option value="Ninguno" >Ninguno</option>
                                         <option value="Circular" >Circular</option>
                                         <option value="Especiales">Especiales</option>
                                         <option value="Ovalados">Ovalados</option>
@@ -871,7 +873,7 @@ const SolicitudCotizacion=({elemented})=> {
                                 <Autocomplete
                                     className='shearchinputs'
                                     value={valueHotStamping}
-                                    onChange={(event, newValue) => {if(newValue!==null){valueHotStamping(newValue);setValue("hot_stamping",newValue.id)}else{valueHotStamping(null);setValue("hot_stamping",null)}}}
+                                    onChange={(event, newValue) => {if(newValue!==null){setValueHotStamping(newValue);setValue("hot_stamping",newValue.id)}else{setValueHotStamping(null);setValue("hot_stamping",null)}}}
                                     options={allDatas?.hotStampings}
                                     getOptionLabel={(option) => option.hostStamping}
                                     renderInput={(params) => <TextField {...params}  required label="Seleccionar hot stamping" />}
