@@ -20,9 +20,7 @@ const Cotizacion=({elemented})=> {
     const [dataform,setDataform]=useState(null)
     const [verPdf,setVerPdf]=useState(false);
     
-    const [valoresPorCiudad,setValoresPorCiudad]=useState([])
-    const [proporcionTroquel,setProporcionTroquel]=useState(0);
-    const [proporcionEtiqueta,setProporcionEtiqueta]=useState(0);
+    const [valoresPorCiudad,setValoresPorCiudad]=useState([]);
     const logo = "./img/cdpLogo2.png";
     const optionsTables = {
         paginationSize: 5, 
@@ -1373,7 +1371,7 @@ const Cotizacion=({elemented})=> {
                                     <div className="col-12 zoom90" style={{display: "flex", flexDirection:"row"}}>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="rollos_por" {...register("rollos_por")} readOnly={true}  />
-                                            <label style={{color:"#000000"}} htmlFor="rollos_por">Rollas por.</label>
+                                            <label style={{color:"#000000"}} htmlFor="rollos_por">Rollos por.</label>
                                         </div>
                                         <div className="form-floating  mx-auto p-1 ">
                                             <input type="text" className="form-control" id="EtiqAncho" {...register("EtiqAncho")} readOnly={true}  />
@@ -2219,7 +2217,7 @@ const Cotizacion=({elemented})=> {
                                             <option value="Resina" attr-precio="2.00">Resina</option>
                                             <option value="Cera Resina" attr-precio="1.50">Cera Resina</option>
                                         </select>
-                                        <label style={{color:"#000000"}} htmlFor="CintaZebra" attr-precio="1.50">Cinta</label>
+                                        <label style={{color:"#000000"}} htmlFor="CintaZebra" >Cinta</label>
                                     </div>
 
                                 </div>

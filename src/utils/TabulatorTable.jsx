@@ -65,10 +65,10 @@ const TabulatorTable = ({ data,columns,action=null,rowSelected=1 }) => {
       
       
     }
-  }, []);
+  }, [data]);
 
   return (
-    <><div ref={tableRef}></div></>
+    <div className="border border-dark-subtle rounded p-2 shadow-lg"><div  ref={tableRef}></div></div>
     
   );
 };

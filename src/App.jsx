@@ -3,7 +3,6 @@ import './App.css';
 import Sidebar from './layouts/sidebar';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './styles/Globals.less';
-import Login from './auth/login';
 import ValidacionToken from './auth/ValidacionToken';
 import NotFound from './utils/NotFound';
 import Decrypt from './config/Decrypt';
