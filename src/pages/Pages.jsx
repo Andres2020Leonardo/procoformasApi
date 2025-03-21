@@ -1,12 +1,12 @@
 import { useState } from "react";
 import Cotizacion from "../cotizaciones/Cotizacion";
 import ListSolicitudes from "../cotizaciones/ListSolicitudes";
-import SolicitudCotizacion from "../cotizaciones/solicitudCotizacion";
+import SolicitudCotizacion from "../cotizaciones/SolicitudCotizacion";
 import Home from "./Home";
 import ListCotizaciones from "../cotizaciones/ListCotizaciones";
-import Inventario from "../almacen/inventario";
+import Inventario from "../almacen/Inventario";
 import RecibirMaterial from "../almacen/RecibirMaterial";
-import Ingreso from "../comercial/ingreso";
+import Ingreso from "../comercial/Ingreso";
 
 function Pages({page,setPage}){
     const [elemented,setElemented]=useState({});
