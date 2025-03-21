@@ -9,6 +9,7 @@ import Decrypt from './config/Decrypt';
 import Pages from './pages/Pages';
 import Encrypt from './config/Encrypt';
 
+
 function App() {
   const [page, setPage] = useState("");
   const rol = localStorage.getItem("AcessToken") ? Decrypt(localStorage.getItem("AcessToken")) : 0;
