@@ -23,25 +23,25 @@ function Pages({page,setPage}){
         switch (page) {
             case "cotizacion/solicitudCotizacion":
                  return <SolicitudCotizacion elemented={elemented}/>
-                break;
+                
             case "cotizacion/cotizacion":
                 return <Cotizacion elemented={elemented}/>
-                break;
+                
             case "cotizacion/listSolicitudes":
                 return <ListSolicitudes editarSolicitud={editarSolicitud}/>
-                break;
+                
             case "cotizacion/listCotizaciones":
                 return  <ListCotizaciones editarCotizacion={editarCotizacion}/>
-                break;
+                
             case "almacen/inventario":
                 return  <Inventario/>
-                break;
+                
             case "almacen/recibir":
                 return  <RecibirMaterial/>
-                break;
+                
             case "comercial/ingreso":
                 return  <Ingreso/>
-                break;
+                
             default:
                 return <Home/>
         }
