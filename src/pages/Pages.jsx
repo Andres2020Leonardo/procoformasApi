@@ -7,6 +7,7 @@ import ListCotizaciones from "../cotizaciones/ListCotizaciones";
 import Inventario from "../almacen/Inventario";
 import RecibirMaterial from "../almacen/RecibirMaterial";
 import Ingreso from "../comercial/Ingreso";
+import CertificadoLaboral from "../th/init";
 
 function Pages({page,setPage}){
     const [elemented,setElemented]=useState({});
@@ -41,7 +42,8 @@ function Pages({page,setPage}){
                 
             case "comercial/ingreso":
                 return  <Ingreso/>
-                
+            case "th":
+                    return  <CertificadoLaboral/>   
             default:
                 return <Home/>
         }

@@ -38,6 +38,7 @@
     "react-pdf-js": "^5.1.0",
     "react-router-dom": "^6.26.1",
     "react-tabulator": "^0.21.0",
+    "react-to-print": "^3.0.5",
     "recharts": "^2.12.7",
     "tabulator-tables": "^6.3.0",
     "tesseract.js": "^5.1.1",

@@ -132,6 +132,7 @@ const Sidebar = ({rol,addPage}) => {
             </p>
             
           </Link>
+         
           <div className={`collapse colla-sidebar p-2 rounded ${isOpenMenu=="Comercial" ? "show":""}`}  >
                 <button
                   onClick={()=>addPage("comercial/ingreso")}
@@ -155,6 +156,24 @@ const Sidebar = ({rol,addPage}) => {
                 </button>
               
             </div></>}
+           <Link
+            onClick={()=>addPage("th")}
+            className={`${
+              active == 1 && "  "
+            } d-flex mt-1 flex-row align-middle mx-auto hoverLink p-1 w-100 h-5vh btn-group`}
+          >
+           
+             <img
+            className=" text-api-s me-1   my-auto "
+                src={comercial}
+                alt="Logo Argos"
+                style={{height:"95%",Width:"auto", objectFit:"contain"}}
+            />
+            <p className="plink hidden overflow-hidden my-auto ">
+              Talento Humano
+            </p>
+            
+          </Link>
           {["1","2"].includes(rol) && <> <Link
             onClick={()=>setIsOpenMenuFuntion("Almacén",3)}
             className={`${
