@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import './App.css';
-import Sidebar from './layouts/sidebar';
+import Sidebar from './layouts/Sidebar';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import './styles/Globals.less';
 import ValidacionToken from './auth/ValidacionToken';
@@ -8,6 +8,7 @@ import NotFound from './utils/NotFound';
 import Decrypt from './config/Decrypt';
 import Pages from './pages/Pages';
 import Encrypt from './config/Encrypt';
+
 
 function App() {
   const [page, setPage] = useState("");

@@ -1,12 +1,13 @@
 import { useState } from "react";
 import Cotizacion from "../cotizaciones/Cotizacion";
 import ListSolicitudes from "../cotizaciones/ListSolicitudes";
-import SolicitudCotizacion from "../cotizaciones/solicitudCotizacion";
+import SolicitudCotizacion from "../cotizaciones/SolicitudCotizacion";
 import Home from "./Home";
 import ListCotizaciones from "../cotizaciones/ListCotizaciones";
-import Inventario from "../almacen/inventario";
+import Inventario from "../almacen/Inventario";
 import RecibirMaterial from "../almacen/RecibirMaterial";
-import Ingreso from "../comercial/ingreso";
+import Ingreso from "../comercial/Ingreso";
+import CertificadoLaboral from "../th/init";
 
 function Pages({page,setPage}){
     const [elemented,setElemented]=useState({});
@@ -23,25 +24,26 @@ function Pages({page,setPage}){
         switch (page) {
             case "cotizacion/solicitudCotizacion":
                  return <SolicitudCotizacion elemented={elemented}/>
-                break;
+                
             case "cotizacion/cotizacion":
                 return <Cotizacion elemented={elemented}/>
-                break;
+                
             case "cotizacion/listSolicitudes":
                 return <ListSolicitudes editarSolicitud={editarSolicitud}/>
-                break;
+                
             case "cotizacion/listCotizaciones":
                 return  <ListCotizaciones editarCotizacion={editarCotizacion}/>
-                break;
+                
             case "almacen/inventario":
                 return  <Inventario/>
-                break;
+                
             case "almacen/recibir":
                 return  <RecibirMaterial/>
-                break;
+                
             case "comercial/ingreso":
                 return  <Ingreso/>
-                break;
+            case "th":
+                    return  <CertificadoLaboral/>   
             default:
                 return <Home/>
         }
