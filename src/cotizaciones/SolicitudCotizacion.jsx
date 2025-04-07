@@ -259,14 +259,14 @@ const SolicitudCotizacion=({elemented})=> {
                 setValue('cantidad6',elemented.cantidad6||'')
                 setValue('cantidad7',elemented.cantidad7||'')
                 setValue('cantidad8',elemented.cantidad8||'')
-                setValue('entrega1',elemented.entrega1||'')
-                setValue('entrega2',elemented.entrega2||'')
-                setValue('entrega3',elemented.entrega3||'')
-                setValue('entrega4',elemented.entrega4||'')
-                setValue('entrega5',elemented.entrega5||'')
-                setValue('entrega6',elemented.entrega6||'')
-                setValue('entrega7',elemented.entrega7||'')
-                setValue('entrega8',elemented.entrega8||'')
+                setValue('entrega1',elemented.entrega1||'1')
+                setValue('entrega2',elemented.entrega2||'1')
+                setValue('entrega3',elemented.entrega3||'1')
+                setValue('entrega4',elemented.entrega4||'1')
+                setValue('entrega5',elemented.entrega5||'1')
+                setValue('entrega6',elemented.entrega6||'1')
+                setValue('entrega7',elemented.entrega7||'1')
+                setValue('entrega8',elemented.entrega8||'1')
                 setValue('fecuencia_dias1',elemented.fecuenciaDias1||'')
                 setValue('fecuencia_dias2',elemented.fecuenciaDias2||'')
                 setValue('fecuencia_dias3',elemented.fecuenciaDias3||'')
@@ -742,35 +742,35 @@ const SolicitudCotizacion=({elemented})=> {
                                 <div className="form-floating  mx-auto  col-6 p-1"  >
                                     <div className="col-12 form-control" style={{background: "#a5afb6", height: "auto ",display: "flex", flexDirection: "column"}} id="diventragas">
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
-                                            <input type="text" className="form-control  bgWhite"  id="entrega1" {...register("entrega1",{required:'campo requerido'})}/>
+                                            <input type="text" className="form-control  bgWhite"  id="entrega1" defaultValue="1" {...register("entrega1",{required:'campo requerido'})}/>
 
                                         </div>
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
-                                            <input type="text" className="form-control  bgWhite"  id="entrega2" {...register("entrega2")}/>
+                                            <input type="text" className="form-control  bgWhite"  id="entrega2" defaultValue="1" {...register("entrega2")}/>
 
                                         </div>
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
-                                            <input type="text" className="form-control  bgWhite"  id="entrega3" {...register("entrega3")}/>
+                                            <input type="text" className="form-control  bgWhite"  id="entrega3" defaultValue="1" {...register("entrega3")}/>
 
                                         </div>
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
-                                            <input type="text" className="form-control  bgWhite"  id="entrega4" {...register("entrega4")}/>
+                                            <input type="text" className="form-control  bgWhite"  id="entrega4" defaultValue="1" {...register("entrega4")}/>
 
                                         </div>
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
-                                            <input type="text" className="form-control  bgWhite"  id="entrega5" {...register("entrega5")}/>
+                                            <input type="text" className="form-control  bgWhite"  id="entrega5" defaultValue="1" {...register("entrega5")}/>
 
                                         </div>
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
-                                            <input type="text" className="form-control  bgWhite"  id="entrega6" {...register("entrega6")}/>
+                                            <input type="text" className="form-control  bgWhite"  id="entrega6" defaultValue="1" {...register("entrega6")}/>
 
                                         </div>
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
-                                            <input type="text" className="form-control  bgWhite"  id="entrega7" {...register("entrega7")}/>
+                                            <input type="text" className="form-control  bgWhite"  id="entrega7" defaultValue="1" {...register("entrega7")}/>
 
                                         </div>
                                         <div className="  mx-auto p-1 col-12" style={{display: "flex", flexDirection: "row"}} >
-                                            <input type="text" className="form-control  bgWhite"  id="entrega8" {...register("entrega8")}/>
+                                            <input type="text" className="form-control  bgWhite"  id="entrega8" defaultValue="1" {...register("entrega8")}/>
 
                                         </div>
                                     </div>
@@ -1036,7 +1036,7 @@ const SolicitudCotizacion=({elemented})=> {
                                         <div className="form-control" id="divcheckratio3" style={{display: "flex", flexDirection: "row", background: "#a5afb6"}}>
                                             <div className="form-control p-1 m-1" style={{background: "transparent ", border: "none"}}>
                                                 <div className="form-check col-6">
-                                                    <input className="form-check-input"  type="radio" {...register("presentacion")} disabled={watch('unidad_seleccion')==="unidad_rollos"?false:true}  checked={watch('unidad_seleccion')==="unidad_rollos"?true:false} id="presentacion_rollos" value="rollos"/>
+                                                    <input className="form-check-input"  type="radio" {...register("presentacion")}   checked={watch('unidad_seleccion')==="unidad_rollos"?true:false} id="presentacion_rollos" value="rollos"/>
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="presentacion_rollos">
                                                         En rollos
                                                     </label>
@@ -1044,15 +1044,15 @@ const SolicitudCotizacion=({elemented})=> {
                                                 </div>
                                                 <div className="form-control m-1" style={{display: "flex", flexDirection: "row"}}>
                                                     <div className="form-floating  mx-auto p-1 col-3">
-                                                        <input type="number" className="form-control" disabled={watch('unidad_seleccion')==="unidad_rollos"?false:true}  checked={watch('unidad_seleccion')==="unidad_rollos"?true:false} id="rollos_por" {...register("rollos_por")}/>
+                                                        <input type="number" className="form-control"   checked={watch('unidad_seleccion')==="unidad_rollos"?true:false} id="rollos_por" {...register("rollos_por")}/>
                                                         <label style={{color:"#000000"}} htmlFor="rollos_por">Rollos por (Etiqs.)</label>
                                                     </div>
                                                     <div className="form-floating  mx-auto p-1 col-3">
-                                                        <input type="number" className="form-control" disabled={watch('unidad_seleccion')==="unidad_rollos"?false:true}  checked={watch('unidad_seleccion')==="unidad_rollos"?true:false} id="etiq_ancho" {...register("etiq_ancho")}/>
+                                                        <input type="number" className="form-control"   checked={watch('unidad_seleccion')==="unidad_rollos"?true:false} id="etiq_ancho" {...register("etiq_ancho")}/>
                                                         <label style={{color:"#000000"}} htmlFor="etiq_ancho">Etiq. Ancho</label>
                                                     </div>
                                                     <div className="form-floating mx-auto p-1 col-3" >
-                                                        <select className="form-select bg-secondary-subtle-r" disabled={watch('unidad_seleccion')==="unidad_rollos"?false:true}  checked={watch('unidad_seleccion')==="unidad_rollos"?true:false} id="core" {...register("core")} aria-label="core"  >
+                                                        <select className="form-select bg-secondary-subtle-r"   checked={watch('unidad_seleccion')==="unidad_rollos"?true:false} id="core" {...register("core")} aria-label="core"  >
                                                             <option value="1" >1 pulgada</option>
                                                             <option value="1.5" >1.5 pulgada</option>
                                                             <option value="2" >2 pulgada</option>
@@ -1071,7 +1071,7 @@ const SolicitudCotizacion=({elemented})=> {
 
                                             <div className="form-control p-1 m-1" style={{background: "transparent ", border: "none"}}>
                                                 <div className="form-check col-6">
-                                                    <input className="form-check-input" disabled={watch('unidad_seleccion')==="unidad_otra"?false:true}  checked={watch('unidad_seleccion')==="unidad_otra"?true:false} type="radio" {...register("presentacion")} id="presentacion_hojas" value="hojas"/>
+                                                    <input className="form-check-input"  checked={watch('unidad_seleccion')==="unidad_otra"?true:false} type="radio" {...register("presentacion")} id="presentacion_hojas" value="hojas"/>
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="presentacion_hojas">
                                                         En hojas
                                                     </label>
@@ -1079,11 +1079,11 @@ const SolicitudCotizacion=({elemented})=> {
                                                 </div>
                                                 <div className="form-control m-1" style={{display: "flex", flexDirection: "row"}}>
                                                     <div className="form-floating  mx-auto p-1 col-5">
-                                                        <input type="number" disabled={watch('unidad_seleccion')==="unidad_otra"?false:true}  checked={watch('unidad_seleccion')==="unidad_otra"?true:false} className="form-control" id="etiquetas_hoja" {...register("etiquetas_hoja")}/>
+                                                        <input type="number"  checked={watch('unidad_seleccion')==="unidad_otra"?true:false} className="form-control" id="etiquetas_hoja" {...register("etiquetas_hoja")}/>
                                                         <label style={{color:"#000000"}} htmlFor="etiquetas_hoja">Etiquetas por Hoja</label>
                                                     </div>
                                                     <div className="form-floating  mx-auto p-1 col-5">
-                                                        <input type="number" disabled={watch('unidad_seleccion')==="unidad_otra"?false:true}  checked={watch('unidad_seleccion')==="unidad_otra"?true:false} className="form-control" id="hojas_paquete" {...register("hojas_paquete")}/>
+                                                        <input type="number"  checked={watch('unidad_seleccion')==="unidad_otra"?true:false} className="form-control" id="hojas_paquete" {...register("hojas_paquete")}/>
                                                         <label style={{color:"#000000"}} htmlFor="hojas_paquete">Hojas por paquete</label>
                                                     </div>
                                                 </div>

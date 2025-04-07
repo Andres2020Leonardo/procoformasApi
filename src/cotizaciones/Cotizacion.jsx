@@ -115,7 +115,6 @@ const Cotizacion=({elemented})=> {
         tipoTinta4:0,
         grTinta4:0,
         PlanchasTinta4:0,
-        CambPlanchas:0,
         diferirEtiqueta:0,
         metros:0,
         GradPlanchas:0,
@@ -266,7 +265,6 @@ const Cotizacion=({elemented})=> {
                   }
                   calcularAvance()
                   calcularAncho()
-                  calcularCajas();
             }else{
                 setValue('CUnidad',0);
                 setValue('around',0);
@@ -278,7 +276,6 @@ const Cotizacion=({elemented})=> {
                   }
                   calcularAvance()
                   calcularAncho()
-                  calcularCajas();
             }}
         
          
@@ -329,7 +326,6 @@ const Cotizacion=({elemented})=> {
               setValue('metros',calcularMetros(watch('cantidad1')))
               calcularAvance()
               calcularAncho()
-              calcularCajas();
         }else{
             setValue('CUnidad',0);
             setValue('around',0);
@@ -556,7 +552,6 @@ const Cotizacion=({elemented})=> {
                 setValue('metros',calcularMetros(watch('cantidad1')))
                 calcularAvance()
                 calcularAncho()
-                calcularCajas();
                 setLoadingIcon(false)
             }, 2000);
             setValue('PlanchasTinta1',elemented.planchasTinta1)
@@ -618,6 +613,7 @@ const Cotizacion=({elemented})=> {
         let largo_caja=29.5
         let ancho_caja=29.5
         let alto_caja=34
+        console.log('psi',parseInt(watch('posi')))
         let ancho_etiqueta=parseInt(watch('posi'))===1 || parseInt(watch('posi'))===2 || parseInt(watch('posi'))===5 || parseInt(watch('posi'))===6 ? parseFloat(watch('anchoMaterialC')): parseFloat(watch('avanceReal'));
         let capacidad_largo= Math.ceil(largo_caja/diametro)
         let capacidad_ancho= Math.ceil(ancho_caja/diametro)
@@ -642,7 +638,19 @@ const Cotizacion=({elemented})=> {
         if(watch('anchoEspe')==""){
             alert("Falta Ancho Esperado")
         }else{
-            let calculoAncho=parseFloat(watch('anchoEspe'))*parseFloat(watch('across'))+((parseFloat(watch('across'))-1)*parseFloat(watch('espacioentreetiquetas')))+((2*parseFloat(watch('espacioexteriores'))))
+            
+            const anchoEspe = parseFloat(watch('anchoEspe'));
+            const across = parseFloat(watch('across'));
+            const espacioEntreEtiquetas = parseFloat(watch('espacioentreetiquetas'));
+            const espacioExteriores = parseFloat(watch('espacioexteriores'));
+            console.log('across',across)
+            console.log('espacioentreetiquetas',espacioEntreEtiquetas)
+            console.log('espacioexteriores',espacioExteriores)
+            let calculoAncho = 
+            (anchoEspe * across) +
+            ((across > 1 ? (across - 1) : 0) * espacioEntreEtiquetas) +
+            (2 * espacioExteriores);
+            console.log('calculoAncho',  (anchoEspe * across))
             setValue('anchoMaterialC', parseFloat(calculoAncho.toFixed(1)) || 0);
             setValue('anchoLaminacionC', parseFloat(calculoAncho.toFixed(1)) || 0);
             setValue('anchoColdC', parseFloat(calculoAncho.toFixed(1)) || 0);
@@ -677,19 +685,29 @@ const Cotizacion=({elemented})=> {
         return  Math.round(metros);
     }
     function calcularCostoTintaM2(){
-        let valor_tintas=( parseFloat(watch('grTinta1'))*(parseFloat(watch('CubrimientoCoti1'))/100)*parseFloat(watch('PlanchasTinta1')))+( parseFloat(watch('grTinta2'))*(parseFloat(watch('CubrimientoCoti2'))/100)*parseFloat(watch('PlanchasTinta2')))+( parseFloat(watch('grTinta3'))*(parseFloat(watch('CubrimientoCoti3'))/100)*parseFloat(watch('PlanchasTinta3')))+( parseFloat(watch('grTinta4'))*(parseFloat(watch('CubrimientoCoti4'))/100)*parseFloat(watch('PlanchasTinta4')))
+        let valor_tintas=( parseFloat(watch('grTinta1'))*(parseFloat(watch('CubrimientoCoti1'))/100))+( parseFloat(watch('grTinta2'))*(parseFloat(watch('CubrimientoCoti2'))/100))+( parseFloat(watch('grTinta3'))*(parseFloat(watch('CubrimientoCoti3'))/100))+( parseFloat(watch('grTinta4'))*(parseFloat(watch('CubrimientoCoti4'))/100))
       
         return Math.round(valor_tintas)
     }
-    function calcularValorTotalTintas(cantidad){
+    function calcularValorTotalTintas(cantidad) {
+        let metros_l = parseFloat(calcularMetros(cantidad));
+        console.log('metros_l',metros_l)
+        let ancho_cm = parseFloat(watch('anchoMaterialC'));
+        console.log('ancho_cm',ancho_cm)
+        let ancho_m = ancho_cm / 100;
+        console.log('ancho_m',ancho_m)
+        let area_m2 = metros_l * ancho_m;
+        console.log('area_m2',area_m2)
+        let gramos = area_m2; // 4g por metro cuadrado
+        console.log('gramos',gramos)
+        let costoPorGramo = calcularCostoTintaM2();
+        console.log('costoPorGramo',costoPorGramo)
+        let valorTotal = gramos * costoPorGramo;
+        console.log('valorTotal',valorTotal)
         
-        cantidad = parseFloat(cantidad)
-        let area_total_etiquetasCM2=calcularAreaEtiqueta()*cantidad;
-        let area_total_etiquetasM2=area_total_etiquetasCM2/10000;
-        let Consumo_tintaGramos=area_total_etiquetasM2;
-        let Valor_total_de_tinta=Consumo_tintaGramos*calcularCostoTintaM2();
-        return Math.round(Valor_total_de_tinta);
+        return Math.round(valorTotal);
     }
+    
    
     function numeroDePlanchas() {
         let texto_acabado=toggleButtonAcabado.current.querySelector('p').textContent;
@@ -798,8 +816,6 @@ const Cotizacion=({elemented})=> {
         
         cantidad = parseFloat(cantidad)
         let metroslineales=parseFloat(calcularMetros(cantidad));
-        let anchomaterial=parseFloat(watch('anchoMaterialC'));
-        let metroscuadrados=metros*anchomaterial;
         //// tiempo adicional maquina
         let tiempo_adicional_maquina=0;
         //// precio adicional maquina
@@ -1552,15 +1568,18 @@ const Cotizacion=({elemented})=> {
 
                                     
                                     <div className="form-floating  mx-auto p-1 " style={{width: "15% "}}>
-                                        <input type="text" className="form-control" id="CUnidad" {...register("CUnidad")} onChange={()=>calcularAncho()} />
+                                        <input type="text" className="form-control" id="CUnidad" {...register("CUnidad")} onChange={(e)=>{setValue("CUnidad", e.target.value);calcularAncho()}} onBlur={(e)=>{setValue("CUnidad", e.target.value);calcularAncho()}} 
+                                                onClick={(e) => {setValue("CUnidad", e.target.value);calcularAncho()}} />
                                         <label style={{color:"#000000"}} htmlFor="CUnidad">Unidad</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 " style={{width: "15% "}}>
-                                        <input type="text" className="form-control" id="around" {...register("around")} onChange={()=>calcularAncho()}/>
+                                        <input type="text" className="form-control" id="around" {...register("around")} onChange={(e)=>{setValue("around", e.target.value);calcularAncho()}} onBlur={(e)=>{setValue("around", e.target.value);calcularAncho()}} 
+                                                onClick={(e) => {setValue("around", e.target.value);calcularAncho()}}/>
                                         <label style={{color:"#000000"}} htmlFor="around">Around</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 " style={{width: "15% "}}>
-                                        <input type="text" className="form-control" id="across" {...register("across")} onChange={()=>calcularAncho()} />
+                                        <input type="text" className="form-control" id="across" {...register("across")} onChange={(e)=>{setValue("across", e.target.value);calcularAncho()}} onBlur={(e)=>{setValue("across", e.target.value);calcularAncho()}} 
+                                                onClick={(e) => {setValue("across", e.target.value);calcularAncho()}} />
                                         <label style={{color:"#000000"}} htmlFor="across">Across</label>
                                     </div>
 
@@ -1591,7 +1610,8 @@ const Cotizacion=({elemented})=> {
                                         <label style={{color:"#000000"}} htmlFor="sustratotipodiv">Sustrato</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="espacioexteriores" {...register("espacioexteriores")} onChange={()=>calcularAncho()} />
+                                        <input type="text" className="form-control" id="espacioexteriores" {...register("espacioexteriores")} onChange={(e)=>{setValue("espacioexteriores", e.target.value);calcularAncho()}} onBlur={(e)=>{setValue("espacioexteriores", e.target.value);calcularAncho()}} 
+                                                onClick={(e) => {setValue("espacioexteriores", e.target.value);calcularAncho()}} />
                                         <label style={{color:"#000000"}} htmlFor="espacioexteriores">Espacio en exterior</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
@@ -1872,7 +1892,8 @@ const Cotizacion=({elemented})=> {
                                         <label style={{color:"#000000"}} htmlFor="grTinta2">$Gr. tinta (m²)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="PlanchasTinta2" {...register("PlanchasTinta2")} onChange={()=>grdPla()} />
+                                        <input type="text" className="form-control" id="PlanchasTinta2" {...register("PlanchasTinta2")}   onChange={(e)=>{setValue("PlanchasTinta2", e.target.value);grdPla()}} onBlur={(e)=>{setValue("PlanchasTinta2", e.target.value);grdPla()}} 
+                                                onClick={(e) => {setValue("PlanchasTinta2", e.target.value);grdPla()}}/>
                                         <label style={{color:"#000000"}} htmlFor="PlanchasTinta2">Total Planchas por tipo de tinta</label>
                                     </div>
 
@@ -1899,7 +1920,8 @@ const Cotizacion=({elemented})=> {
                                         <label style={{color:"#000000"}} htmlFor="grTinta3">$Gr. tinta (m²)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="PlanchasTinta3" {...register("PlanchasTinta3")} onChange={()=>grdPla()} />
+                                        <input type="text" className="form-control" id="PlanchasTinta3" {...register("PlanchasTinta3")}  onChange={(e)=>{setValue("PlanchasTinta3", e.target.value);grdPla()}} onBlur={(e)=>{setValue("PlanchasTinta3", e.target.value);grdPla()}} 
+                                                onClick={(e) => {setValue("PlanchasTinta3", e.target.value);grdPla()}} />
                                         <label style={{color:"#000000"}} htmlFor="PlanchasTinta3">Total Planchas por tipo de tinta</label>
                                     </div>
 
@@ -1925,7 +1947,8 @@ const Cotizacion=({elemented})=> {
                                         <label style={{color:"#000000"}} htmlFor="grTinta4">$Gr. tinta (m²)</label>
                                     </div>
                                     <div className="form-floating  mx-auto p-1 col-3" >
-                                        <input type="text" className="form-control" id="PlanchasTinta4" {...register("PlanchasTinta4")} onChange={()=>grdPla()} />
+                                        <input type="text" className="form-control" id="PlanchasTinta4" {...register("PlanchasTinta4")}  onChange={(e)=>{setValue("PlanchasTinta4", e.target.value);grdPla()}} onBlur={(e)=>{setValue("PlanchasTinta4", e.target.value);grdPla()}} 
+                                                onClick={(e) => {setValue("PlanchasTinta4", e.target.value);grdPla()}}/>
                                         <label style={{color:"#000000"}} htmlFor="PlanchasTinta4">Total Planchas por tipo de tinta</label>
                                     </div>
 
