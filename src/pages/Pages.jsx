@@ -8,6 +8,7 @@ import Inventario from "../almacen/Inventario";
 import RecibirMaterial from "../almacen/RecibirMaterial";
 import Ingreso from "../comercial/Ingreso";
 import CertificadoLaboral from "../th/init";
+import Cotizacion2 from "../cotizaciones/Cotizacion2";
 
 function Pages({page,setPage}){
     const [elemented,setElemented]=useState({});
@@ -27,6 +28,7 @@ function Pages({page,setPage}){
                 
             case "cotizacion/cotizacion":
                 return <Cotizacion elemented={elemented}/>
+
                 
             case "cotizacion/listSolicitudes":
                 return <ListSolicitudes editarSolicitud={editarSolicitud}/>
