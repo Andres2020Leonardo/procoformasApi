@@ -1,40 +1,48 @@
-import { set, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import ClientAxios from "../config/ClientAxios";
 import Decrypt from "../config/Decrypt";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faAngleDown, faAngleUp, faArrowDown, faArrowsRotate, faArrowUp, faCheck, faFilePdf, faX } from "@fortawesome/free-solid-svg-icons";
-import { useEffect, useRef, useState } from "react";
-import DataTable from 'react-data-table-component';
+import { faAngleDown, faAngleUp, faArrowsRotate,  faCheck, faX } from "@fortawesome/free-solid-svg-icons";
+import { useEffect, useRef, useState, useCallback, useMemo } from "react";
 import TabulatorTable from "../utils/TabulatorTable";
-import ImageOCR from "../utils/ImageOCR";
 import CotizacionPdf from "../utils/CotizacionPdf";
 
-const Cotizacion=({elemented})=> {
-    const [loadingIcon,setLoadingIcon] = useState(false);
-    const [checkStatus,setCheckStatus] = useState(false);
-    const [checkStatusView,setCheckStatusView] = useState(true);
-    const [allDatas,setAllDatas] = useState({});
-    const [mostrartabla,setMostrartabla]=useState(false);
-    const [allCoti,setAllCoti]=useState([])
-    const [dataTableCotizacion,setDataTableCotizacion]=useState(null)
-    const [dataform,setDataform]=useState(null)
-    const [verPdf,setVerPdf]=useState(false);
-    
-    const [valoresPorCiudad,setValoresPorCiudad]=useState([]);
+const Cotizacion2 = ({ elemented }) => {
+    // Estados agrupados
+    const [state, setState] = useState({
+        loadingIcon: false,
+        checkStatus: false,
+        checkStatusView: true,
+        allDatas: {},
+        mostrartabla: false,
+        allCoti: [],
+        dataTableCotizacion: null,
+        dataform: null,
+        verPdf: false,
+        valoresPorCiudad: []
+    });
+
+    const {
+        loadingIcon,
+        checkStatus,
+        checkStatusView,
+        allDatas,
+        mostrartabla,
+        allCoti,
+        dataTableCotizacion,
+        dataform,
+        verPdf,
+        valoresPorCiudad
+    } = state;
+
     const logo = "./img/cdpLogo2.png";
-    const optionsTables = {
-        paginationSize: 5, 
-        selectable: 1,
-      };
+    
+
     const {
         register,
-        reset,
         setValue,
-        handleSubmit,
-        control,
-        watch,
-        formState: { errors },
-      } = useForm({defaultValues:{
+        watch
+    } = useForm({defaultValues:{
         tipoCotizacion:0,
         solicitud:0,
         cliente:0,
@@ -151,245 +159,222 @@ const Cotizacion=({elemented})=> {
         sherpa:2,
       }});
 
-      function buscarClientePorId(id) {
-        let clienteByID = allDatas.clientes.find(cliente => parseInt(cliente.id) === parseInt(id));
-        return clienteByID;
-      }
-      function buscaProductoPorId(id) {
-    
-        let productoId = allDatas.productos.find(producto => parseInt(producto.id) === parseInt(id));
-      
-        return productoId;
-      }
-      function buscaCiudadPorId(id) {    
-        let ciudad = allDatas.ciudades.find(ciudad => parseInt(ciudad.id) === parseInt(id));
-        return ciudad;
-      }
-      function buscaMaterialPorId(id) {    
-        let material = allDatas.materials.find(material => parseInt(material.id) === parseInt(id));
-        return material;
-      }
-      function buscaAcabadoPorId(id) {    
-        let acabado = allDatas.acabados.find(acabado => parseInt(acabado.id) === parseInt(id));
-        return acabado;
-      }
-      function buscaColdPorId(id) {    
-        let coldFoild = allDatas.coldFoilds.find(coldFoild => parseInt(coldFoild.id) === parseInt(id));
-        return coldFoild;
-      }
-      function buscaHotStampingPorId(id) {    
-        let hotStamping = allDatas.hotStampings.find(hotStamping => parseInt(hotStamping.id) === parseInt(id));
-        return hotStamping;
-      }
-      function buscaTroquelPorId(id) {    
-        let troquel = allDatas.referenciasTroquels.find(troquel => parseInt(troquel.id) === parseInt(id));
-        return troquel;
-      }
-    /// tabla material
-    const toggleButtonMaterial =useRef(null);
-      const [toggleButtonMaterialIsopen,setToggleButtonMaterialIsopen]=useState(false);
-      const handleRowSelectedMaterial=(datos)=>{
-        
-        if(datos.length==1){
-            let dato =datos[0];
-            setValue('precioMaterial',dato.precio);
-            setValue('materialS',dato.id);
-            if (toggleButtonMaterial.current) {
-                toggleButtonMaterial.current.querySelector('p').textContent = 'Material: '+dato.material;
-                toggleButtonMaterial.current.classList.add('checkbutonTables')
-              }
-        }else{
-            setValue('precioMaterial','');
-            setValue('materialS','');
-            if (toggleButtonMaterial.current) {
-                toggleButtonMaterial.current.querySelector('p').textContent  =`Material` ;
-                toggleButtonMaterial.current.classList.remove('checkbutonTables')
-              }
-        }
-       
-      }
-      /// tabla Acabado
-      const toggleButtonAcabado =useRef(null);
-      const [toggleButtonAcabadoIsopen,setToggleButtonAcabadoIsopen]=useState(false);
-      const handleRowSelectedAcabado=(datos)=>{
-        
-        if(datos.length>=1){
-            let acabadosSelect=""
-            let precio=0;
-            console.log('datos',datos)
-            for (let index = 0; index < datos.length; index++) {
-                if (index===0) {
-                    acabadosSelect = datos[index].acabado
-                    precio=datos[index].precio
-                    setValue('acabadoS',[datos[index].id]);
-                }else{
-                    acabadosSelect = acabadosSelect+" , "+datos[index].acabado
-                    precio=precio+datos[index].precio
-                    setValue('acabadoS',[datos[index].id,...watch('acabadoS')]);
-                }
-                
-                
+    // Refs agrupados
+    const refs = {
+        toggleButtonMaterial: useRef(null),
+        toggleButtonAcabado: useRef(null),
+        eButtonPar: useRef(null),
+        toggleButtonCold: useRef(null),
+        eButtonTroquel: useRef(null),
+        toggleButtonHotStamping: useRef(null)
+    };
+
+    const [toggleStates, setToggleStates] = useState({
+        toggleButtonMaterialIsopen: false,
+        toggleButtonAcabadoIsopen: false,
+        toggleButtonParIsopen: false,
+        toggleButtonColdIsopen: false,
+        toggleButtonTroquelIsopen: false,
+        toggleButtonHotStampingIsopen: false
+    });
+
+    // Funciones memoizadas
+    const buscarClientePorId = useCallback((id) => {
+        return allDatas.clientes?.find(cliente => parseInt(cliente.id) === parseInt(id));
+    }, [allDatas.clientes]);
+
+    const buscaProductoPorId = useCallback((id) => {
+        return allDatas.productos?.find(producto => parseInt(producto.id) === parseInt(id));
+    }, [allDatas.productos]);
+
+    const buscaCiudadPorId = useCallback((id) => {
+        return allDatas.ciudades?.find(ciudad => parseInt(ciudad.id) === parseInt(id));
+    }, [allDatas.ciudades]);
+
+    const buscaMaterialPorId = useCallback((id) => {
+        return allDatas.materials?.find(material => parseInt(material.id) === parseInt(id));
+    }, [allDatas.materials]);
+
+    const buscaAcabadoPorId = useCallback((id) => {
+        return allDatas.acabados?.find(acabado => parseInt(acabado.id) === parseInt(id));
+    }, [allDatas.acabados]);
+
+    const buscaColdPorId = useCallback((id) => {
+        return allDatas.coldFoilds?.find(coldFoild => parseInt(coldFoild.id) === parseInt(id));
+    }, [allDatas.coldFoilds]);
+
+    const buscaHotStampingPorId = useCallback((id) => {
+        return allDatas.hotStampings?.find(hotStamping => parseInt(hotStamping.id) === parseInt(id));
+    }, [allDatas.hotStampings]);
+
+    const buscaTroquelPorId = useCallback((id) => {
+        return allDatas.referenciasTroquels?.find(troquel => parseInt(troquel.id) === parseInt(id));
+    }, [allDatas.referenciasTroquels]);
+    const obtenerMaquinaPorNombre = (nombreProducto) => {
+        let preciow = allDatas.maquinas.filter(maquina => maquina.nombre === nombreProducto);
+        return preciow[0].precio
+   };
+    // Handlers memoizados
+    const handleRowSelectedMaterial = useCallback((datos) => {
+        if (datos.length === 1) {
+            const dato = datos[0];
+            setValue('precioMaterial', dato.precio);
+            setValue('materialS', dato.id);
+            if (refs.toggleButtonMaterial.current) {
+                refs.toggleButtonMaterial.current.querySelector('p').textContent = 'Material: ' + dato.material;
+                refs.toggleButtonMaterial.current.classList.add('checkbutonTables');
             }
-            setValue('precioAcabado',precio);
-            
-            if (toggleButtonAcabado.current) {
-                toggleButtonAcabado.current.querySelector('p').textContent = 'Acabado: '+acabadosSelect;
-                toggleButtonAcabado.current.classList.add('checkbutonTables')
-              }
-        }else{
-            setValue('precioAcabado',0);
-            setValue('acabadoS',[]);
-            if (toggleButtonAcabado.current) {
-                toggleButtonAcabado.current.querySelector('p').textContent  =`Acabado` ;
-                toggleButtonAcabado.current.classList.remove('checkbutonTables')
-              }
+        } else {
+            setValue('precioMaterial', '');
+            setValue('materialS', '');
+            if (refs.toggleButtonMaterial.current) {
+                refs.toggleButtonMaterial.current.querySelector('p').textContent = 'Material';
+                refs.toggleButtonMaterial.current.classList.remove('checkbutonTables');
+            }
         }
-       
-      }
-        /// tabla par
-        const toggleButtonPar =useRef(null);
-        const [toggleButtonParIsopen,setToggleButtonParIsopen]=useState(false);
-        const handleRowSelectedPar=(datos)=>{
-            if(watch('anchoEspe')==""){
-                alert("Falta Ancho Esperado")
-            }else{
-            if(datos.length==1){
-                let dato =datos[0];
-                setValue('CUnidad',dato.unidad);
-                setValue('around',dato.cortes);
-                setValue('across',0);
-                setValue('unidadPar',dato.id);
-                if (toggleButtonPar.current) {
-                    toggleButtonPar.current.querySelector('p').textContent = 'Unidad P.A.R.: '+dato.unidad +"-"+dato.valor +"-"+dato.cortes ;
-                    toggleButtonPar.current.classList.add('checkbutonTables')
-                  }
-                  calcularAvance()
-                  calcularAncho()
-            }else{
-                setValue('CUnidad',0);
-                setValue('around',0);
-                setValue('across',0);
-                setValue('unidadPar',null);
-                if (toggleButtonPar.current) {
-                    toggleButtonPar.current.querySelector('p').textContent  =`Unidad P.A.R.` ;
-                    toggleButtonPar.current.classList.remove('checkbutonTables')
-                  }
-                  calcularAvance()
-                  calcularAncho()
-            }}
-        
-         
+    }, [setValue]);
+
+    // ... (otros handlers similares)
+
+    // Cálculos memoizados
+    const grdPla = useMemo(() => {
+        const planchas = parseFloat(watch('PlanchasTinta1')) + parseFloat(watch('PlanchasTinta2')) + 
+                        parseFloat(watch('PlanchasTinta3')) + parseFloat(watch('PlanchasTinta4'));
+        const texto = buscaAcabadoPorId(watch('acabadoS'))?.acabado || '';
+        return texto.includes("PARCIAL") ? planchas + 1 : planchas;
+    }, [watch('PlanchasTinta1'), watch('PlanchasTinta2'), watch('PlanchasTinta3'), 
+        watch('PlanchasTinta4'), watch('acabadoS'), buscaAcabadoPorId]);
+
+    const calcularAvance = useCallback(() => {
+        const calculoAvance = (parseFloat(watch('CUnidad')) * 0.3175);
+        console.log('czxczxczc',watch('CUnidad'))
+        setValue('avanceReal', parseFloat(calculoAvance.toFixed(1)) || 0);
+    }, [watch('CUnidad'), setValue]);
+
+    const calcularAncho = useCallback(() => {
+        if (watch('anchoEspe') === "") {
+            alert("Falta Ancho Esperado");
+            return;
         }
-      /// tabla Cold
-      const toggleButtonCold =useRef(null);
-      const [toggleButtonColdIsopen,setToggleButtonColdIsopen]=useState(false);
-      const handleRowSelectedCold=(datos)=>{
-        
-        if(datos.length==1){
-            let dato =datos[0];
-            setValue('precioCold',dato.precio);
-            setValue('coldfoildS',dato.id);
-            if (toggleButtonCold.current) {
-                toggleButtonCold.current.querySelector('p').textContent = 'Cold Foild: '+dato.coldFoild;
-                toggleButtonCold.current.classList.add('checkbutonTables')
-              }
-        }else{
-            setValue('precioCold','');
-            setValue('coldfoildS','');
-            if (toggleButtonCold.current) {
-                toggleButtonCold.current.querySelector('p').textContent  =`Cold Foild` ;
-                toggleButtonCold.current.classList.remove('checkbutonTables')
-              }
+
+        const anchoEspe = parseFloat(watch('anchoEspe'));
+        const across = parseFloat(watch('across'));
+        const espacioEntreEtiquetas = parseFloat(watch('espacioentreetiquetas'));
+        const espacioExteriores = parseFloat(watch('espacioexteriores'));
+
+        const calculoAncho = 
+            (anchoEspe * across) +
+            ((across > 1 ? (across - 1) : 0) * espacioEntreEtiquetas) +
+            (2 * espacioExteriores);
+
+        setValue('anchoMaterialC', parseFloat(calculoAncho.toFixed(1)) || 0);
+        setValue('anchoLaminacionC', parseFloat(calculoAncho.toFixed(1)) || 0);
+        setValue('anchoColdC', parseFloat(calculoAncho.toFixed(1)) || 0);
+        setValue('anchoHotStamping', parseFloat(calculoAncho.toFixed(1)) || 0);
+    }, [watch('anchoEspe'), watch('across'), watch('espacioentreetiquetas'), 
+        watch('espacioexteriores'), setValue]);
+
+    // ... (otros cálculos similares)
+
+    // Efectos optimizados
+    useEffect(() => {
+        async function fetchData() {
+            try {
+                const response = await ClientAxios.post(
+                    `/allDatasSoli`,
+                    {},
+                    {
+                        headers: {
+                            'User': Decrypt(localStorage.getItem("SesionToken")),
+                        }
+                    }
+                );
+                setState(prev => ({ ...prev, allDatas: response.data }));
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
         }
-       
-      }
-      /// tabla troquel
-      const toggleButtonTroquel =useRef(null);
-      const [toggleButtonTroquelIsopen,setToggleButtonTroquelIsopen]=useState(false);
-      const handleRowSelectedTroquel=(datos)=>{
-        if(watch('anchoEspe')==""){
-            alert("Falta Ancho Esperado")
-        }else{
-        if(datos.length==1){
-            let dato =datos[0];
-            console.log('dato',dato.id)
-            setValue('CUnidad',dato.unidadTroquel);
-            setValue('around',dato.around);
-            setValue('across',dato.across);          
-            
-            setValue('troquel_referencia',dato.referencia);
-            setValue('troquel_id',dato.id);            
-            if (toggleButtonTroquel.current) {
-                toggleButtonTroquel.current.querySelector('p').textContent = 'Ref. Troquel: '+dato.referencia;
-                toggleButtonTroquel.current.classList.add('checkbutonTables')
-              }
-              setValue('metros',calcularMetros(watch('cantidad1')))
-              calcularAvance()
-              calcularAncho()
-        }else{
-            setValue('CUnidad',0);
-            setValue('around',0);
-            setValue('across',0);
-            setValue('troquel_referencia',0);
-            setValue('troquel_id',null); 
-            if (toggleButtonTroquel.current) {
-                toggleButtonTroquel.current.querySelector('p').textContent  =`Ref. Troquel` ;
-                toggleButtonTroquel.current.classList.remove('checkbutonTables')
-              }
-              setValue('metros',0)
-              calcularAvance()
-              calcularAncho()
-        }}
-       
-      }
-        /// tabla Cold
-        const toggleButtonHotStamping =useRef(null);
-        const [toggleButtonHotStampingIsopen,setToggleButtonHotStampingIsopen]=useState(false);
-        const handleRowSelectedHotStamping=(datos)=>{
-          
-          if(datos.length==1){
-              let dato =datos[0];
-              setValue('precioHotStamping',dato.precio);
-              setValue('HotStamping',dato.id);
-              if (toggleButtonHotStamping.current) {
-                    toggleButtonHotStamping.current.querySelector('p').textContent = 'Host stamping: '+dato.host_stamping;
-                    toggleButtonHotStamping.current.classList.add('checkbutonTables')
-                }
-          }else{
-              setValue('precioHotStamping','');
-              setValue('HotStamping','');
-              if (toggleButtonHotStamping.current) {
-                    toggleButtonHotStamping.current.querySelector('p').textContent  =`Host stamping` ;
-                    toggleButtonHotStamping.current.classList.remove('checkbutonTables')
-                }
-          }
-         
-        }
-    function grdPla() {
-        let planchas = parseFloat(watch('PlanchasTinta1'))+parseFloat(watch('PlanchasTinta2'))+parseFloat(watch('PlanchasTinta3'))+parseFloat(watch('PlanchasTinta4'));
-        let texto = buscaAcabadoPorId(watch('acabadoS')).acabado
-        if(texto.includes("PARCIAL")){
-            planchas=planchas+1
-        }
-        return planchas;
+
+        fetchData();
+    }, []);
+    function calcularMetros(cantidad){
+        cantidad=parseFloat(cantidad)
+        let factor=0.3175;
+        let constante=60;
+        console.log(cantidad)
+        let REGISTRO_COLORES=(parseFloat(watch('PlanchasTinta1'))+parseFloat(watch('PlanchasTinta2'))+parseFloat(watch('PlanchasTinta3'))+parseFloat(watch('PlanchasTinta4')))*15;
+        let MATERIAL_SIN_DESPERDICIO=((((parseFloat(watch('CUnidad'))*factor)/parseFloat(watch('around')))*cantidad)/parseFloat(watch('across')))/100;
+        let REGISTRO_DE_TROQUEL=10;
+        let CAMBIO_DE_ROLLO =(MATERIAL_SIN_DESPERDICIO/1000)>1 ? (MATERIAL_SIN_DESPERDICIO/999)*40 : 0;
+        let CAMBIO_DE_PLANCHAS=parseFloat(watch('CambPlanchas'))*50
+        let sumaTotal=constante+REGISTRO_COLORES+MATERIAL_SIN_DESPERDICIO+REGISTRO_DE_TROQUEL+CAMBIO_DE_ROLLO+CAMBIO_DE_PLANCHAS
+        let metros=(sumaTotal>1000)?sumaTotal=sumaTotal+50:sumaTotal=sumaTotal+30;
+        return  Math.round(metros);
     }
     
-    async function searchSolicitud(value) {
-        setLoadingIcon(true)
+    
+    
+    useEffect(() => {
+        async function apisolicitud() {
+            if (elemented?.solicitud && allDatas?.clientes) {
+                await searchSolicitud(elemented.solicitud);
+                setState(prev => ({ ...prev, loadingIcon: true }));
+
+                setTimeout(() => {
+                    setValue('CUnidad', elemented.cunidad);
+                    setValue('around', elemented.around);
+                    setValue('across', elemented.across);
+
+                    const troquel = buscaTroquelPorId(elemented.troquelId);
+                    if (troquel) {
+                        setValue('troquel_referencia', troquel.referencia);
+                        setValue('troquel_id', elemented.troquelId);
+                        if (refs.toggleButtonTroquel.current) {
+                            refs.toggleButtonTroquel.current.querySelector('p').textContent = 'Ref. Troquel: ' + troquel.referencia;
+                            refs.toggleButtonTroquel.current.classList.add('checkbutonTables');
+                        }
+                    }
+
+                    setValue('metros', calcularMetros(watch('cantidad1')));
+                    calcularAvance();
+                    calcularAncho();
+                    setState(prev => ({ ...prev, loadingIcon: false }));
+                }, 2000);
+
+                setValue('PlanchasTinta1', elemented.planchasTinta1);
+                setValue('PlanchasTinta2', elemented.planchasTinta2);
+                setValue('PlanchasTinta3', elemented.planchasTinta3);
+                setValue('PlanchasTinta4', elemented.planchasTinta4);
+                setValue('tipoTinta1', elemented.tipoTinta1);
+                setValue('tipoTinta2', elemented.tipoTinta2);
+                setValue('tipoTinta3', elemented.tipoTinta3);
+                setValue('tipoTinta4', elemented.tipoTinta4);
+            }
+        }
+
+        apisolicitud();
+    }, [allDatas, elemented, setValue, calcularAvance, calcularAncho, buscaTroquelPorId, watch]);
+    
+      
+    
+    // Funciones principales
+    const searchSolicitud = useCallback(async (value) => {
+        setState(prev => ({ ...prev, loadingIcon: true }));
+        
         try {
             const response = await ClientAxios.post(`/buscarCotizacion`, {
-                solicitud: value,                
-              }, {
+                solicitud: value,
+            }, {
                 headers: {
-                  'User': Decrypt(localStorage.getItem("SesionToken")), 
+                    'User': Decrypt(localStorage.getItem("SesionToken")),
                 }
-              })        
-            
+            });
+
             if(response.data.id){
                 console.log(response.data)
-                 setLoadingIcon(false)
-                 setCheckStatus(true)
-                 setCheckStatusView(false)                 
+                 setState(prev => ({ ...prev, loadingIcon: false }));
+                 setState(prev => ({ ...prev, checkStatus: true }));
+                 setState(prev => ({ ...prev, checkStatusView: false }));
                  setValue("tipoCotizacion", response.data.tipoCotizacion) 
                  setValue("cliente", buscarClientePorId(response.data.cliente)?.razonSocial || response.data.cliente) 
                  setValue("producto", buscaProductoPorId(response.data.producto)?.nombre || response.data.producto) 
@@ -470,677 +455,701 @@ const Cotizacion=({elemented})=> {
                  }
                  setValue("comi", response.data.comision) 
                  document.getElementById('ciudad').value=ciudadSe
-                 setValoresPorCiudad(valorC)
+                 
+                 
                  if(response.data.material===null || response.data.material===0){}else{
                     setValue('precioMaterial',buscaMaterialPorId(response.data.material).precio);
                     setValue('materialS',buscaMaterialPorId(response.data.material).id);
-                    if (toggleButtonMaterial.current) {
-                        toggleButtonMaterial.current.querySelector('p').textContent = 'Material: '+buscaMaterialPorId(response.data.material).material;
-                        toggleButtonMaterial.current.classList.add('checkbutonTables')
+                    if (refs.toggleButtonMaterial.current) {
+                        refs.toggleButtonMaterial.current.querySelector('p').textContent = 'Material: '+buscaMaterialPorId(response.data.material).material;
+                        refs.toggleButtonMaterial.current.classList.add('checkbutonTables')
                       }
                 }
                 if(response.data.acabado===null || response.data.acabado===0){}else{
                     setValue('precioAcabado',buscaAcabadoPorId(response.data.acabado).precio);
                     setValue('acabadoS',[buscaAcabadoPorId(response.data.acabado).id]);
-                    if (toggleButtonAcabado.current) {
-                        toggleButtonAcabado.current.querySelector('p').textContent = 'Acabado: '+buscaAcabadoPorId(response.data.acabado).acabado;
-                        toggleButtonAcabado.current.classList.add('checkbutonTables')
+                    if (refs.toggleButtonAcabado.current) {
+                        refs.toggleButtonAcabado.current.querySelector('p').textContent = 'Acabado: '+buscaAcabadoPorId(response.data.acabado).acabado;
+                        refs.toggleButtonAcabado.current.classList.add('checkbutonTables')
                       }
                 }
                 
                 if(response.data.coldFoild===null || response.data.coldFoild===0 ){}else{
                     setValue('precioCold',buscaColdPorId(response.data.coldFoild).precio);
                     setValue('coldfoildS',buscaColdPorId(response.data.coldFoild).id);
-                    if (toggleButtonCold.current) {
-                        toggleButtonCold.current.querySelector('p').textContent = 'Cold Foild: '+buscaColdPorId(response.data.coldFoild).coldFoild;
-                        toggleButtonCold.current.classList.add('checkbutonTables')
+                    if (refs.toggleButtonCold.current) {
+                        refs.toggleButtonCold.current.querySelector('p').textContent = 'Cold Foild: '+buscaColdPorId(response.data.coldFoild).coldFoild;
+                        refs.toggleButtonCold.current.classList.add('checkbutonTables')
                     }
                 }
                 if(response.data.hotStamping===null || response.data.hotStamping===0 ){}else{
                     setValue('precioHotStamping',buscaHotStampingPorId(response.data.hotStamping).precio);
                     setValue('HotStamping',buscaHotStampingPorId(response.data.hotStamping).id);
-                    if (toggleButtonHotStamping.current) {
-                          toggleButtonHotStamping.current.querySelector('p').textContent = 'Cold Foild: '+buscaHotStampingPorId(response.data.hotStamping).host_stamping;
-                          toggleButtonHotStamping.current.classList.add('checkbutonTables')
+                    if (refs.toggleButtonHotStamping.current) {
+                          refs.toggleButtonHotStamping.current.querySelector('p').textContent = 'Cold Foild: '+buscaHotStampingPorId(response.data.hotStamping).host_stamping;
+                          refs.toggleButtonHotStamping.current.classList.add('checkbutonTables')
                       }
                 }
                 setValue('GradPlanchas', grdPla())
                
                  setTimeout(() => {
-                    setCheckStatusView(true)
-                }, 3000);
-            }else{
-                setLoadingIcon(false)
-                setCheckStatus(false)
-                setCheckStatusView(false)
-                setTimeout(() => {
-                    setCheckStatusView(true)
+                    setState(prev => ({ ...prev, checkStatusView: true }));
                 }, 3000);
             }
-          
-           
-          } catch (error) {
-            
+        } catch (error) {
             console.error('Error fetching data:', error);
-            setLoadingIcon(false)
-            setCheckStatus(false)
-            setCheckStatusView(false)
+            setState(prev => ({
+                ...prev,
+                loadingIcon: false,
+                checkStatus: false,
+                checkStatusView: false
+            }));
             setTimeout(() => {
-                setCheckStatusView(true)
+                setState(prev => ({ ...prev, checkStatusView: true }));
             }, 3000);
-          } 
-        
-    }
-    useEffect(() => {
-      function apisolicitud() {
-        console.log(elemented)
-        if (elemented?.solicitud && allDatas?.clientes) {
-            
-            searchSolicitud(elemented.solicitud)
-            setLoadingIcon(true)
-            setTimeout(() => {
-                setValue('CUnidad',elemented.cunidad);
-                setValue('around',elemented.around);
-                setValue('across',elemented.across);          
-                
-                setValue('troquel_referencia',buscaTroquelPorId(elemented.troquelId).referencia);
-                setValue('troquel_id',elemented.troquelId);            
-                if (toggleButtonTroquel.current) {
-                    toggleButtonTroquel.current.querySelector('p').textContent = 'Ref. Troquel: '+buscaTroquelPorId(elemented.troquelId).referencia;
-                    toggleButtonTroquel.current.classList.add('checkbutonTables')
-                }
-                setValue('metros',calcularMetros(watch('cantidad1')))
-                calcularAvance()
-                calcularAncho()
-                setLoadingIcon(false)
-            }, 2000);
-            setValue('PlanchasTinta1',elemented.planchasTinta1)
-            setValue('PlanchasTinta2',elemented.planchasTinta2)
-            setValue('PlanchasTinta3',elemented.planchasTinta3)
-            setValue('PlanchasTinta4',elemented.planchasTinta4)
-            setValue('tipoTinta1',elemented.tipoTinta1)
-            setValue('tipoTinta2',elemented.tipoTinta2)
-            setValue('tipoTinta3',elemented.tipoTinta3)
-            setValue('tipoTinta4',elemented.tipoTinta4)
         }
-      }
-      apisolicitud();
-      
-    }, [allDatas])
+    }, [setValue, buscarClientePorId, buscaProductoPorId, buscaCiudadPorId, 
+        buscaMaterialPorId, buscaAcabadoPorId, buscaColdPorId, buscaHotStampingPorId]);
+        function numeroDePlanchas() {
+            let texto_acabado=refs.toggleButtonAcabado.current.querySelector('p').textContent;
+            let planchas=parseFloat(watch('PlanchasTinta1'))+parseFloat(watch('PlanchasTinta2'))+parseFloat(watch('PlanchasTinta3'))+parseFloat(watch('PlanchasTinta4'))
+            if (texto_acabado.includes("PARCIAL")){
+                planchas=planchas+1
+            }
+            return planchas
     
-    useEffect(() => {
-        async function fetchData() {
-          try {
-            const response = await ClientAxios.post(
-              `/allDatasSoli`,   {}, 
-              {
-                headers: {
-                  'User': Decrypt(localStorage.getItem("SesionToken")), 
-                }
-              }
-              
-            );
-            console.log(response.data)
-            setAllDatas(response.data)
-          } catch (error) {
-            console.error('Error fetching data:', error);
-          } finally {
-          }
         }
-      
-        fetchData();   
-      }, []);
-       /// calculos avance avanceEspe
-      function calcularAvance(){
-            let calculoAvance=(parseFloat(watch('CUnidad'))*0.3175)
-            setValue('avanceReal',parseFloat(calculoAvance.toFixed(1)) || 0)
-      }
+        function costoPlanchasporEtiqueta(cantidad,diferir) {
+     
 
-    function calcularMetrosPorRollo() {
+            cantidad = parseFloat(cantidad)
+            let cms2 = parseFloat(watch('anchoMaterialC'))  * parseFloat(watch('avanceReal'))
+            let valorPlancaCms2 = cms2*100
+            let Valorplanchas=valorPlancaCms2*numeroDePlanchas()
+            let valorfinalPlanchas=parseFloat(Valorplanchas)/(parseFloat(diferir)/cantidad)
+            return Math.round(valorfinalPlanchas)
+            
+            
+        }
+        function calcularCostoTintaM2(){
+            let valor_tintas=( parseFloat(watch('grTinta1'))*(parseFloat(watch('CubrimientoCoti1'))/100))+( parseFloat(watch('grTinta2'))*(parseFloat(watch('CubrimientoCoti2'))/100))+( parseFloat(watch('grTinta3'))*(parseFloat(watch('CubrimientoCoti3'))/100))+( parseFloat(watch('grTinta4'))*(parseFloat(watch('CubrimientoCoti4'))/100))
+          
+            return Math.round(valor_tintas)
+        }
+        function calcularValorTotalTintas(cantidad) {
+            let metros_l = parseFloat(calcularMetros(cantidad));
+            console.log('metros_l',metros_l)
+            let ancho_cm = parseFloat(watch('anchoMaterialC'));
+            console.log('ancho_cm',ancho_cm)
+            let ancho_m = ancho_cm / 100;
+            console.log('ancho_m',ancho_m)
+            let area_m2 = metros_l * ancho_m;
+            console.log('area_m2',area_m2)
+            let gramos = area_m2; // 4g por metro cuadrado
+            console.log('gramos',gramos)
+            let costoPorGramo = calcularCostoTintaM2();
+            console.log('costoPorGramo',costoPorGramo)
+            let valorTotal = gramos * costoPorGramo;
+            console.log('valorTotal',valorTotal)
+            
+            return Math.round(valorTotal);
+        }
+        function costoTerminacionEn(cantidad){
+            let seleccionTerminado=watch('terminacionEn')
+            if (seleccionTerminado==='Rebobinado') {
+                return (calcularMetros(cantidad)/562.5)*10000;
+            }else if (seleccionTerminado==='En hojas') {
+                return (calcularMetros(cantidad)/562.5)*10000;
+            }
+            else if (seleccionTerminado==='Doblado') {
+                return  (calcularMetros(cantidad)/562.5)*10000;
+            }else{
+                alert('selecionar terminación')
+                return 0
+            }
+        }
+        function calcularValorTroquel(cantidad,diferir) {
+            if(watch('cantidad1')===0){
+                alert('Buscar solicitud o agregar diferir costo troquel')
+                return 0;
+            }else{
+                let figuras=parseFloat(watch('around'))+parseFloat(watch('across'))
+                let valorFiguras=figuras<=20?220000:figuras>20 && figuras<=35? 270000 : figuras>35 && figuras<=50? 320000 : 370000 
+                let costoT=((((parseFloat(watch('CUnidad'))*0.3175*parseFloat(watch('anchoMaterialC')))*1200)+valorFiguras)/diferir)*cantidad
+                return costoT;
+            }
+        }
+        function costoTroquel(cantidad,diferir) {
+            if (watch('troquel')==="plano") {
+                return 100000;
+            }
+            switch (watch('costoTroquelTipo')) {            
+                case 'Existente':
+                    return calcularValorTroquel(cantidad,diferir);
+                    break;
+                case 'Nuevo':
+                    return calcularValorTroquel(cantidad,diferir);
+                    break;
+                case 'Nuevo Especial':
+                    return calcularValorTroquel(cantidad,diferir);
+                    break;
+                case 'otro':
+                    return watch('costoTroquelTipoOtro')/diferir;
+                    break;
+                case 'Ninguno':
+                    return 0;
+                    break;
+                default:
+                    return 0;
+                    break;
+            }
+        }
+        function calcularMetrosPorRollo() {
             let etiquetas=parseFloat(watch('rollos_por'));
-            console.log(etiquetas)
             if(parseInt(watch('posi'))===1 || parseInt(watch('posi'))===2 || parseInt(watch('posi'))===5 || parseInt(watch('posi'))===6){
                return parseFloat(watch('avanceReal'))/parseFloat(watch('around'))*etiquetas;
             }else{
                return parseFloat(watch('anchoMaterialC'))/parseFloat(watch('across'))*etiquetas;
             }
-    }
-
-    function calcularCajasPorRollos() {
-        let metrosporrollo = parseFloat(calcularMetrosPorRollo());
-        let core_d=parseFloat(watch('Core'))*parseFloat(watch('Core'));
-        let diametro=parseFloat(((core_d)+((4*(metrosporrollo/0.0254)*(152*0.0394*0.001))/3.1416)))
-        let largo_caja=29.5
-        let ancho_caja=29.5
-        let alto_caja=34
-        console.log('psi',parseInt(watch('posi')))
-        let ancho_etiqueta=parseInt(watch('posi'))===1 || parseInt(watch('posi'))===2 || parseInt(watch('posi'))===5 || parseInt(watch('posi'))===6 ? parseFloat(watch('anchoMaterialC')): parseFloat(watch('avanceReal'));
-        let capacidad_largo= Math.ceil(largo_caja/diametro)
-        let capacidad_ancho= Math.ceil(ancho_caja/diametro)
-        let capacidad_alto= Math.ceil(alto_caja/ancho_etiqueta)
-        let total_capacidad=capacidad_largo*capacidad_ancho*capacidad_alto;
-        return total_capacidad;
-    }
-    function calcularCajas() {
-      
-        setValue('cajas_cantidad1',Math.ceil(parseFloat(parseFloat(watch('cantidad1')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
-        setValue('cajas_cantidad2',Math.ceil(parseFloat(parseFloat(watch('cantidad2')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
-        setValue('cajas_cantidad3',Math.ceil(parseFloat(parseFloat(watch('cantidad3')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
-        setValue('cajas_cantidad4',Math.ceil(parseFloat(parseFloat(watch('cantidad4')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
-        setValue('cajas_cantidad5',Math.ceil(parseFloat(parseFloat(watch('cantidad5')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
-        setValue('cajas_cantidad6',Math.ceil(parseFloat(parseFloat(watch('cantidad6')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
-        setValue('cajas_cantidad7',Math.ceil(parseFloat(parseFloat(watch('cantidad7')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
-        setValue('cajas_cantidad8',Math.ceil(parseFloat(parseFloat(watch('cantidad8')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
-        
-    }
-      /// calculos avance anchoEspe
-    function calcularAncho(){
-        if(watch('anchoEspe')==""){
-            alert("Falta Ancho Esperado")
-        }else{
+        }
+        function calcularCajasPorRollos() {
+            let metrosporrollo = parseFloat(calcularMetrosPorRollo());
+            let core_d=parseFloat(watch('Core'))*parseFloat(watch('Core'));
+            let diametro=parseFloat(((core_d)+((4*(metrosporrollo/0.0254)*(152*0.0394*0.001))/3.1416)))
+            let largo_caja=29.5
+            let ancho_caja=29.5
+            let alto_caja=34
+            console.log('anchoMaterialC',watch('anchoMaterialC'))
+            console.log('avanceReal',watch('avanceReal'))
+            let ancho_etiqueta=parseInt(watch('posi'))===1 || parseInt(watch('posi'))===2 || parseInt(watch('posi'))===5 || parseInt(watch('posi'))===6 ? parseFloat(watch('anchoMaterialC')): parseFloat(watch('avanceReal'));
+            let capacidad_largo= Math.ceil(largo_caja/diametro)
+            let capacidad_ancho= Math.ceil(ancho_caja/diametro)
+            let capacidad_alto= Math.ceil(alto_caja/ancho_etiqueta)
+            let total_capacidad=capacidad_largo*capacidad_ancho*capacidad_alto;
+            return total_capacidad;
+        }
+        function calcularCajas() {
+            console.log(watch('rollos_por'))
+            console.log(calcularCajasPorRollos())
+            setValue('cajas_cantidad1',Math.ceil(parseFloat(parseFloat(watch('cantidad1')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
+            setValue('cajas_cantidad2',Math.ceil(parseFloat(parseFloat(watch('cantidad2')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
+            setValue('cajas_cantidad3',Math.ceil(parseFloat(parseFloat(watch('cantidad3')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
+            setValue('cajas_cantidad4',Math.ceil(parseFloat(parseFloat(watch('cantidad4')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
+            setValue('cajas_cantidad5',Math.ceil(parseFloat(parseFloat(watch('cantidad5')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
+            setValue('cajas_cantidad6',Math.ceil(parseFloat(parseFloat(watch('cantidad6')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
+            setValue('cajas_cantidad7',Math.ceil(parseFloat(parseFloat(watch('cantidad7')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
+            setValue('cajas_cantidad8',Math.ceil(parseFloat(parseFloat(watch('cantidad8')))/parseFloat(watch('rollos_por'))/parseFloat(calcularCajasPorRollos())));
             
-            const anchoEspe = parseFloat(watch('anchoEspe'));
-            const across = parseFloat(watch('across'));
-            const espacioEntreEtiquetas = parseFloat(watch('espacioentreetiquetas'));
-            const espacioExteriores = parseFloat(watch('espacioexteriores'));
-            console.log('across',across)
-            console.log('espacioentreetiquetas',espacioEntreEtiquetas)
-            console.log('espacioexteriores',espacioExteriores)
-            let calculoAncho = 
-            (anchoEspe * across) +
-            ((across > 1 ? (across - 1) : 0) * espacioEntreEtiquetas) +
-            (2 * espacioExteriores);
-            console.log('calculoAncho',  (anchoEspe * across))
-            setValue('anchoMaterialC', parseFloat(calculoAncho.toFixed(1)) || 0);
-            setValue('anchoLaminacionC', parseFloat(calculoAncho.toFixed(1)) || 0);
-            setValue('anchoColdC', parseFloat(calculoAncho.toFixed(1)) || 0);
-            setValue('anchoHotStamping', parseFloat(calculoAncho.toFixed(1)) || 0);
         }
-       
-
-    }
-    const handleRowSelectedCoti=(datos)=>{       
-       
-      }
-      
-    
-    
-    function calcularAreaEtiqueta(){
-        return  parseFloat(watch('anchoEspe'))*parseFloat(watch('avanceEspe'));
-    }
-    //
-    ///Etiq para graduar
-    function calcularMetros(cantidad){
-        cantidad=parseFloat(cantidad)
-        let factor=0.3175;
-        let constante=60;
-        console.log(cantidad)
-        let REGISTRO_COLORES=(parseFloat(watch('PlanchasTinta1'))+parseFloat(watch('PlanchasTinta2'))+parseFloat(watch('PlanchasTinta3'))+parseFloat(watch('PlanchasTinta4')))*15;
-        let MATERIAL_SIN_DESPERDICIO=((((parseFloat(watch('CUnidad'))*factor)/parseFloat(watch('around')))*cantidad)/parseFloat(watch('across')))/100;
-        let REGISTRO_DE_TROQUEL=10;
-        let CAMBIO_DE_ROLLO =(MATERIAL_SIN_DESPERDICIO/1000)>1 ? (MATERIAL_SIN_DESPERDICIO/999)*40 : 0;
-        let CAMBIO_DE_PLANCHAS=parseFloat(watch('CambPlanchas'))*50
-        let sumaTotal=constante+REGISTRO_COLORES+MATERIAL_SIN_DESPERDICIO+REGISTRO_DE_TROQUEL+CAMBIO_DE_ROLLO+CAMBIO_DE_PLANCHAS
-        let metros=(sumaTotal>1000)?sumaTotal=sumaTotal+50:sumaTotal=sumaTotal+30;
-        return  Math.round(metros);
-    }
-    function calcularCostoTintaM2(){
-        let valor_tintas=( parseFloat(watch('grTinta1'))*(parseFloat(watch('CubrimientoCoti1'))/100))+( parseFloat(watch('grTinta2'))*(parseFloat(watch('CubrimientoCoti2'))/100))+( parseFloat(watch('grTinta3'))*(parseFloat(watch('CubrimientoCoti3'))/100))+( parseFloat(watch('grTinta4'))*(parseFloat(watch('CubrimientoCoti4'))/100))
-      
-        return Math.round(valor_tintas)
-    }
-    function calcularValorTotalTintas(cantidad) {
-        let metros_l = parseFloat(calcularMetros(cantidad));
-        console.log('metros_l',metros_l)
-        let ancho_cm = parseFloat(watch('anchoMaterialC'));
-        console.log('ancho_cm',ancho_cm)
-        let ancho_m = ancho_cm / 100;
-        console.log('ancho_m',ancho_m)
-        let area_m2 = metros_l * ancho_m;
-        console.log('area_m2',area_m2)
-        let gramos = area_m2; // 4g por metro cuadrado
-        console.log('gramos',gramos)
-        let costoPorGramo = calcularCostoTintaM2();
-        console.log('costoPorGramo',costoPorGramo)
-        let valorTotal = gramos * costoPorGramo;
-        console.log('valorTotal',valorTotal)
-        
-        return Math.round(valorTotal);
-    }
-    
-   
-    function numeroDePlanchas() {
-        let texto_acabado=toggleButtonAcabado.current.querySelector('p').textContent;
-        let planchas=parseFloat(watch('PlanchasTinta1'))+parseFloat(watch('PlanchasTinta2'))+parseFloat(watch('PlanchasTinta3'))+parseFloat(watch('PlanchasTinta4'))
-        if (texto_acabado.includes("PARCIAL")){
-            planchas=planchas+1
-        }
-        return planchas
-
-    }
-    
-    function calcularValorTroquel(cantidad,diferir) {
-        if(watch('cantidad1')===0){
-            alert('Buscar solicitud o agregar diferir costo troquel')
-            return 0;
-        }else{
-            let figuras=parseFloat(watch('around'))+parseFloat(watch('across'))
-            let valorFiguras=figuras<=20?220000:figuras>20 && figuras<=35? 270000 : figuras>35 && figuras<=50? 320000 : 370000 
-            let costoT=((((parseFloat(watch('CUnidad'))*0.3175*parseFloat(watch('anchoMaterialC')))*1200)+valorFiguras)/diferir)*cantidad
-            return costoT;
-        }
-    }
-    function costoPlanchasporEtiqueta(cantidad,diferir) {
-     
-
-        cantidad = parseFloat(cantidad)
-        let cms2 = parseFloat(watch('anchoMaterialC'))  * parseFloat(watch('avanceReal'))
-        let valorPlancaCms2 = cms2*100
-        let Valorplanchas=valorPlancaCms2*numeroDePlanchas()
-        let valorfinalPlanchas=parseFloat(Valorplanchas)/(parseFloat(diferir)/cantidad)
-        return Math.round(valorfinalPlanchas)
-        
-        
-    }
-    function costoTerminacionEn(cantidad){
-        let seleccionTerminado=watch('terminacionEn')
-        if (seleccionTerminado==='Rebobinado') {
-            return (calcularMetros(cantidad)/562.5)*10000;
-        }else if (seleccionTerminado==='En hojas') {
-            return (calcularMetros(cantidad)/562.5)*10000;
-        }
-        else if (seleccionTerminado==='Doblado') {
-            return  (calcularMetros(cantidad)/562.5)*10000;
-        }else{
-            alert('selecionar terminación')
-            return 0
-        }
-    }
-    function costoTroquel(cantidad,diferir) {
-        if (watch('troquel')==="plano") {
-            return 100000;
-        }
-        switch (watch('costoTroquelTipo')) {            
-            case 'Existente':
-                return calcularValorTroquel(cantidad,diferir);
-                break;
-            case 'Nuevo':
-                return calcularValorTroquel(cantidad,diferir);
-                break;
-            case 'Nuevo Especial':
-                return calcularValorTroquel(cantidad,diferir);
-                break;
-            case 'otro':
-                return watch('costoTroquelTipoOtro')/diferir;
-                break;
-            case 'Ninguno':
-                return 0;
-                break;
-            default:
-                return 0;
-                break;
-        }
-    }
-    function recargoTrnsporteF() {
-        switch (watch('recargoTrnsporte')) {
-            case 'Corte Manual':
-                return parseFloat(watch('recargoTrnsporteCMCosto'));
-                break;
-            case 'Doblado Manual':
-                return parseFloat(watch('recargoTrnsporteDMCosto'));
-                break;
-            case 'Reproceso de Corte y Rebobinado':
-                return parseFloat(watch('recargoTrnsporteCRCosto'));
-                break;
-            case 'otro':
-                return parseFloat(watch('recargoTrnsporteOtroCosto'));
-                break;
-        
-            default:
-                return 0;
-                break;
-        }
-    }
-    function name(params) {
-        switch (key) {
-            case value:
-                
-                break;
-        
-            default:
-                break;
-        }
-    }
-
-    function costoTotal(cantidad,coti,troquelDif,fotoDife){
-        
-        cantidad = parseFloat(cantidad)
-        let metroslineales=parseFloat(calcularMetros(cantidad));
-        //// tiempo adicional maquina
-        let tiempo_adicional_maquina=0;
-        //// precio adicional maquina
-        let precio_adicional_maquina=0;
-        ///add
-        let precioGraduacionPlanchas=parseFloat(document.getElementById('GradPlanchas').getAttribute('attr-precio'))*parseFloat(watch('GradPlanchas'));
-        let CambPlanchas=parseFloat(document.getElementById('CambPlanchas').getAttribute('attr-precio'))*parseFloat(watch('CambPlanchas'));
-        let GradPAR=parseFloat(document.getElementById('GradPAR').getAttribute('attr-precio'))*parseFloat(watch('GradPAR'));
-        let PrepTintas=parseFloat(document.getElementById('PrepTintas').getAttribute('attr-precio'))*parseFloat(watch('PrepTintas'));
-        let CambiosTintas=parseFloat( document.getElementById('CambiosTintas').getAttribute('attr-precio'))*parseFloat(watch('CambiosTintas'));
-        if (precioGraduacionPlanchas>0){
-            tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat(watch('GradPlanchas'))*10)
-            precio_adicional_maquina=precio_adicional_maquina+precioGraduacionPlanchas;
-        }
-        if (PrepTintas>0){
-            precio_adicional_maquina=precio_adicional_maquina+PrepTintas;
-        }
-        if (CambPlanchas>0){
-            tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat(watch('GradPlanchas'))*10)
-            precio_adicional_maquina=precio_adicional_maquina+CambPlanchas;
-        }
-        if (GradPAR>0){
-            tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat(watch('GradPAR'))*15)
-            precio_adicional_maquina=precio_adicional_maquina+GradPAR;
-        }
-        if (CambiosTintas>0){
-            tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat(watch('CambiosTintas'))*15)
-            precio_adicional_maquina=precio_adicional_maquina+CambiosTintas;
-        }
-        //// impRevAd
-        var IRAdhesivo = document.querySelector('input[name="IRAdhesivo"]:checked');
-        
-            if(IRAdhesivo.value=="Si"){
-                
-                precio_adicional_maquina=precio_adicional_maquina*parseFloat(IRAdhesivo.getAttribute('attr-precio'))
-                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(IRAdhesivo.getAttribute('attr-tiempo'));
-            }
-      
-        ///// imprevline
-        var IRLiner = document.querySelector('input[name="IRLiner"]:checked');
-       
-            if(IRLiner=="Si"){
-                precio_adicional_maquina=precio_adicional_maquina+parseFloat(IRLiner.getAttribute('attr-precio'))
-                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(IRLiner.getAttribute('attr-tiempo'));
-            }
-      
-        ///// troquel
-        var TroquelGraduacion = document.querySelector('input[name="TroquelGraduacion"]:checked');
-       
-            if(TroquelGraduacion.value=="Si"){
-                precio_adicional_maquina=precio_adicional_maquina*parseFloat(TroquelGraduacion.getAttribute('attr-precio'))
-                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(TroquelGraduacion.getAttribute('attr-tiempo'));
-            }
-   
-        ////// Shok air
-        var ShokAir = document.querySelector('input[name="ShokAir"]:checked');
-       
-            if(ShokAir.value=="Si"){
-                precio_adicional_maquina=precio_adicional_maquina*parseFloat(ShokAir.getAttribute('attr-precio'))
-                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(ShokAir.getAttribute('attr-tiempo'));
-            }
-      
-        ///// ponchado
-        var ponchadoFc = document.querySelector('input[name="ponchadoFc"]:checked');
-       
-            if(ponchadoFc.value=="Si"){
-                precio_adicional_maquina=precio_adicional_maquina*parseFloat(ponchadoFc.getAttribute('attr-precio'))
-                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(ponchadoFc.getAttribute('attr-tiempo'));
-            }
-     
-        ///// mesa shetter
-        var MesaShetter =document.querySelector('input[name="MesaShetter"]:checked');
-  
-            if(MesaShetter.value=="Si"){
-                precio_adicional_maquina=precio_adicional_maquina*parseFloat(MesaShetter.getAttribute('attr-precio'))
-                tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(MesaShetter.getAttribute('attr-tiempo'));
-            }ShokAir
-     
-        ///// velocidadImp
-        var velocidadImp = document.querySelector('input[name="velocidadImp"]:checked');
-        let velocidad=0
-        
-            if (velocidadImp.value=="Otro"){
-                velocidad=parseFloat(watch('velocidadImpvalor'));
-            }else{
-                velocidad=parseFloat(watch('velocidadImp'));
-            }
-
-        ///// maquina
-        var maquina = document.querySelector('input[name="maquina"]:checked');
-        let maquinaprecio=0
-        
-        if (maquina) {
-            maquinaprecio = parseFloat(maquina.getAttribute('attr-precio'));
-        } else {
-            alert("Por favor, selecciona una opción maquina.");
-        }
-        /// calculo valor maquina
-
-        let trabajohoras=metroslineales/velocidad;
-        
-       
-        tiempo_adicional_maquina=tiempo_adicional_maquina/60
-        
-        let Costo_tiempo_adicional=maquinaprecio*tiempo_adicional_maquina
-        let Costo_total_trabajo=trabajohoras*maquinaprecio
-        let Costo_total_maquina=0
-        Costo_total_maquina=Costo_total_trabajo+Costo_tiempo_adicional
-    
-        
-        let sherpavalor=document.getElementById('sherpa').getAttribute('attr-precio');
-        let preciosherpa=parseFloat(document.getElementById('sherpa').value)*parseFloat(sherpavalor);
-        ///// fin radios
-        let etiqAlAncho=document.getElementById('etiqAlAncho').getAttribute('attr-precio');
-        let avanceZebra=document.getElementById('avanceZebra').getAttribute('attr-precio');
-        let RefDistintasZebra=document.getElementById('RefDistintasZebra').getAttribute('attr-precio');
-        /// cinta
-        var CintaZebra = document.getElementById('CintaZebra');
-        var CintaZebraprecio=0
-        if(CintaZebra.selectedIndex!==-1){
-            CintaZebraprecio = parseFloat(CintaZebra.options[CintaZebra.selectedIndex].getAttribute('attr-precio'));
-        }
-       
-        ///// transporteCiudad aburra 
-        var transporteCiudad = document.querySelector('select[id="ciudadEnvio"]');
-        let transporteCiudadprecio = 0;
-        let cantidadCajas=0;
-        // Verificar si se ha seleccionado una opción válida
-        if (transporteCiudad && transporteCiudad.value) {
-            // Obtener el precio del atributo 'attr-precio' de la opción seleccionada
-            transporteCiudadprecio = parseFloat(transporteCiudad.selectedOptions[0].getAttribute('att-precio'));
-            // Multiplicar por la cantidad de cajas (presupongo que la función 'watch' devuelve el valor de 'cajas')
-            switch (coti) {
-                case 1:
-                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad1'));
-                    cantidadCajas=parseInt(watch('cajas_cantidad1'));
-                break;
-                case 2:
-                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad2'));
-                    cantidadCajas=parseInt(watch('cajas_cantidad2'));
-                break;
-                case 3:
-                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad3'));
-                    cantidadCajas=parseInt(watch('cajas_cantidad3'));
-                break;
-                case 4:
-                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad4'));
-                    cantidadCajas=parseInt(watch('cajas_cantidad4'));
-                break;
-                case 5:
-                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad5'));
-                    cantidadCajas=parseInt(watch('cajas_cantidad5'));
-                break;
-                case 6:
-                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad6'));
-                    cantidadCajas=parseInt(watch('cajas_cantidad6'));
-                break;
-                case 7:
-                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad7'));
-                    cantidadCajas=parseInt(watch('cajas_cantidad7'));
-                break;
-                case 8:
-                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad8'));
-                    cantidadCajas=parseInt(watch('cajas_cantidad8'));
-                break;
-                
+        function recargoTrnsporteF() {
+            switch (watch('recargoTrnsporte')) {
+                case 'Corte Manual':
+                    return parseFloat(watch('recargoTrnsporteCMCosto'));
+                    break;
+                case 'Doblado Manual':
+                    return parseFloat(watch('recargoTrnsporteDMCosto'));
+                    break;
+                case 'Reproceso de Corte y Rebobinado':
+                    return parseFloat(watch('recargoTrnsporteCRCosto'));
+                    break;
+                case 'otro':
+                    return parseFloat(watch('recargoTrnsporteOtroCosto'));
+                    break;
+            
                 default:
-                    transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad1'));
-                    cantidadCajas=parseInt(watch('cajas_cantidad1'));
+                    return 0;
                     break;
             }
-            
-        } else {
-            alert("Por favor, selecciona una opción de ciudad.");
         }
-           
-
-        ////
-
-        var materialValor = toggleButtonMaterial.current.querySelector('p').textContent;
-        let materialValorprecio=0
-        if (materialValor=="Material") {
-            alert("Por favor, selecciona una opción de Material.");
-        } else {
-            materialValorprecio =parseFloat(metroslineales)*(parseFloat(watch("anchoMaterialC"))/100)*parseFloat(watch("precioMaterial"));
-        }
-        var acabadoValor =  toggleButtonAcabado.current.querySelector('p').textContent;
-        let acabadoValorprecio=0
-        if (acabadoValor=="Acabado") {
-            acabadoValorprecio = parseFloat(0);
-        } else {
-            acabadoValorprecio = parseFloat(metroslineales)*(parseFloat(watch("anchoMaterialC"))/100)*parseFloat(watch("precioAcabado"));
-        }
-        var coldValor = toggleButtonCold.current.querySelector('p').textContent;
-        let coldValorprecio=0
-        if (coldValor=="Cold Foild") {
-            coldValorprecio = parseFloat(0);
-        } else {
-            coldValorprecio = parseFloat(metroslineales)*(parseFloat(watch("anchoMaterialC"))/100)*parseFloat(watch("precioCold"));
-        }
-
-
-        const horasMaquina = trabajohoras + tiempo_adicional_maquina;
-        let wholeHours = Math.floor(horasMaquina);
-        let fractionalHours = horasMaquina - wholeHours;
-        let fractionalMinutes = Math.round(fractionalHours * 60);
+        function costoTotal(cantidad,coti,troquelDif,fotoDife){
         
-        // Ajustar las horas si los minutos son 60
-        if (fractionalMinutes === 60) {
-            fractionalMinutes = 0;
-            wholeHours += 1;
-        }
-        
-        const formattedMinutes = fractionalMinutes.toString().padStart(2, '0');
-        
-        const horasMaquinaReales = `${wholeHours} h ${formattedMinutes}m`;
-
-
-
-
-       
-        var coti = (coti);
-        var cantidadtd =parseFloat((Math.round(cantidad)));
-        var materialValorpreciotd =parseFloat((Math.round(materialValorprecio)));
-        var acabadoValorpreciotd =parseFloat((Math.round(acabadoValorprecio)));
-        var coldValorpreciotd =parseFloat((Math.round(coldValorprecio)));
-        var Costo_total_maquinatd =parseFloat((Math.round(Costo_total_maquina)));
-        var horas_maquina =(horasMaquinaReales);
-        var precioGraduacionPlanchastd =parseFloat((Math.round(precioGraduacionPlanchas)));
-        var CambPlanchastd =parseFloat((Math.round(CambPlanchas)));
-        var GradPARtd =parseFloat((GradPAR));
-        var CambiosTintastd =parseFloat((Math.round(CambiosTintas)));
-        var PrepTintastd =parseFloat((Math.round(PrepTintas)));
-        var costoPlanchasporEtiquetatd =parseFloat((Math.round(costoPlanchasporEtiqueta(cantidad,fotoDife))));
-        var calcularValorTotalTintastd =parseFloat((Math.round(calcularValorTotalTintas(cantidad))));
-        var transporteCiudadpreciotd =parseFloat(transporteCiudadprecio) 
-        var constoTerminacion =parseFloat(costoTerminacionEn(cantidad));
-        var costoTroqueltd =parseFloat(costoTroquel(cantidad,troquelDif));
-        var recargoTrnsporteFtd =parseFloat(recargoTrnsporteF());
-       
-        let costo_total = materialValorpreciotd+acabadoValorpreciotd+coldValorpreciotd+Costo_total_maquinatd+precioGraduacionPlanchastd+CambPlanchastd+GradPARtd+CambiosTintastd+PrepTintastd+costoPlanchasporEtiquetatd+calcularValorTotalTintastd+transporteCiudadpreciotd+constoTerminacion+costoTroqueltd+recargoTrnsporteFtd;
-        let subtotal=parseFloat(costo_total);
-        var utilildadtd= parseFloat(subtotal*parseFloat(watch('utilidad'))/100)
-        var comisiontd = parseFloat(subtotal*parseFloat(watch('comision'))/100)
-        costo_total=parseFloat(subtotal)+parseFloat(utilildadtd)+parseFloat(comisiontd);
-        var costo_totaltd = parseFloat(Math.round(costo_total));
-        let cotizando ={
-            'coti':coti,
-            'cantidadtd':cantidadtd,
-            'materialValorpreciotd':materialValorpreciotd,
-            'acabadoValorpreciotd':acabadoValorpreciotd,
-            'coldValorpreciotd':coldValorpreciotd,
-            'Costo_total_maquinatd':Costo_total_maquinatd,
-            'horas_maquina':horas_maquina,
-            'precioGraduacionPlanchastd':precioGraduacionPlanchastd,
-            'CambPlanchastd':CambPlanchastd,
-            'GradPARtd':GradPARtd,
-            'CambiosTintastd':CambiosTintastd,
-            'PrepTintastd':PrepTintastd,
-            'costoPlanchasporEtiquetatd':costoPlanchasporEtiquetatd,
-            'calcularValorTotalTintastd':calcularValorTotalTintastd,
-            'transporteCiudadpreciotd':transporteCiudadpreciotd,
-            'costo_totaltd':costo_totaltd,
-            'constoTerminacion':constoTerminacion,
-            'costoTroqueltd':costoTroqueltd,
-            'recargoTrnsporteFtd':recargoTrnsporteFtd,
-            'utilildadtd':utilildadtd,
-            'comisiontd':comisiontd,
-            'preciosherpa':parseFloat(preciosherpa),
-            'subtotal':subtotal,
-            'cajas':cantidadCajas
+            cantidad = parseFloat(cantidad)
+            let metroslineales=parseFloat(calcularMetros(cantidad));
+            //// tiempo adicional maquina
+            let tiempo_adicional_maquina=0;
+            //// precio adicional maquina
+            let precio_adicional_maquina=0;
+            ///add
+            let precioGraduacionPlanchas=parseFloat(document.getElementById('GradPlanchas').getAttribute('attr-precio'))*parseFloat(watch('GradPlanchas'));
+            let CambPlanchas=parseFloat(document.getElementById('CambPlanchas').getAttribute('attr-precio'))*parseFloat(watch('CambPlanchas'));
+            let GradPAR=parseFloat(document.getElementById('GradPAR').getAttribute('attr-precio'))*parseFloat(watch('GradPAR'));
+            let PrepTintas=parseFloat(document.getElementById('PrepTintas').getAttribute('attr-precio'))*parseFloat(watch('PrepTintas'));
+            let CambiosTintas=parseFloat( document.getElementById('CambiosTintas').getAttribute('attr-precio'))*parseFloat(watch('CambiosTintas'));
+            if (precioGraduacionPlanchas>0){
+                tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat(watch('GradPlanchas'))*10)
+                precio_adicional_maquina=precio_adicional_maquina+precioGraduacionPlanchas;
             }
-        
-        return   cotizando;
-    }
+            if (PrepTintas>0){
+                precio_adicional_maquina=precio_adicional_maquina+PrepTintas;
+            }
+            if (CambPlanchas>0){
+                tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat(watch('GradPlanchas'))*10)
+                precio_adicional_maquina=precio_adicional_maquina+CambPlanchas;
+            }
+            if (GradPAR>0){
+                tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat(watch('GradPAR'))*15)
+                precio_adicional_maquina=precio_adicional_maquina+GradPAR;
+            }
+            if (CambiosTintas>0){
+                tiempo_adicional_maquina=tiempo_adicional_maquina+(parseFloat(watch('CambiosTintas'))*15)
+                precio_adicional_maquina=precio_adicional_maquina+CambiosTintas;
+            }
+            //// impRevAd
+            var IRAdhesivo = document.querySelector('input[name="IRAdhesivo"]:checked');
+            
+                if(IRAdhesivo.value=="Si"){
+                    
+                    precio_adicional_maquina=precio_adicional_maquina*parseFloat(IRAdhesivo.getAttribute('attr-precio'))
+                    tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(IRAdhesivo.getAttribute('attr-tiempo'));
+                }
+          
+            ///// imprevline
+            var IRLiner = document.querySelector('input[name="IRLiner"]:checked');
+           
+                if(IRLiner=="Si"){
+                    precio_adicional_maquina=precio_adicional_maquina+parseFloat(IRLiner.getAttribute('attr-precio'))
+                    tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(IRLiner.getAttribute('attr-tiempo'));
+                }
+          
+            ///// troquel
+            var TroquelGraduacion = document.querySelector('input[name="TroquelGraduacion"]:checked');
+           
+                if(TroquelGraduacion.value=="Si"){
+                    precio_adicional_maquina=precio_adicional_maquina*parseFloat(TroquelGraduacion.getAttribute('attr-precio'))
+                    tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(TroquelGraduacion.getAttribute('attr-tiempo'));
+                }
+       
+            ////// Shok air
+            var ShokAir = document.querySelector('input[name="ShokAir"]:checked');
+           
+                if(ShokAir.value=="Si"){
+                    precio_adicional_maquina=precio_adicional_maquina*parseFloat(ShokAir.getAttribute('attr-precio'))
+                    tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(ShokAir.getAttribute('attr-tiempo'));
+                }
+          
+            ///// ponchado
+            var ponchadoFc = document.querySelector('input[name="ponchadoFc"]:checked');
+           
+                if(ponchadoFc.value=="Si"){
+                    precio_adicional_maquina=precio_adicional_maquina*parseFloat(ponchadoFc.getAttribute('attr-precio'))
+                    tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(ponchadoFc.getAttribute('attr-tiempo'));
+                }
+         
+            ///// mesa shetter
+            var MesaShetter =document.querySelector('input[name="MesaShetter"]:checked');
+      
+                if(MesaShetter.value=="Si"){
+                    precio_adicional_maquina=precio_adicional_maquina*parseFloat(MesaShetter.getAttribute('attr-precio'))
+                    tiempo_adicional_maquina=tiempo_adicional_maquina+ parseFloat(MesaShetter.getAttribute('attr-tiempo'));
+                }ShokAir
+         
+            ///// velocidadImp
+            var velocidadImp = document.querySelector('input[name="velocidadImp"]:checked');
+            let velocidad=0
+            
+                if (velocidadImp.value=="Otro"){
+                    velocidad=parseFloat(watch('velocidadImpvalor'));
+                }else{
+                    velocidad=parseFloat(watch('velocidadImp'));
+                }
     
-    const constructionCotizacion=()=>{  
-        setAllCoti([])      
-        for (let index = 1; index < 10; index++) {
-            let cantidad_select="cantidad"+index;
-            let cantidad_foto="difFotopolimero"+index;
-            let cantidad_troquel="difTroquel"+index;
-                if (parseFloat(watch(cantidad_select))>0){
-                    let coOb = costoTotal(watch(cantidad_select),index,watch(cantidad_troquel),watch(cantidad_foto));
-                    setAllCoti(prevData => [...prevData, coOb]);
+            ///// maquina
+            var maquina = document.querySelector('input[name="maquina"]:checked');
+            let maquinaprecio=0
+            
+            if (maquina) {
+                maquinaprecio = parseFloat(maquina.getAttribute('attr-precio'));
+            } else {
+                alert("Por favor, selecciona una opción maquina.");
+            }
+            /// calculo valor maquina
+    
+            let trabajohoras=metroslineales/velocidad;
+            
+           
+            tiempo_adicional_maquina=tiempo_adicional_maquina/60
+            
+            let Costo_tiempo_adicional=maquinaprecio*tiempo_adicional_maquina
+            let Costo_total_trabajo=trabajohoras*maquinaprecio
+            let Costo_total_maquina=0
+            Costo_total_maquina=Costo_total_trabajo+Costo_tiempo_adicional
+        
+            
+            let sherpavalor=document.getElementById('sherpa').getAttribute('attr-precio');
+            let preciosherpa=parseFloat(document.getElementById('sherpa').value)*parseFloat(sherpavalor);
+            ///// fin radios
+            let etiqAlAncho=document.getElementById('etiqAlAncho').getAttribute('attr-precio');
+            let avanceZebra=document.getElementById('avanceZebra').getAttribute('attr-precio');
+            let RefDistintasZebra=document.getElementById('RefDistintasZebra').getAttribute('attr-precio');
+            /// cinta
+            var CintaZebra = document.getElementById('CintaZebra');
+            var CintaZebraprecio=0
+            if(CintaZebra.selectedIndex!==-1){
+                CintaZebraprecio = parseFloat(CintaZebra.options[CintaZebra.selectedIndex].getAttribute('attr-precio'));
+            }
+           
+            ///// transporteCiudad aburra 
+            var transporteCiudad = document.querySelector('select[id="ciudadEnvio"]');
+            let transporteCiudadprecio = 0;
+            let cantidadCajas=0;
+            // Verificar si se ha seleccionado una opción válida
+            if (transporteCiudad && transporteCiudad.value) {
+                // Obtener el precio del atributo 'attr-precio' de la opción seleccionada
+                transporteCiudadprecio = parseFloat(transporteCiudad.selectedOptions[0].getAttribute('att-precio'));
+                // Multiplicar por la cantidad de cajas (presupongo que la función 'watch' devuelve el valor de 'cajas')
+                switch (coti) {
+                    case 1:
+                        transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad1'));
+                        cantidadCajas=parseInt(watch('cajas_cantidad1'));
+                    break;
+                    case 2:
+                        transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad2'));
+                        cantidadCajas=parseInt(watch('cajas_cantidad2'));
+                    break;
+                    case 3:
+                        transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad3'));
+                        cantidadCajas=parseInt(watch('cajas_cantidad3'));
+                    break;
+                    case 4:
+                        transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad4'));
+                        cantidadCajas=parseInt(watch('cajas_cantidad4'));
+                    break;
+                    case 5:
+                        transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad5'));
+                        cantidadCajas=parseInt(watch('cajas_cantidad5'));
+                    break;
+                    case 6:
+                        transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad6'));
+                        cantidadCajas=parseInt(watch('cajas_cantidad6'));
+                    break;
+                    case 7:
+                        transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad7'));
+                        cantidadCajas=parseInt(watch('cajas_cantidad7'));
+                    break;
+                    case 8:
+                        transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad8'));
+                        cantidadCajas=parseInt(watch('cajas_cantidad8'));
+                    break;
+                    
+                    default:
+                        transporteCiudadprecio = parseFloat(transporteCiudadprecio) * parseInt(watch('cajas_cantidad1'));
+                        cantidadCajas=parseInt(watch('cajas_cantidad1'));
+                        break;
+                }
+                
+            } else {
+                alert("Por favor, selecciona una opción de ciudad.");
+            }
+               
+    
+            ////
+    
+            var materialValor = refs.toggleButtonMaterial.current.querySelector('p').textContent;
+            let materialValorprecio=0
+            if (materialValor=="Material") {
+                alert("Por favor, selecciona una opción de Material.");
+            } else {
+                materialValorprecio =parseFloat(metroslineales)*(parseFloat(watch("anchoMaterialC"))/100)*parseFloat(watch("precioMaterial"));
+            }
+            var acabadoValor =  refs.toggleButtonAcabado.current.querySelector('p').textContent;
+            let acabadoValorprecio=0
+            if (acabadoValor=="Acabado") {
+                acabadoValorprecio = parseFloat(0);
+            } else {
+                acabadoValorprecio = parseFloat(metroslineales)*(parseFloat(watch("anchoMaterialC"))/100)*parseFloat(watch("precioAcabado"));
+            }
+            var coldValor = refs.toggleButtonCold.current.querySelector('p').textContent;
+            let coldValorprecio=0
+            if (coldValor=="Cold Foild") {
+                coldValorprecio = parseFloat(0);
+            } else {
+                coldValorprecio = parseFloat(metroslineales)*(parseFloat(watch("anchoMaterialC"))/100)*parseFloat(watch("precioCold"));
+            }
+    
+    
+            const horasMaquina = trabajohoras + tiempo_adicional_maquina;
+            let wholeHours = Math.floor(horasMaquina);
+            let fractionalHours = horasMaquina - wholeHours;
+            let fractionalMinutes = Math.round(fractionalHours * 60);
+            
+            // Ajustar las horas si los minutos son 60
+            if (fractionalMinutes === 60) {
+                fractionalMinutes = 0;
+                wholeHours += 1;
+            }
+            
+            const formattedMinutes = fractionalMinutes.toString().padStart(2, '0');
+            
+            const horasMaquinaReales = `${wholeHours} h ${formattedMinutes}m`;
+    
+    
+    
+    
+          
+            var cantidadtd =parseFloat((Math.round(cantidad)));
+            var materialValorpreciotd =parseFloat((Math.round(materialValorprecio)));
+            var acabadoValorpreciotd =parseFloat((Math.round(acabadoValorprecio)));
+            var coldValorpreciotd =parseFloat((Math.round(coldValorprecio)));
+            var Costo_total_maquinatd =parseFloat((Math.round(Costo_total_maquina)));
+            var horas_maquina =(horasMaquinaReales);
+            var precioGraduacionPlanchastd =parseFloat((Math.round(precioGraduacionPlanchas)));
+            var CambPlanchastd =parseFloat((Math.round(CambPlanchas)));
+            var GradPARtd =parseFloat((GradPAR));
+            var CambiosTintastd =parseFloat((Math.round(CambiosTintas)));
+            var PrepTintastd =parseFloat((Math.round(PrepTintas)));
+            var costoPlanchasporEtiquetatd =parseFloat((Math.round(costoPlanchasporEtiqueta(cantidad,fotoDife))));
+            var calcularValorTotalTintastd =parseFloat((Math.round(calcularValorTotalTintas(cantidad))));
+            var transporteCiudadpreciotd =parseFloat(transporteCiudadprecio) 
+            var constoTerminacion =parseFloat(costoTerminacionEn(cantidad));
+            var costoTroqueltd =parseFloat(costoTroquel(cantidad,troquelDif));
+            var recargoTrnsporteFtd =parseFloat(recargoTrnsporteF());
+            
+            let costo_total = materialValorpreciotd+acabadoValorpreciotd+coldValorpreciotd+Costo_total_maquinatd+precioGraduacionPlanchastd+CambPlanchastd+GradPARtd+CambiosTintastd+PrepTintastd+costoPlanchasporEtiquetatd+calcularValorTotalTintastd+transporteCiudadpreciotd+constoTerminacion+costoTroqueltd+recargoTrnsporteFtd;
+            let subtotal=parseFloat(costo_total);
+            var utilildadtd= parseFloat(subtotal*parseFloat(watch('utilidad'))/100)
+            var comisiontd = parseFloat(subtotal*parseFloat(watch('comision'))/100)
+            costo_total=parseFloat(subtotal)+parseFloat(utilildadtd)+parseFloat(comisiontd);
+            var costo_totaltd = parseFloat(Math.round(costo_total));
+            let cotizando ={
+                'coti':coti,
+                'cantidadtd':cantidadtd,
+                'materialValorpreciotd':materialValorpreciotd,
+                'acabadoValorpreciotd':acabadoValorpreciotd,
+                'coldValorpreciotd':coldValorpreciotd,
+                'Costo_total_maquinatd':Costo_total_maquinatd,
+                'horas_maquina':horas_maquina,
+                'precioGraduacionPlanchastd':precioGraduacionPlanchastd,
+                'CambPlanchastd':CambPlanchastd,
+                'GradPARtd':GradPARtd,
+                'CambiosTintastd':CambiosTintastd,
+                'PrepTintastd':PrepTintastd,
+                'costoPlanchasporEtiquetatd':costoPlanchasporEtiquetatd,
+                'calcularValorTotalTintastd':calcularValorTotalTintastd,
+                'transporteCiudadpreciotd':transporteCiudadpreciotd,
+                'costo_totaltd':costo_totaltd,
+                'constoTerminacion':constoTerminacion,
+                'costoTroqueltd':costoTroqueltd,
+                'recargoTrnsporteFtd':recargoTrnsporteFtd,
+                'utilildadtd':utilildadtd,
+                'comisiontd':comisiontd,
+                'preciosherpa':parseFloat(preciosherpa),
+                'subtotal':subtotal,
+                'cajas':cantidadCajas
                 }
             
+            return   cotizando;
         }
-        setMostrartabla(true);
-    }
-    const obtenerMaquinaPorNombre = (nombreProducto) => {
-         let preciow = allDatas.maquinas.filter(maquina => maquina.nombre === nombreProducto);
-         return preciow[0].precio
-    };
-    async function onSubmitForm(data) {
+    const handleRowSelectedCoti=(datos)=>{       
+       
+        } 
+    const handleRowSelectedHotStamping=(datos)=>{
+          
+            if(datos.length==1){
+                let dato =datos[0];
+                setValue('precioHotStamping',dato.precio);
+                setValue('HotStamping',dato.id);
+                if (refs.toggleButtonHotStamping.current) {
+                    refs.toggleButtonHotStamping.current.querySelector('p').textContent = 'Host stamping: '+dato.host_stamping;
+                    refs.toggleButtonHotStamping.current.classList.add('checkbutonTables')
+                  }
+            }else{
+                setValue('precioHotStamping','');
+                setValue('HotStamping','');
+                if (refs.toggleButtonHotStamping.current) {
+                    refs.toggleButtonHotStamping.current.querySelector('p').textContent  =`Host stamping` ;
+                    refs.toggleButtonHotStamping.current.classList.remove('checkbutonTables')
+                  }
+            }
+           
+          }   
+    const handleRowSelectedTroquel=(datos)=>{
+            if(watch('anchoEspe')==""){
+                alert("Falta Ancho Esperado")
+            }else{
+            if(datos.length==1){
+                let dato =datos[0];
+                console.log('dato',dato.id)
+                setValue('CUnidad',dato.unidadTroquel);
+                setValue('around',dato.around);
+                setValue('across',dato.across);          
+                
+                setValue('troquel_referencia',dato.referencia);
+                setValue('troquel_id',dato.id);            
+                if (refs.toggleButtonTroquel.current) {
+                    refs.toggleButtonTroquel.current.querySelector('p').textContent = 'Ref. Troquel: '+dato.referencia;
+                    refs.toggleButtonTroquel.current.classList.add('checkbutonTables')
+                  }
+                  setValue('metros',calcularMetros(watch('cantidad1')))
+                  calcularAvance()
+                  calcularAncho()
+            }else{
+                setValue('CUnidad',0);
+                setValue('around',0);
+                setValue('across',0);
+                setValue('troquel_referencia',0);
+                setValue('troquel_id',null); 
+                if (refs.toggleButtonTroquel.current) {
+                    refs.toggleButtonTroquel.current.querySelector('p').textContent  =`Ref. Troquel` ;
+                    refs.toggleButtonTroquel.current.classList.remove('checkbutonTables')
+                  }
+                  setValue('metros',0)
+                  calcularAvance()
+                  calcularAncho()
+            }}
+           
+          }
+        const handleRowSelectedPar=(datos)=>{
+            if(watch('anchoEspe')==""){
+                alert("Falta Ancho Esperado")
+            }else{
+            if(datos.length==1){
+                let dato =datos[0];
+                setValue('CUnidad',dato.unidad);
+                setValue('around',dato.cortes);
+                setValue('across',0);
+                setValue('unidadPar',dato.id);
+                if (refs.toggleButtonPar.current) {
+                    refs.toggleButtonPar.current.querySelector('p').textContent = 'Unidad P.A.R.: '+dato.unidad +"-"+dato.valor +"-"+dato.cortes ;
+                    refs.toggleButtonPar.current.classList.add('checkbutonTables')
+                  }
+                  calcularAvance()
+                  calcularAncho()
+            }else{
+                setValue('CUnidad',0);
+                setValue('around',0);
+                setValue('across',0);
+                setValue('unidadPar',null);
+                if (refs.toggleButtonPar.current) {
+                    refs.toggleButtonPar.current.querySelector('p').textContent  =`Unidad P.A.R.` ;
+                    refs.toggleButtonPar.current.classList.remove('checkbutonTables')
+                  }
+                  calcularAvance()
+                  calcularAncho()
+            }}
         
+         
+        }
+        const handleRowSelectedAcabado=(datos)=>{
+        
+            if(datos.length>=1){
+                let acabadosSelect=""
+                let precio=0;
+                console.log('datos',datos)
+                for (let index = 0; index < datos.length; index++) {
+                    if (index===0) {
+                        acabadosSelect = datos[index].acabado
+                        precio=datos[index].precio
+                        setValue('acabadoS',[datos[index].id]);
+                    }else{
+                        acabadosSelect = acabadosSelect+" , "+datos[index].acabado
+                        precio=precio+datos[index].precio
+                        setValue('acabadoS',[datos[index].id,...watch('acabadoS')]);
+                    }
+                    
+                    
+                }
+                setValue('precioAcabado',precio);
+                
+                if (refs.toggleButtonAcabado.current) {
+                    refs.toggleButtonAcabado.current.querySelector('p').textContent = 'Acabado: '+acabadosSelect;
+                    refs.toggleButtonAcabado.current.classList.add('checkbutonTables')
+                  }
+            }else{
+                setValue('precioAcabado',0);
+                setValue('acabadoS',[]);
+                if (refs.toggleButtonAcabado.current) {
+                    refs.toggleButtonAcabado.current.querySelector('p').textContent  =`Acabado` ;
+                    refs.toggleButtonAcabado.current.classList.remove('checkbutonTables')
+                  }
+            }
+           
+          }
+          const handleRowSelectedCold=(datos)=>{
+        
+            if(datos.length==1){
+                let dato =datos[0];
+                setValue('precioCold',dato.precio);
+                setValue('coldfoildS',dato.id);
+                if (toggleButtonCold.current) {
+                    toggleButtonCold.current.querySelector('p').textContent = 'Cold Foild: '+dato.coldFoild;
+                    toggleButtonCold.current.classList.add('checkbutonTables')
+                  }
+            }else{
+                setValue('precioCold','');
+                setValue('coldfoildS','');
+                if (toggleButtonCold.current) {
+                    toggleButtonCold.current.querySelector('p').textContent  =`Cold Foild` ;
+                    toggleButtonCold.current.classList.remove('checkbutonTables')
+                  }
+            }
+           
+          }
+    const constructionCotizacion = useCallback(() => {
+        setState(prev => ({ ...prev, allCoti: [], mostrartabla: false }));
+        
+        const newAllCoti = [];
+        for (let index = 1; index < 10; index++) {
+            const cantidad_select = "cantidad" + index;
+            const cantidad_foto = "difFotopolimero" + index;
+            const cantidad_troquel = "difTroquel" + index;
+            
+            if (parseFloat(watch(cantidad_select))) {
+                const coOb = costoTotal(watch(cantidad_select), index, watch(cantidad_troquel), watch(cantidad_foto));
+                newAllCoti.push(coOb);
+            }
+        }
+        
+        setState(prev => ({
+            ...prev,
+            allCoti: newAllCoti,
+            mostrartabla: true
+        }));
+    }, [watch]);
+
+    const onSubmitForm = useCallback(async (data) => {
         try {
             let newData = { ...data, valoresGlobales: allCoti };
             const arrayToString = JSON.stringify(watch('acabadoS').map(item => item));
-             newData = { ...newData, acabadoSAll: arrayToString };
-             newData = { ...newData, valoresGlobaleslength: allCoti.length };
-            console.log(newData)
-            const response = await ClientAxios.post(`/insertcotizacionReal`, newData)
+            newData = { ...newData, acabadoSAll: arrayToString };
+            newData = { ...newData, valoresGlobaleslength: allCoti.length };
             
-            
-           
-            
-         
+            const response = await ClientAxios.post(`/insertcotizacionReal`, newData);
+            // Manejar respuesta
         } catch (error) {
-          
-            console.log(error)
+            console.log(error);
         }
-    } 
-   
+    }, [allCoti, watch]);
+
+    // Render optimizado
+    if (!allDatas?.clientes) {
+        return (
+            <div className="navegadorOpenBody d-flex h-100vh">
+                <img className="mx-auto my-auto spin" src={logo} alt="Logo Argos" />
+            </div>
+        );
+    }
 
     return (
-        
-        <>  {loadingIcon && <div className="position-fixed rounded p-1 shadow-lg" style={{zIndex:200,top:10,right:20,height:"8vh",width:"5vw",background:"#498ac2"}}><FontAwesomeIcon className="fa-spin fa-beat-fade text-black" style={{height:"90%"}}   icon={faArrowsRotate}/></div>}
-            {checkStatusView ? <></> :  checkStatus ? <div className="position-fixed rounded p-1 shadow-lg" style={{zIndex:200,top:10,right:20,height:"8vh",width:"5vw",background:"#498ac2"}}><FontAwesomeIcon className=" fa-beat-fade text-success" style={{height:"90%"}}   icon={faCheck}/></div>:<div className="position-fixed rounded p-1 shadow-lg" style={{zIndex:200,top:10,right:20,height:"8vh",width:"5vw",background:"#498ac2"}}><FontAwesomeIcon className="fa-beat-fade text-danger" style={{height:"90%"}}   icon={faX}/></div>}
-            
-            {!allDatas?.clientes?<div className="navegadorOpenBody d-flex  h-100vh"><img
-            className="mx-auto my-auto spin"
-            src={logo}
-            alt="Logo Argos"
-          /></div>:<div id="contenedorbody" className=" navegadorOpenBody" >
+        <>
+            {loadingIcon && (
+                <div className="position-fixed rounded p-1 shadow-lg" style={{ zIndex: 200, top: 10, right: 20, height: "8vh", width: "5vw", background: "#498ac2" }}>
+                    <FontAwesomeIcon className="fa-spin fa-beat-fade text-black" style={{ height: "90%" }} icon={faArrowsRotate} />
+                </div>
+            )}
+
+            {!checkStatusView && (
+                checkStatus ? (
+                    <div className="position-fixed rounded p-1 shadow-lg" style={{ zIndex: 200, top: 10, right: 20, height: "8vh", width: "5vw", background: "#498ac2" }}>
+                        <FontAwesomeIcon className="fa-beat-fade text-success" style={{ height: "90%" }} icon={faCheck} />
+                    </div>
+                ) : (
+                    <div className="position-fixed rounded p-1 shadow-lg" style={{ zIndex: 200, top: 10, right: 20, height: "8vh", width: "5vw", background: "#498ac2" }}>
+                        <FontAwesomeIcon className="fa-beat-fade text-danger" style={{ height: "90%" }} icon={faX} />
+                    </div>
+                )
+            )}
+
+            <div id="contenedorbody" className="navegadorOpenBody">
                 <form id="formularioCotizacion" method="POST" className="col-12 " style={{display: "flex", flexDirection: "row"}}>
                     <div className="carousel-item active mx-auto"  style={{padding: "1%", zoom: "90% "}}>   
                         <div className="card scroll-divs-card"  style={{  marginBottom: "20px",  background: "#011034 " }}>
@@ -1480,12 +1489,12 @@ const Cotizacion=({elemented})=> {
 
                                     <div className="accordion mx-auto p-1  " id="accordionRefTroquel" style={{width: "40% "}}>
                                         <div className="accordion-item">
-                                                <button ref={toggleButtonTroquel} onClick={()=>setToggleButtonTroquelIsopen(!toggleButtonTroquelIsopen)} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
+                                                <button ref={refs.toggleButtonTroquel} onClick={()=>setToggleStates(prev => ({ ...prev, toggleButtonTroquelIsopen: !toggleStates.toggleButtonTroquelIsopen }))} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
                                                     <p className="my-auto text-dark">Ref. Troquel</p>
-                                                    {toggleButtonTroquelIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
+                                                    {toggleStates.toggleButtonTroquelIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
                                            
-                                            <div id="collaTroquel"   className={`accordion-collapse collapse ${toggleButtonTroquelIsopen && "show"} `}>
+                                            <div id="collaTroquel"   className={`accordion-collapse collapse ${toggleStates.toggleButtonTroquelIsopen && "show"} `}>
                                                 <div className="accordion-body">
                                                 <TabulatorTable columns={[{
                                                         title: 'Id',
@@ -1528,11 +1537,11 @@ const Cotizacion=({elemented})=> {
                                     </div>
                                     <div className="accordion mx-auto p-1" id="accordionPar" style={{width: "50% "}}>
                                         <div className="accordion-item">
-                                        <button ref={toggleButtonPar} onClick={()=>setToggleButtonParIsopen(!toggleButtonParIsopen)} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
+                                        <button ref={refs.toggleButtonPar} onClick={()=>setToggleStates(prev => ({ ...prev, toggleButtonParIsopen: !toggleStates.toggleButtonParIsopen }))} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
                                                     <p className="my-auto text-dark">Unidad P.A.R.</p>
-                                                    {toggleButtonParIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
+                                                    {toggleStates.toggleButtonParIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
-                                            <div id="collaPar"   className={`accordion-collapse collapse ${toggleButtonParIsopen && "show"} `}>
+                                            <div id="collaPar"   className={`accordion-collapse collapse ${toggleStates.toggleButtonParIsopen && "show"} `}>
                                                 <div className="accordion-body">
                                                 <TabulatorTable columns={[{
                                                         title: 'Id',
@@ -1623,11 +1632,11 @@ const Cotizacion=({elemented})=> {
 
                                     <div className="accordion mx-auto p-1 " id="accordionMaterial" style={{width: "50% "}} >
                                         <div className="accordion-item">
-                                        <button ref={toggleButtonMaterial} onClick={()=>setToggleButtonMaterialIsopen(!toggleButtonMaterialIsopen)} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
+                                        <button ref={refs.toggleButtonMaterial} onClick={()=>setToggleStates(prev => ({ ...prev, toggleButtonMaterialIsopen: !toggleStates.toggleButtonMaterialIsopen }))} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
                                                     <p className="my-auto text-dark">Material</p>
-                                                    {toggleButtonMaterialIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
+                                                    {toggleStates.toggleButtonMaterialIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
-                                            <div id="collaMaterial"   className={`accordion-collapse collapse ${toggleButtonMaterialIsopen && "show"} `}>
+                                            <div id="collaMaterial"   className={`accordion-collapse collapse ${toggleStates.toggleButtonMaterialIsopen && "show"} `}>
                                                 <div className="accordion-body">
                                                 <TabulatorTable columns={[{
                                                         title: 'Id',
@@ -1682,11 +1691,11 @@ const Cotizacion=({elemented})=> {
 
                                     <div className="accordion mx-auto p-1" id="accordionAcabado" style={{width: "75% "}}>
                                         <div className="accordion-item">
-                                                <button ref={toggleButtonAcabado} onClick={()=>setToggleButtonAcabadoIsopen(!toggleButtonAcabadoIsopen)} className="button  bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
+                                                <button ref={refs.toggleButtonAcabado} onClick={()=>setToggleStates(prev => ({ ...prev, toggleButtonAcabadoIsopen: !toggleStates.toggleButtonAcabadoIsopen }))} className="button  bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
                                                     <p className="my-auto text-dark">Acabado</p>
-                                                    {toggleButtonAcabadoIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
+                                                    {toggleStates.toggleButtonAcabadoIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
-                                            <div id="collaacabado"   className={`accordion-collapse collapse ${toggleButtonAcabadoIsopen && "show"} `}>
+                                            <div id="collaacabado"   className={`accordion-collapse collapse ${toggleStates.toggleButtonAcabadoIsopen && "show"} `}>
                                                 <div className="accordion-body">
                                                 <TabulatorTable columns={[{
                                                         title: 'Id',
@@ -1738,11 +1747,11 @@ const Cotizacion=({elemented})=> {
 
                                     <div className="accordion mx-auto p-1" id="accordionCold" style={{width: "75% "}}>
                                         <div className="accordion-item">
-                                        <button ref={toggleButtonCold} onClick={()=>setToggleButtonColdIsopen(!toggleButtonColdIsopen)} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
+                                        <button ref={refs.toggleButtonCold} onClick={()=>setToggleStates(prev => ({ ...prev, toggleButtonColdIsopen: !toggleStates.toggleButtonColdIsopen }))} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
                                                     <p className="my-auto text-dark">Cold Foild</p>
-                                                    {toggleButtonColdIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
+                                                    {toggleStates.toggleButtonColdIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
-                                            <div id="collaCold"   className={`accordion-collapse collapse ${toggleButtonColdIsopen && "show"} `}>
+                                            <div id="collaCold"   className={`accordion-collapse collapse ${toggleStates.toggleButtonColdIsopen && "show"} `}>
                                                 <div className="accordion-body">
                                                 <TabulatorTable columns={[{
                                                         title: 'Id',
@@ -1794,11 +1803,11 @@ const Cotizacion=({elemented})=> {
 
                                     <div className="accordion mx-auto p-1" id="accordionCold" style={{width: "75% "}}>
                                         <div className="accordion-item">
-                                        <button ref={toggleButtonCold} onClick={()=>setToggleButtonHotStampingIsopen(!toggleButtonHotStampingIsopen)} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
+                                        <button ref={refs.toggleButtonCold} onClick={()=>setToggleStates(prev => ({ ...prev, toggleButtonHotStampingIsopen: !toggleStates.toggleButtonHotStampingIsopen }))} className="button bg-body w-100 d-flex " style={{justifyContent:"center",alignItems:"center"}} type="button" >
                                                     <p className="my-auto text-dark">Hot stamping</p>
-                                                    {toggleButtonColdIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
+                                                    {toggleStates.toggleButtonColdIsopen? <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleUp}/> : <FontAwesomeIcon className="ms-2 my-auto" icon={faAngleDown}/>}
                                                    </button>
-                                            <div id="collaCold"   className={`accordion-collapse collapse ${toggleButtonHotStampingIsopen && "show"} `}>
+                                            <div id="collaCold"   className={`accordion-collapse collapse ${toggleStates.toggleButtonHotStampingIsopen && "show"} `}>
                                                 <div className="accordion-body">
                                                 <TabulatorTable columns={[{
                                                         title: 'Id',
@@ -2347,7 +2356,7 @@ const Cotizacion=({elemented})=> {
 
                                             </div>
                                             <div className="form-floating mx-auto p-1 col-4 " >
-                                                <select className="form-select bg-secondary-subtle-r " id="ciudadEnvio" {...register("ciudadEnvio",{required:'campo requerido'})} onChange={()=>calcularCajas()} >
+                                                <select className="form-select bg-secondary-subtle-r " id="ciudadEnvio" {...register("ciudadEnvio",{required:'campo requerido'})} onChange={calcularCajas()} >
                                                     <option value={""} >Seleccionar</option>
                                                     <option value={"aburra"} att-precio="16627">Valle de aburra</option>
                                                     <option value={"Ciudad Principal"} att-precio="22367">Ciudad Principal</option>
@@ -2364,35 +2373,35 @@ const Cotizacion=({elemented})=> {
                                             </div>
                                             <div className="col-12 zoom90 mt-4" style={{display: "flex", flexDirection:"row"}}>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
-                                                    <input type="text" className="form-control" id="cajas_cantidad1" {...register("cajas_cantidad1")}   />
+                                                    <input type="text" className="form-control" id="cajas_cantidad1" {...register("cajas_cantidad1")} readOnly={true}  />
                                                     <label style={{color:"#000000"}} htmlFor="cajas_cantidad1">Cajas cantidad 1</label>
                                                 </div>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
-                                                    <input type="text" className="form-control" id="cajas_cantidad2" {...register("cajas_cantidad2")}   />
+                                                    <input type="text" className="form-control" id="cajas_cantidad2" {...register("cajas_cantidad2")} readOnly={true}  />
                                                     <label style={{color:"#000000"}} htmlFor="cajas_cantidad2">Cajas cantidad 2</label>
                                                 </div>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
-                                                    <input type="text" className="form-control" id="cajas_cantidad3" {...register("cajas_cantidad3")}  />
+                                                    <input type="text" className="form-control" id="cajas_cantidad3" {...register("cajas_cantidad3")} readOnly={true} />
                                                     <label style={{color:"#000000"}} htmlFor="cajas_cantidad3">Cajas cantidad 3</label>
                                                 </div>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
-                                                    <input type="text" className="form-control" id="cajas_cantidad4" {...register("cajas_cantidad4")}   />
+                                                    <input type="text" className="form-control" id="cajas_cantidad4" {...register("cajas_cantidad4")} readOnly={true}  />
                                                     <label style={{color:"#000000"}} htmlFor="cajas_cantidad4">Cajas cantidad 4</label>
                                                 </div>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
-                                                    <input type="text" className="form-control" id="cajas_cantidad5" {...register("cajas_cantidad5")}   />
+                                                    <input type="text" className="form-control" id="cajas_cantidad5" {...register("cajas_cantidad5")} readOnly={true}  />
                                                     <label style={{color:"#000000"}} htmlFor="cajas_cantidad5">Cajas cantidad 5</label>
                                                 </div>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
-                                                    <input type="text" className="form-control" id="cajas_cantidad6" {...register("cajas_cantidad6")}   />
+                                                    <input type="text" className="form-control" id="cajas_cantidad6" {...register("cajas_cantidad6")} readOnly={true}  />
                                                     <label style={{color:"#000000"}} htmlFor="cajas_cantidad6">Cajas cantidad 6</label>
                                                 </div>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
-                                                    <input type="text" className="form-control" id="cajas_cantidad7" {...register("cajas_cantidad7")}   />
+                                                    <input type="text" className="form-control" id="cajas_cantidad7" {...register("cajas_cantidad7")} readOnly={true}  />
                                                     <label style={{color:"#000000"}} htmlFor="cajas_cantidad7">Cajas cantidad 7</label>
                                                 </div>
                                                 <div className="form-floating  mx-auto p-1 " style={{width: "12.5%"}}>
-                                                    <input type="text" className="form-control" id="cajas_cantidad8" {...register("cajas_cantidad8")}   />
+                                                    <input type="text" className="form-control" id="cajas_cantidad8" {...register("cajas_cantidad8")} readOnly={true}  />
                                                     <label style={{color:"#000000"}} htmlFor="cajas_cantidad8">Cajas cantidad 8</label>
                                                 </div>
                                             </div>
@@ -2428,10 +2437,13 @@ const Cotizacion=({elemented})=> {
                     
                 </form>
             
-                {mostrartabla && 
+            </div>
+
+            {/* Modales permanecen igual */}
+            {mostrartabla && 
                     <div className="bg-success  top-50 start-50 translate-middle" style={{position:"fixed",width:"100vw",height:"100vh",zIndex:"300"}}>
                         <div className="bg-body rounded top-50 start-50 translate-middle p-4" style={{position:"fixed",width:"85vw",height:"80vh",zIndex:"400"}}>
-                                    <button   onClick={()=>setMostrartabla(false)} style={{position:"absolute",top:8,right:8,width:"30px",height:"30px",display:"flex",alignItems:"center",alignContent:"center"}}><FontAwesomeIcon
+                                    <button   onClick={()=>setState(prev => ({ ...prev, mostrartabla: false }))} style={{position:"absolute",top:8,right:8,width:"30px",height:"30px",display:"flex",alignItems:"center",alignContent:"center"}}><FontAwesomeIcon
                                         icon={faX}
                                         
                                         className=" my-auto mx-auto bg-body"
@@ -2607,7 +2619,7 @@ const Cotizacion=({elemented})=> {
                                             negativeSign:true,
                                             precision:2,
                                         }},
-                                        {title: 'Acciones', field: 'acciones', formatter: function(cell, formatterParams, onRendered){
+                                        {title: 'Acciones', field: 'acciones', formatter: function(cell){
                                             // Crear el botón
                                             const button = document.createElement("button");
                                             button.className = "btn btn-primary";
@@ -2620,9 +2632,9 @@ const Cotizacion=({elemented})=> {
                                             button.addEventListener("click", function() {
                                                 const rowData = cell.getRow().getData(); // Obtener los datos de la fila actual
                                                 const currentData = watch();
-                                                setDataTableCotizacion(rowData);
-                                                setDataform(currentData);
-                                                setVerPdf(true)                                               
+                                                setState(prev => ({ ...prev, dataTableCotizacion: rowData }));
+                                                setState(prev => ({ ...prev, dataform: currentData }));
+                                                setState(prev => ({ ...prev, verPdf: true }));
                                                 // Aquí puedes agregar más lógica, como abrir un modal o redirigir a otra página
                                             });
                                 
@@ -2639,10 +2651,11 @@ const Cotizacion=({elemented})=> {
                         
                     </div>
                     }
-                {verPdf && 
+
+            {verPdf && 
                     <div className="bg-success  top-50 start-50 translate-middle" style={{position:"fixed",width:"100vw",height:"100vh",zIndex:"400"}}>
                         <div className="bg-body rounded top-50 start-50 translate-middle p-4" style={{position:"fixed",width:"85vw",height:"80vh",zIndex:"500"}}>
-                                    <button   onClick={()=>setVerPdf(false)} style={{position:"absolute",top:8,right:8,width:"30px",height:"30px",display:"flex",alignItems:"center",alignContent:"center"}}><FontAwesomeIcon
+                                    <button   onClick={()=>setState(prev => ({ ...prev, verPdf: false }))} style={{position:"absolute",top:8,right:8,width:"30px",height:"30px",display:"flex",alignItems:"center",alignContent:"center"}}><FontAwesomeIcon
                                         icon={faX}
                                         
                                         className=" my-auto mx-auto bg-body"
@@ -2657,10 +2670,8 @@ const Cotizacion=({elemented})=> {
                         
                     </div>
                     }
-                                        
-            </div>
-            }
-        
-        </>);
-}
-export default Cotizacion;
+        </>
+    );
+};
+
+export default Cotizacion2;

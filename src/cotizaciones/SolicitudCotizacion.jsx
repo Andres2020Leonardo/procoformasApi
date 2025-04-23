@@ -108,15 +108,14 @@ const SolicitudCotizacion=({elemented})=> {
                 
                 if(response.data!=="Creación fallida."){
                     setCotizacion(response.data)
-                    // setMostrarPdf(true)
                 }
                 setAlert({
                     msg: "Creación o actualización exitosa con #: "+response.data,
                     error: false,
                   });
-                setTimeout(() => {
-                    document.location.reload();
-                }, 8000);
+                // setTimeout(() => {
+                //     document.location.reload();
+                // }, 8000);
                 setLoadingIcon(false)
                 setCreada(true)
             } catch (error) {
