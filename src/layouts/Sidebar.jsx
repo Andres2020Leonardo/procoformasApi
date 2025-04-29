@@ -13,6 +13,7 @@ const Sidebar = ({rol,addPage}) => {
   const logoOnly = "./img/JAT1.png";
   const cotizacion = "./img/icons/solicitud_cotizacion.png";
   const comercial = "./img/icons/ICONOS-03.png";
+  const coloricon = "./img/icons/color.png";
   const almacen = "./img/icons/almacen.png";
   function setIsOpenMenuFuntion(r, n) {
     if (isOpenMenu === "" || isOpenId === 0 || isOpenId !== n) {
@@ -171,6 +172,24 @@ const Sidebar = ({rol,addPage}) => {
             />
             <p className="plink hidden overflow-hidden my-auto ">
               Talento Humano
+            </p>
+            
+          </Link>
+          <Link
+            onClick={()=>addPage("cotizacion/coloranalizador")}
+            className={`${
+              active == 1 && "  "
+            } d-flex mt-1 flex-row align-middle mx-auto hoverLink p-1 w-100 h-5vh btn-group`}
+          >
+           
+             <img
+            className=" text-api-s me-1   my-auto "
+                src={coloricon}
+                alt="Logo Argos"
+                style={{height:"95%",Width:"auto", objectFit:"contain"}}
+            />
+            <p className="plink hidden overflow-hidden my-auto ">
+              Analizador de colores
             </p>
             
           </Link>

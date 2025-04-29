@@ -9,6 +9,7 @@ import RecibirMaterial from "../almacen/RecibirMaterial";
 import Ingreso from "../comercial/Ingreso";
 import CertificadoLaboral from "../th/init";
 import Cotizacion2 from "../cotizaciones/Cotizacion2";
+import ColorAnalyzer from "../utils/ColorAnalyzer";
 
 function Pages({page,setPage}){
     const [elemented,setElemented]=useState({});
@@ -45,7 +46,9 @@ function Pages({page,setPage}){
             case "comercial/ingreso":
                 return  <Ingreso/>
             case "th":
-                    return  <CertificadoLaboral/>   
+                    return  <CertificadoLaboral/> 
+            case "cotizacion/coloranalizador":
+                    return  <ColorAnalyzer/>  
             default:
                 return <Home/>
         }

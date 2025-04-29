@@ -671,6 +671,8 @@ const Cotizacion=({elemented})=> {
     //
     ///Etiq para graduar
     function calcularMetros(cantidad){
+
+        // colid foil agrega 200 metros
         cantidad=parseFloat(cantidad)
         let factor=0.3175;
         let constante=60;
@@ -685,7 +687,7 @@ const Cotizacion=({elemented})=> {
         return  Math.round(metros);
     }
     function calcularCostoTintaM2(){
-        let valor_tintas=( parseFloat(watch('grTinta1'))*(parseFloat(watch('CubrimientoCoti1'))/100))+( parseFloat(watch('grTinta2'))*(parseFloat(watch('CubrimientoCoti2'))/100))+( parseFloat(watch('grTinta3'))*(parseFloat(watch('CubrimientoCoti3'))/100))+( parseFloat(watch('grTinta4'))*(parseFloat(watch('CubrimientoCoti4'))/100))
+        let valor_tintas=(( parseFloat(watch('grTinta1'))*(parseFloat(watch('CubrimientoCoti1'))/100))*parseFloat(watch('PlanchasTinta1')))+(( parseFloat(watch('grTinta2'))*(parseFloat(watch('CubrimientoCoti2'))/100)*parseFloat(watch('PlanchasTinta1'))))+(( parseFloat(watch('grTinta3'))*(parseFloat(watch('CubrimientoCoti3'))/100)*parseFloat(watch('PlanchasTinta1'))))+(( parseFloat(watch('grTinta4'))*(parseFloat(watch('CubrimientoCoti4'))/100)*parseFloat(watch('PlanchasTinta1'))))
       
         return Math.round(valor_tintas)
     }
@@ -745,12 +747,30 @@ const Cotizacion=({elemented})=> {
     function costoTerminacionEn(cantidad){
         let seleccionTerminado=watch('terminacionEn')
         if (seleccionTerminado==='Rebobinado') {
-            return (calcularMetros(cantidad)/562.5)*10000;
+            let valorTerminacionF=0
+            if ((calcularMetros(cantidad)/562.5)*10000<10000) {
+                valorTerminacionF=10000
+            }else{
+                valorTerminacionF=(calcularMetros(cantidad)/562.5)*10000
+            }
+            return  valorTerminacionF;
         }else if (seleccionTerminado==='En hojas') {
-            return (calcularMetros(cantidad)/562.5)*10000;
+            let valorTerminacionF=0
+            if ((calcularMetros(cantidad)/562.5)*10000<10000) {
+                valorTerminacionF=10000
+            }else{
+                valorTerminacionF=(calcularMetros(cantidad)/562.5)*10000
+            }
+            return  valorTerminacionF;
         }
         else if (seleccionTerminado==='Doblado') {
-            return  (calcularMetros(cantidad)/562.5)*10000;
+            let valorTerminacionF=0
+            if ((calcularMetros(cantidad)/562.5)*10000<10000) {
+                valorTerminacionF=10000
+            }else{
+                valorTerminacionF=(calcularMetros(cantidad)/562.5)*10000
+            }
+            return  valorTerminacionF;
         }else{
             alert('selecionar terminación')
             return 0
@@ -1059,9 +1079,10 @@ const Cotizacion=({elemented})=> {
         let costo_total = materialValorpreciotd+acabadoValorpreciotd+coldValorpreciotd+Costo_total_maquinatd+precioGraduacionPlanchastd+CambPlanchastd+GradPARtd+CambiosTintastd+PrepTintastd+costoPlanchasporEtiquetatd+calcularValorTotalTintastd+transporteCiudadpreciotd+constoTerminacion+costoTroqueltd+recargoTrnsporteFtd;
         let subtotal=parseFloat(costo_total);
         var utilildadtd= parseFloat(subtotal*parseFloat(watch('utilidad'))/100)
-        var comisiontd = parseFloat(subtotal*parseFloat(watch('comision'))/100)
+        var comisiontd = parseFloat((parseFloat(subtotal)+parseFloat(utilildadtd))*parseFloat(watch('comision'))/100)
         costo_total=parseFloat(subtotal)+parseFloat(utilildadtd)+parseFloat(comisiontd);
         var costo_totaltd = parseFloat(Math.round(costo_total));
+        
         let cotizando ={
             'coti':coti,
             'cantidadtd':cantidadtd,
