@@ -1035,7 +1035,7 @@ const SolicitudCotizacion=({elemented})=> {
                                         <div className="form-control" id="divcheckratio3" style={{display: "flex", flexDirection: "row", background: "#a5afb6"}}>
                                             <div className="form-control p-1 m-1" style={{background: "transparent ", border: "none"}}>
                                                 <div className="form-check col-6">
-                                                    <input className="form-check-input"  type="radio" {...register("presentacion")}   checked={watch('unidad_seleccion')==="unidad_rollos"?true:false} id="presentacion_rollos" value="rollos"/>
+                                                    <input className="form-check-input"  type="radio" {...register("presentacion")}    id="presentacion_rollos" value="rollos"/>
                                                     <label style={{color:"#000000"}} className="form-check-label" htmlFor="presentacion_rollos">
                                                         En rollos
                                                     </label>
@@ -1043,15 +1043,15 @@ const SolicitudCotizacion=({elemented})=> {
                                                 </div>
                                                 <div className="form-control m-1" style={{display: "flex", flexDirection: "row"}}>
                                                     <div className="form-floating  mx-auto p-1 col-3">
-                                                        <input type="number" className="form-control"   checked={watch('unidad_seleccion')==="unidad_rollos"?true:false} id="rollos_por" {...register("rollos_por")}/>
+                                                        <input type="number" className="form-control"    id="rollos_por" {...register("rollos_por")}/>
                                                         <label style={{color:"#000000"}} htmlFor="rollos_por">Rollos por (Etiqs.)</label>
                                                     </div>
                                                     <div className="form-floating  mx-auto p-1 col-3">
-                                                        <input type="number" className="form-control"   checked={watch('unidad_seleccion')==="unidad_rollos"?true:false} id="etiq_ancho" {...register("etiq_ancho")}/>
+                                                        <input type="number" className="form-control"    id="etiq_ancho" {...register("etiq_ancho")}/>
                                                         <label style={{color:"#000000"}} htmlFor="etiq_ancho">Etiq. Ancho</label>
                                                     </div>
                                                     <div className="form-floating mx-auto p-1 col-3" >
-                                                        <select className="form-select bg-secondary-subtle-r"   checked={watch('unidad_seleccion')==="unidad_rollos"?true:false} id="core" {...register("core")} aria-label="core"  >
+                                                        <select className="form-select bg-secondary-subtle-r"   id="core" {...register("core")} aria-label="core"  >
                                                             <option value="1" >1 pulgada</option>
                                                             <option value="1.5" >1.5 pulgada</option>
                                                             <option value="2" >2 pulgada</option>
