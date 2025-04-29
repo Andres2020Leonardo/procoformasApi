@@ -1078,10 +1078,11 @@ const Cotizacion=({elemented})=> {
        
         let costo_total = materialValorpreciotd+acabadoValorpreciotd+coldValorpreciotd+Costo_total_maquinatd+precioGraduacionPlanchastd+CambPlanchastd+GradPARtd+CambiosTintastd+PrepTintastd+costoPlanchasporEtiquetatd+calcularValorTotalTintastd+transporteCiudadpreciotd+constoTerminacion+costoTroqueltd+recargoTrnsporteFtd;
         let subtotal=parseFloat(costo_total);
-        var utilildadtd= parseFloat(subtotal*parseFloat(watch('utilidad'))/100)
-        var comisiontd = parseFloat((parseFloat(subtotal)+parseFloat(utilildadtd))*parseFloat(watch('comision'))/100)
-        costo_total=parseFloat(subtotal)+parseFloat(utilildadtd)+parseFloat(comisiontd);
-        var costo_totaltd = parseFloat(Math.round(costo_total));
+        let fp=1.53;
+        var utilildadtd= parseFloat(watch('utilidad'))/100
+        var comisiontd = parseFloat(watch('comision'))/100
+        let precio=(subtotal)/(1-utilildadtd-(comisiontd*fp));
+        var costo_totaltd = parseFloat(Math.round(precio));
         
         let cotizando ={
             'coti':coti,
@@ -1103,8 +1104,8 @@ const Cotizacion=({elemented})=> {
             'constoTerminacion':constoTerminacion,
             'costoTroqueltd':costoTroqueltd,
             'recargoTrnsporteFtd':recargoTrnsporteFtd,
-            'utilildadtd':utilildadtd,
-            'comisiontd':comisiontd,
+            'utilildadtd':costo_totaltd*utilildadtd,
+            'comisiontd':costo_totaltd*comisiontd,
             'preciosherpa':parseFloat(preciosherpa),
             'subtotal':subtotal,
             'cajas':cantidadCajas
