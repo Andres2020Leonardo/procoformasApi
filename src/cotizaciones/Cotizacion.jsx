@@ -610,10 +610,9 @@ const Cotizacion=({elemented})=> {
         let metrosporrollo = parseFloat(calcularMetrosPorRollo());
         let core_d=parseFloat(watch('Core'))*parseFloat(watch('Core'));
         let diametro=parseFloat(((core_d)+((4*(metrosporrollo/0.0254)*(152*0.0394*0.001))/3.1416)))
-        let largo_caja=29.5
-        let ancho_caja=29.5
-        let alto_caja=34
-        console.log('psi',parseInt(watch('posi')))
+        let largo_caja=38 //29.5
+        let ancho_caja=37 //29.5
+        let alto_caja=32.5 //34
         let ancho_etiqueta=parseInt(watch('posi'))===1 || parseInt(watch('posi'))===2 || parseInt(watch('posi'))===5 || parseInt(watch('posi'))===6 ? parseFloat(watch('anchoMaterialC')): parseFloat(watch('avanceReal'));
         let capacidad_largo= Math.ceil(largo_caja/diametro)
         let capacidad_ancho= Math.ceil(ancho_caja/diametro)
@@ -687,7 +686,7 @@ const Cotizacion=({elemented})=> {
         return  Math.round(metros);
     }
     function calcularCostoTintaM2(){
-        let valor_tintas=(( parseFloat(watch('grTinta1'))*(parseFloat(watch('CubrimientoCoti1'))/100))*parseFloat(watch('PlanchasTinta1')))+(( parseFloat(watch('grTinta2'))*(parseFloat(watch('CubrimientoCoti2'))/100)*parseFloat(watch('PlanchasTinta1'))))+(( parseFloat(watch('grTinta3'))*(parseFloat(watch('CubrimientoCoti3'))/100)*parseFloat(watch('PlanchasTinta1'))))+(( parseFloat(watch('grTinta4'))*(parseFloat(watch('CubrimientoCoti4'))/100)*parseFloat(watch('PlanchasTinta1'))))
+        let valor_tintas=(( parseFloat(watch('grTinta1'))*(parseFloat(watch('CubrimientoCoti1'))/100)))+(( parseFloat(watch('grTinta2'))*(parseFloat(watch('CubrimientoCoti2'))/100)))+(( parseFloat(watch('grTinta3'))*(parseFloat(watch('CubrimientoCoti3'))/100)))+(( parseFloat(watch('grTinta4'))*(parseFloat(watch('CubrimientoCoti4'))/100)))
       
         return Math.round(valor_tintas)
     }
@@ -1080,8 +1079,8 @@ const Cotizacion=({elemented})=> {
         let subtotal=parseFloat(costo_total);
         let fp=1.53;
         var utilildadtd= parseFloat(watch('utilidad'))/100
-        var comisiontd = parseFloat(watch('comision'))/100
-        let precio=(subtotal)/(1-utilildadtd-(comisiontd*fp));
+        var comisiontd = (parseFloat(watch('comision'))/100)*fp
+        let precio=(subtotal)/(1-utilildadtd-(comisiontd));
         var costo_totaltd = parseFloat(Math.round(precio));
         
         let cotizando ={
